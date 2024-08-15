@@ -48,11 +48,10 @@
     <div class="heros__categories_container">
 		<div class="heros__categories" onclick="toggleCategory()">
 			<i class="menu-icon">&#9776;</i>
-	
 			Danh sách sản phẩm
 		</div>
 
-		<ul id="categoryList" style="display: none;">
+		<ul id="categoryList" style="display:none ;">
 			<li>Đồng hồ Seiko</li>
 			<li>Đồng hồ KOI</li>
 			<!-- Thêm các mục khác -->
