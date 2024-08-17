@@ -20,7 +20,7 @@ public class Product {
         this.gender = gender;
     }
 
-    // Getters and Setters
+
     public int getProductID() {
         return productID;
     }
