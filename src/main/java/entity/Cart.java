@@ -17,7 +17,6 @@ public class Cart {
         this.createdAt = createdAt;
     }
 
-    // Getters and Setters
     public int getCartID() {
         return cartID;
     }
