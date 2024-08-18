@@ -59,7 +59,7 @@ public class DAO {
         return products;
     }
 
-    public User login(String user, String pass) {
+    public User Login(String user, String pass) {
     	String query = "SELECT * FROM Users WHERE [Username] = ? AND Password = ?";
 
 		try {
@@ -79,7 +79,7 @@ public class DAO {
 
 	}
 
-	public void signup(String user, String pass) {
+	public void SignUp(String user, String pass) {
 		String query = "insert into Users \n" + " values (?,?,0,0)";
 		try {
 			conn = new DBContext().getConnection();
