@@ -37,7 +37,7 @@
 			System.out.println(userName);
 			System.out.println(password);
 			
-			User acc = DAO.getInstance().login(userName,password);
+			User acc = DAO.getInstance().Login(userName,password);
 			System.out.println(acc);
 			if(acc == null) {
 				request.setAttribute("mess","Wrong user or password");
