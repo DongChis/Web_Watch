@@ -37,27 +37,27 @@ public class DAO {
 	}
 
 
-    public List<Product> getAllProducts() {
-        List<Product> products = new ArrayList<>();
-        String query = "SELECT * FROM Products";
-        try (Connection conn = new DBContext().getConnection();
-             PreparedStatement ps = conn.prepareStatement(query);
-             ResultSet rs = ps.executeQuery()) {
+	 public List<Product> getAllProducts() {
+	        List<Product> products = new ArrayList<>();
+	        String query = "SELECT * FROM Products";
+	        try (Connection conn = new DBContext().getConnection();
+	             PreparedStatement ps = conn.prepareStatement(query);
+	             ResultSet rs = ps.executeQuery()) {
 
-            while (rs.next()) {
-                products.add(new Product(rs.getInt("ProductID"), 
-                                         rs.getString("Title"), 
-                                         rs.getString("Name"), 
-                                         rs.getString("Description"),
-                                         rs.getDouble("Price"),
-                                         rs.getString("ImageURL"),
-                                         rs.getString("Gender")));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return products;
-    }
+	            while (rs.next()) {
+	                products.add(new Product(rs.getInt("ProductID"), 
+	                                         rs.getString("Title"), 
+	                                         rs.getString("Name"), 
+	                                         rs.getString("Description"),
+	                                         rs.getDouble("Price"),
+	                                         rs.getString("ImageURL"),
+	                                         rs.getString("Gender")));
+	            }
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	        return products;
+	    }
 
     public User Login(String user, String pass) {
     	String query = "SELECT * FROM Users WHERE [Username] = ? AND Password = ?";
