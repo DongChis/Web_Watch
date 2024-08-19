@@ -1,4 +1,5 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="en">
@@ -8,10 +9,11 @@
     <link rel="stylesheet" href="css/header.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+      
     <title>Watch Store</title>
 </head>
 <body>
-    <!-- Header Top Bar -->
+      <!-- Header Top Bar -->
     <div class="header__top">
         <div class="left-info">
             <span><i class="fas fa-envelope"></i> watchstore@gmail.com</span>
@@ -21,7 +23,16 @@
             <a href="#"><i class="fas fa-heart"></i></a>
             <a href="#"><i class="fas fa-twitter"></i></a>
             <a href="#"><i class="fas fa-star"></i></a>
-            <button onclick="openLoginModal()"><i class="fas fa-user"></i> Đăng nhập</button>
+            <c:if test="${not empty sessionScope.accSession}">
+               <button class="btn btn-primary" onclick="redirectToServlet()" >
+                    <i class="fas fa-user"></i> Đăng Xuất
+                </button>
+            </c:if>
+            <c:if test="${empty sessionScope.accSession}">
+                <button class="btn btn-primary" onclick="redirectToLoginPage()">
+                    <i class="fas fa-user"></i> Đăng nhập
+                </button>
+            </c:if>
         </div>
     </div>
 
@@ -72,5 +83,22 @@
             </div>
         </div>
     </div>
+    <script>
+  
+    function redirectToLoginPage() {
+        window.location.href = 'Login.jsp'; 
+    }
+    function redirectToServlet() {
+        window.location.href = 'logout';
+    }
+    function toggleCategory() {
+        var categoryList = document.getElementById('categoryList');
+        if (categoryList.style.display === 'none') {
+            categoryList.style.display = 'block';
+        } else {
+            categoryList.style.display = 'none';
+        }
+    }
+</script>
 </body>
 </html>
