@@ -18,7 +18,6 @@ public class Order {
         this.orderDetails = orderDetails;
     }
 
-    // Getters and Setters
     public int getOrderID() {
         return orderID;
     }
