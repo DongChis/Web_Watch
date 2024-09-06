@@ -7,7 +7,7 @@
 <meta charset="UTF-8">
 <link rel="stylesheet"
 	href="https://use.fontawesome.com/releases/v6.4.2/css/all.css">
-<link href="css/home.css" rel="stylesheet" type="text/css">
+<link href="css/home.css?v=1.0" rel="stylesheet" type="text/css">
 <title>Watch Store</title>
 </head>
 <body>

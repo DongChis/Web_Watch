@@ -8,7 +8,7 @@
 <meta charset="UTF-8">
 <link rel="stylesheet"
 	href="https://use.fontawesome.com/releases/v6.4.2/css/all.css">
-<link href="css/footer.css" rel="stylesheet" type="text/css"> 
+<link href="css/footer.css?v=1.0" rel="stylesheet" type="text/css"> 
 <link href="css/style.css" rel="stylesheet" type="text/css">
 <title>Insert title here</title>
 </head>
