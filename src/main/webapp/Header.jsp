@@ -58,7 +58,7 @@
     <!-- Categories and Search Bar -->
     <div class="heros__categories_container">
 		<div class="heros__categories" onclick="toggleCategory()">
-			<i class="menu-icon">&#9776;</i>
+		<i class="fa-solid fa-bars">  </i>
 			Danh sách sản phẩm
 		</div>
 

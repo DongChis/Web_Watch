@@ -16,7 +16,7 @@ header {
     width: 100%;
 }
 
-/* Top bar with email and free shipping */
+
 .header__top {
     background-color: #f5f5f5;
     padding: 10px 0;
@@ -143,45 +143,45 @@ header {
 .heros__categories  {
     display: flex;
     align-items: center;
-    background: #3333cc; /* Màu xanh dịu hơn */
+    background: #3333cc;
     color: white;
     padding: 15px;
-    cursor: pointer;
     font-weight: bold;
-    white-space: nowrap;
     border-radius: 5px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
     
     
+}
+.heros__categories i{
+	margin-right: 10px ;
 }
 
 
 .hero__search_form {
     display: flex;
     align-items: center;
-    flex-grow: 2;
     background-color: #f0f0f5;
-    padding: 15px; /* Tăng padding để khung bên ngoài lớn hơn */
-    border-radius: 10px; /* Tăng bo tròn các góc */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    margin: 0 20px 0 20px;
+    padding: 15px; 
+    border-radius: 10px; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    margin: 0 10px 0 20px;
     
 }
 
 .hero__search_form input {
-    font-size: 20px; /* Tăng kích thước font chữ */
-    width: 700px;
-    height: 50px; /* Tăng chiều cao của input */
+    font-size: 20px; 
+    width: 400px;
+    height: 50px; 
     padding: 0 15px;
-    border: 2px solid #ccc; /* Tăng độ dày viền của input */
+    border: 2px solid #ccc; 
     border-radius: 5px;
-    flex-grow: 1;
-    margin-right: 15px; /* Tạo khoảng cách giữa input và button */
+    flex-grow: 2;
+
 }
 
 .hero__search_form button {
-    font-size: 18px; /* Tăng kích thước font chữ của button */
-    height: 50px; /* Tăng chiều cao của button để bằng với input */
+    font-size: 18px; 
+    height: 50px;
     background: #3333cc;
     color: white;
     padding: 0 25px;
@@ -193,10 +193,10 @@ header {
 .hero__search_phone {
     display: flex;
     align-items: center;
-    background-color: #f0f0f5; /* Màu nền nhạt hơn */
+    background-color: #f0f0f5; 
     padding:  15px;
     border-radius: 5px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
     min-width: 220px;
 }
 
@@ -218,4 +218,4 @@ header {
 .hero__search_phone_text span {
     color: #6f6f6f;
     font-size: 14px;
-}
+}	
