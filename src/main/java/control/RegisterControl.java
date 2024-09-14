@@ -19,8 +19,8 @@ public class RegisterControl extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
 
        
-        String username = request.getParameter("username");
-        String password = request.getParameter("password");
+        String username = request.getParameter("user");
+        String password = request.getParameter("pass");
 
         // Gọi phương thức đăng ký tài khoản từ DAO
         
@@ -32,9 +32,11 @@ public class RegisterControl extends HttpServlet {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+         
             response.sendRedirect("Login.jsp"); 
+            
         } else {
-            request.setAttribute("message", "Tên đăng nhập đã tồn tại!");
+            request.setAttribute("mess", "Tên đăng nhập đã tồn tại!");
             request.getRequestDispatcher("Login.jsp").forward(request, response); 
         }
     }

@@ -6,7 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/header.css?v=1.0">
+    <link rel="stylesheet" href="css/header.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
       
@@ -24,6 +24,7 @@
             <a href="#"><i class="fas fa-twitter"></i></a>
             <a href="#"><i class="fas fa-star"></i></a>
             <c:if test="${not empty sessionScope.accSession}">
+            <h3>Xin chào ${sessionScope.accSession.username}<h3>
                <button class="btn btn-primary" onclick="redirectToServlet()" >
                     <i class="fas fa-user"></i> Đăng Xuất
                 </button>
@@ -43,9 +44,9 @@
         </div>
         <div class="nav-menu">
             <ul>
-                <li><a href="home.jsp">Trang chủ</a></li>
+                <li><a href="home">Trang chủ</a></li>
                 <li><a href="about.jsp">Giới thiệu</a></li>
-                <li><a href="products.jsp">Sản phẩm</a></li>
+                <li><a href="productList">Sản phẩm</a></li>
                 <li><a href="blogs.jsp">Bài viết</a></li>
                 <li><a href="contact.jsp">Liên hệ</a></li>
             </ul>
@@ -57,9 +58,9 @@
 
     <!-- Categories and Search Bar -->
     <div class="heros__categories_container">
-		<div class="heros__categories" onclick="toggleCategory()">
-			<i class="menu-icon">&#9776;</i>
-			Danh sách sản phẩm
+		<div class="heros__categories" onclick="">
+			<i class="menu-icon">&#9776; </i>
+			 	Danh sách sản phẩm
 		</div>
 
 		<ul id="categoryList" style="display:none ;">
@@ -91,14 +92,14 @@
     function redirectToServlet() {
         window.location.href = 'logout';
     }
-    function toggleCategory() {
+    /* function toggleCategory() {
         var categoryList = document.getElementById('categoryList');
         if (categoryList.style.display === 'none') {
             categoryList.style.display = 'block';
         } else {
             categoryList.style.display = 'none';
         }
-    }
+    } */
 </script>
 </body>
 </html>

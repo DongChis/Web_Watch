@@ -41,6 +41,7 @@ public class DAO {
 				products.add(new Product(rs.getInt("ProductID"), rs.getString("Title"), rs.getString("Name"),
 						rs.getString("Description"), rs.getDouble("Price"), rs.getString("ImageURL"),
 						rs.getString("Gender")));
+				
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -67,13 +68,14 @@ public class DAO {
 			try (ResultSet rs = ps.executeQuery()) {
 				if (rs.next()) {
 					return new User(rs.getInt("UserID"), rs.getString("Username"), rs.getString("Password"),
-							rs.getString("Email"), rs.getString("Role"), rs.getDate("CreatedAt"));
-				}
+							rs.getString("Email"), rs.getString("Role"), rs.getDate("CreatedAt"));				
+				}	
 			}
 
 		} catch (Exception e) {
 
 			e.printStackTrace();
+			
 		}
 		return null;
 	}
@@ -112,22 +114,20 @@ public class DAO {
 		if (isUsernameTaken(username)) {
 			throw new Exception("Tên người dùng đã tồn tại!");
 		}
-
-		 String query = "INSERT INTO Users (Username, Password, Email, Role, CreatedAt) VALUES (?, ?, NULL, 'Customer', GETDATE())";
+		 String query = "INSERT INTO Users (Username, Password, Email, Role, CreatedAt) VALUES (?, ?, 'email', 'Customer', GETDATE())";
 	
-
 		try {
 			conn = new DBContext().getConnection();
 			
 			ps = conn.prepareStatement(query);
-			System.out.println(ps.toString() + "prepareStatement");
+			System.out.println(ps.toString() + " prepareStatement");
 			ps.setString(1, username);
 			ps.setString(2, password); 
 
 			ps.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
-			throw new Exception("Lỗi trong quá trình đăng ký. Vui lòng thử lại sau.");
+			//throw new Exception("Lỗi trong quá trình đăng ký. Vui lòng thử lại sau.");
 		}
 	}
 
@@ -160,5 +160,13 @@ public class DAO {
 			}
 		}
 		return false;
+	}
+	
+	public static void main(String[] args) throws Exception {
+		DAO d = new DAO();
+		
+	//	System.out.println(d.getUserByUsername("chia"));
+	//	System.out.println(d.getAllProducts());
+		//d.signUp("dung1","1");
 	}
 }

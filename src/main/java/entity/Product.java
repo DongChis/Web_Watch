@@ -2,7 +2,9 @@ package entity;
 
 
 public class Product {
-    private int productID;
+   
+
+	private int productID;
     private String title;
     private String name;
     private String description;
@@ -76,4 +78,10 @@ public class Product {
     public void setGender(String gender) {
         this.gender = gender;
     }
+    
+    @Override
+   	public String toString() {
+   		return "Product [productID=" + productID + ", title=" + title + ", name=" + name + ", description="
+   				+ description + ", price=" + price + ", imageURL=" + imageURL + ", gender=" + gender + "]" +"\n";
+   	}
 }
