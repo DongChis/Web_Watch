@@ -166,13 +166,13 @@ header {
     padding: 15px; 
     border-radius: 10px; 
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    margin: 0 10px 0 20px;
+    margin: 0 50px 0 50px;
     
 }
 
 .hero__search_form input {
     font-size: 20px; /* Tăng kích thước font chữ */
-    width: 693px;
+    width: 620px;
     height: 50px; /* Tăng chiều cao của input */
 
     padding: 0 15px;

@@ -48,7 +48,7 @@
                 <li><a href="about.jsp">Giới thiệu</a></li>
                 <li><a href="productList">Sản phẩm</a></li>
                 <li><a href="blogs.jsp">Bài viết</a></li>
-                <li><a href="contact.jsp">Liên hệ</a></li>
+                <li><a href="detail">Liên hệ</a></li>
             </ul>
         </div>
         <div class="header-cart">
