@@ -6,7 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/headerR.css">
+    <link rel="stylesheet" href="css/topHome.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
       
@@ -58,9 +58,10 @@
 
     <!-- Categories and Search Bar -->
     <div class="heros__categories_container">
-		<div class="heros__categories" onclick="">
-			<i class="menu-icon">&#9776; </i>
-			 	Danh sách sản phẩm
+
+		<div class="heros__categories" onclick="toggleCategory()">
+		<i class="fa-solid fa-bars">  </i>
+			Danh sách sản phẩm
 		</div>
 
 		<ul id="categoryList" style="display:none ;">
