@@ -21,13 +21,14 @@ public class RegisterControl extends HttpServlet {
        
         String username = request.getParameter("user");
         String password = request.getParameter("pass");
+        String email = request.getParameter("email");
 
         // Gọi phương thức đăng ký tài khoản từ DAO
         
         User existingUser = DAO.getInstance().getUserByUsername(username);  
         if (existingUser == null) {
             try {
-				DAO.getInstance().signUp(username, password);
+				DAO.getInstance().signUp(username, password, email);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

@@ -110,11 +110,11 @@ public class DAO {
 		return null;
 	}
 
-	public void signUp(String username, String password) throws Exception {
+	public void signUp(String username, String password, String email) throws Exception {
 		if (isUsernameTaken(username)) {
 			throw new Exception("Tên người dùng đã tồn tại!");
 		}
-		 String query = "INSERT INTO Users (Username, Password, Email, Role, CreatedAt) VALUES (?, ?, 'email', 'Customer', GETDATE())";
+		 String query = "INSERT INTO Users (Username, Password, Email, Role, CreatedAt) VALUES (?, ?, ?, 'Customer', GETDATE())";
 	
 		try {
 			conn = new DBContext().getConnection();
@@ -123,6 +123,7 @@ public class DAO {
 			System.out.println(ps.toString() + " prepareStatement");
 			ps.setString(1, username);
 			ps.setString(2, password); 
+			ps.setString(3, email);
 
 			ps.executeUpdate();
 		} catch (SQLException e) {
