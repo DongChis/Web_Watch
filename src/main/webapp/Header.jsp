@@ -52,7 +52,7 @@
             </ul>
         </div>
         <div class="header-cart">
-            <a href="cart"><i class="fas fa-shopping-cart"></i><span>2</span></a>
+            <a href="cart"><i class="fas fa-shopping-cart"></i><span>	</span></a>
         </div>
     </div>
 

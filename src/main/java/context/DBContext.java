@@ -7,9 +7,9 @@ import java.sql.DriverManager;
 public class DBContext {
 
 	
-	String url = "jdbc:sqlserver://DESKTOP-9LNQ1HF\\SQLEXPRESS:1433;databaseName=DongHo;encrypt=false";
+	String url = "jdbc:sqlserver://DESKTOP-RDMJ7GI\\MSSQLSERVER02:1433;databaseName=DongHo;encrypt=false";
 	String userName = "sa";
-	String password = "dunghoang168";
+	String password = "123";
 
 	
 	public Connection getConnection() throws Exception{
