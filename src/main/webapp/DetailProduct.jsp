@@ -112,15 +112,11 @@
     
     <jsp:include page="Footer.jsp" />
     
-
     <script>
         function changeImage(imageSrc) {
             document.getElementById('displayed-image').src = imageSrc;
         }
     </script>
-
-
-	
 
 </body>
 </html>

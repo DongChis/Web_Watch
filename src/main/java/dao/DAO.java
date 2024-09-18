@@ -187,7 +187,7 @@ public class DAO {
 	public static void main(String[] args) throws Exception {
 		DAO d = new DAO();
 	//	System.out.println(d.getUserByUsername("chia"));
-	//	System.out.println(d.getAllProducts());
+		System.out.println(d.getAllProducts());
 		//d.signUp("dung1","1");
 	}
 }
