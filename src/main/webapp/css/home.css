@@ -60,12 +60,12 @@ h1 {
 
 
 /* Container chính cho danh sách sản phẩm */
-.container {
+.container-list {
     margin-top: 50px;
     margin-bottom: 50px;
 }
 
-.container h2 {
+.container-list h2 {
     text-align: center;
     color: #333;
     font-size: 28px;
