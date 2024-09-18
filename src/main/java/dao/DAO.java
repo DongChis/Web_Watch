@@ -60,7 +60,7 @@ public class DAO {
 		return products;
 	}
 
-	// Kiểm tra xem người dùng đã tồn tại
+	
 	public User getUserByUsername(String username) {
 		String query = "SELECT * FROM Users WHERE Username = ?";
 		try (Connection conn = new DBContext().getConnection(); PreparedStatement ps = conn.prepareStatement(query)) {
@@ -163,9 +163,29 @@ public class DAO {
 		return false;
 	}
 	
+	
+	public Product getProductByID(String id) {
+		String query = "select * from product \n" + "where id = ?";
+		try {
+			conn = new DBContext().getConnection();// mo ket noi voi sql
+			ps = conn.prepareStatement(query);
+			ps.setString(1, id);
+			rs = ps.executeQuery();
+			while (rs.next()) {
+				return new Product(rs.getInt(1), rs.getString(2), rs.getString(3),
+						rs.getString(4), rs.getDouble(5), rs.getString(6),
+						rs.getString(7));
+			}
+
+		} catch (Exception e) {
+		}
+		return null;
+	}
+
+
+	
 	public static void main(String[] args) throws Exception {
 		DAO d = new DAO();
-		
 	//	System.out.println(d.getUserByUsername("chia"));
 		System.out.println(d.getAllProducts());
 		//d.signUp("dung1","1");

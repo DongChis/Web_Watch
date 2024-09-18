@@ -1,10 +1,11 @@
 @charset "UTF-8";
 
+
 .container-body {
-	margin : 20px 70px 20px 70px;
-	padding: 20px;
-	
+    margin: 20px 70px 20px 70px;
+    padding: 20px;
 }
+
 .slideshow-container {
     position: relative;
     max-width: 100%;
@@ -13,17 +14,17 @@
     overflow: hidden;
 }
 
+/* Slide ảnh */
 .slides {
     display: flex;
-    transition: transform 0.5s ease-in-out; /* Hiệu ứng lướt */
+    transition: transform 0.5s ease-in-out;
 }
 
 .slides img {
     width: 100%;
-    flex-shrink: 0; /* Đảm bảo mỗi ảnh giữ kích thước gốc */
+    flex-shrink: 0;
 }
 
-/* Để các slide nằm ngang */
 .slideshow-container {
     width: 100%;
     margin: auto;
@@ -34,34 +35,147 @@
     0% { transform: translateX(0); }
     100% { transform: translateX(-100%); }
 }
-.product-1 {
 
-	
+/* Container cho sản phẩm */
+.product-1, .product-2 {
+    margin-bottom: 30px;
 }
-.product-2 {
-	
-	
-}
+
 .title {
-	background-color: #f0f0f5;
-    padding: 15px; /* Tăng padding để khung bên ngoài lớn hơn */
-    border-radius: 10px; /* Tăng bo tròn các góc */
+    background-color: #f0f0f5;
+    padding: 15px;
+    border-radius: 10px;
 }
 
 h2 {
-	text-align: center;
-	font-size: 34px;
-	color: rgb(0, 0, 142);
-	
+    text-align: center;
+    font-size: 34px;
+    color: rgb(0, 0, 142);
 }
-
-
 
 h1 {
     text-align: center;
     margin-top: 20px;
 }
 
+
+/* Container chính cho danh sách sản phẩm */
+.containerr {
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+
+.container h2 {
+    text-align: center;
+    color: #333;
+    font-size: 28px;
+    margin-bottom: 30px;
+    font-family: 'Arial', sans-serif;
+}
+
+/* Bố trí dạng lưới cho sản phẩm */
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+/* Card sản phẩm */
+.card {
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    margin: 15px;
+    width: 100%;
+    max-width: 300px;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+/* Hiệu ứng hover cho card sản phẩm */
+.card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+/* Hình ảnh sản phẩm */
+.card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+/* Tiêu đề sản phẩm */
+.card-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+/* Mô tả sản phẩm */
+.card-text {
+    font-size: 14px;
+    color: #777;
+    text-align: center;
+    padding: 10px;
+}
+
+/* Giá sản phẩm */
+.card p strong {
+    font-size: 16px;
+    color: #d9534f;
+    display: block;
+    text-align: center;
+    margin-top: 10px;
+}
+
+/* Nút "Xem chi tiết" */
+.card .btn {
+    background-color: #0275d8;
+    color: white;
+    margin: 15px auto;
+    display: block;
+    text-align: center;
+    padding: 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+/* Hiệu ứng hover cho nút */
+.card .btn:hover {
+    background-color: #025aa5;
+    text-decoration: none;
+}
+
+/* Đảm bảo các card được canh giữa và có kích thước phù hợp */
+.col-md-4 {
+    display: flex;
+    justify-content: center;
+}
+
+/* Responsive cho màn hình nhỏ hơn */
+@media (max-width: 768px) {
+    .card {
+        max-width: 100%;
+        margin-bottom: 20px;
+    }
+}
+
+@media (max-width: 576px) {
+    .card {
+        max-width: 100%;
+    }
+}
+
+
+.col-md-4 {
+    display: flex;
+    justify-content: center;
+}
+
+/* CSS cho phần review và đánh giá */
 .review-form, .reviews {
     background: #fff;
     padding: 20px;
