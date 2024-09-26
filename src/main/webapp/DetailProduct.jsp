@@ -12,26 +12,38 @@
 
 	<jsp:include page="Header.jsp" />
 	<div class="container">
-        <div class="product-detail">
-            <div class="product-images">
-                <div class="main-image">
-                    <img id="displayed-image" src="img/image1.png" alt="Product Image">
-                </div>
-                <div class="thumbnails">
-                    <img src="img/image1.png" alt="Thumbnail 1" onclick="changeImage('img/image1.png')">
-                    <img src="img/image2.jpg" alt="Thumbnail 2" onclick="changeImage('img/image2.jpg')">
-                    <img src="img/image3.png" alt="Thumbnail 3" onclick="changeImage('img/image3.png')">
-                </div>
-            </div>
-            <div class="product-info">
-                <h1 class="product-title">Product Name</h1>
-                <p class="product-description">
-                    This is a detailed description of the product. It provides essential information about the product, its features, and benefits.
-                </p>
-                <div class="product-price">
+		<div class="product-detail">
+			<div class="product-images">
+				<div class="main-image">
+					<img id="displayed-image" src="img/image1.png" alt="Product Image">
+				</div>
+				<div class="thumbnails">
+					<img src="img/image1.png" alt="Thumbnail 1"
+						onclick="changeImage('img/image1.png')"> <img
+						src="img/image2.jpg" alt="Thumbnail 2"
+						onclick="changeImage('img/image2.jpg')"> <img
+						src="img/image3.png" alt="Thumbnail 3"
+						onclick="changeImage('img/image3.png')">
+				</div>
+			</div>
+			<div class="product-info">
+			<span class="ratings-star">★★★★☆ </span><p>(102 khách hàng đánh giá )</p>
+				<h1 class="product-title">Product Name</h1>
+				<p class="product-description">This is a detailed description of
+					the product. It provides essential information about the product,
+					its features, and benefits.</p>
+					<p class="product-description">This is a detailed description of
+					the product. It provides essential information about the product,
+					its features, and benefits.</p>
+					<p class="product-description">This is a detailed description of
+					the product. It provides essential information about the product,
+					its features, and benefits.</p>
+					<p class="product-description"> Cam kết hàng chính hãng 100%</p>
+				<p class="product-description">Tình trạng :<div class="product-status">Còn hàng</div>
+				<div class="product-price">
                     <span>$49.99</span>
                 </div>
-                <button class="add-to-cart-btn">Add to Cart</button>
+                <button class="add-to-cart-btn">Thêm vào giỏ hàng</button>
             </div>
         </div>
         
@@ -88,19 +100,22 @@
             <div class="review-list">
                 <h3>Recent Reviews</h3>
                 <div class="review">
-                    <h4>John Doe <span>★★★★☆</span></h4>
+                    <h4>John Doe <span>★★★★☆</span>
+					</h4>
                     <p>
                         The product is great, but delivery was delayed. Overall, I'm satisfied with the quality.
                     </p>
                 </div>
                 <div class="review">
-                    <h4>Jane Smith <span>★★★★★</span></h4>
+                    <h4>Jane Smith <span>★★★★★</span>
+					</h4>
                     <p>
                         Amazing product! The material feels premium and the design is exactly what I was looking for. Highly recommend!
                     </p>
                 </div>
                 <div class="review">
-                    <h4>Mike Johnson <span>★★★☆☆</span></h4>
+                    <h4>Mike Johnson <span>★★★☆☆</span>
+					</h4>
                     <p>
                         Good product, but the color was a bit different from what was shown in the pictures.
                     </p>
@@ -113,10 +128,10 @@
     <jsp:include page="Footer.jsp" />
     
     <script>
-        function changeImage(imageSrc) {
-            document.getElementById('displayed-image').src = imageSrc;
-        }
-    </script>
+					function changeImage(imageSrc) {
+						document.getElementById('displayed-image').src = imageSrc;
+					}
+				</script>
 
 </body>
 </html>
