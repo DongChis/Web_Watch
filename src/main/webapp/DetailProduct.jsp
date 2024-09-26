@@ -13,6 +13,7 @@
 	<jsp:include page="Header.jsp" />
 	<div class="container">
 		<div class="product-detail">
+
 			<h2>${detail.name}</h2>
 			<img src="${detail.imageURL}" alt="${detail.name}">
 			<p>${detail.description}</p>
@@ -102,6 +103,7 @@
 			document.getElementById('displayed-image').src = imageSrc;
 		}
 	</script>
+
 
 </body>
 </html>
