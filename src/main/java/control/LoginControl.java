@@ -14,15 +14,7 @@ import entity.User;
 
 @WebServlet(name = "LoginControl", urlPatterns = { "/login" })
 public class LoginControl extends HttpServlet {
-	private static final long serialVersionUID = 1L;
 
-	/**
-	 * @see HttpServlet#HttpServlet()
-	 */
-	public LoginControl() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -30,8 +22,8 @@ public class LoginControl extends HttpServlet {
 		request.setCharacterEncoding("UTF-8");
 		String userName = request.getParameter("user");
 		String password = request.getParameter("pass");
-		System.out.println(userName);
-		System.out.println(password);
+//		System.out.println(userName);
+//		System.out.println(password);
 
 		User acc = DAO.getInstance().login(userName, password);
 		System.out.println(acc);
@@ -47,13 +39,8 @@ public class LoginControl extends HttpServlet {
 		}
 	}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
-	 *      response)
-	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		doGet(request, response);
 	}
 

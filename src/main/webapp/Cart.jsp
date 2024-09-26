@@ -17,61 +17,46 @@
 			<div class="cart-items">
 				<!-- Sản phẩm trong giỏ hàng -->
 				<div class="cart-item">
-					<div class="product-image">
-						<img src="img/image1.png" alt="Product Image">
-					</div>
-					<div class="product-details">
-						<h2 class="product-name">Product 1</h2>
-						<p class="product-description">High quality, comfortable fit.</p>
-						<div class="quantity">
-							<label for="quantity1">Quantity:</label> <input type="number"
-								id="quantity1" value="1" min="1">
-						</div>
-					</div>
-					<div class="product-price">
-						<span>$49.99</span>
-						<button class="remove-item">Remove</button>
-					</div>
+					 <c:forEach var="item" items="${sessionScope.cart}">
+                    <div class="cart-item">
+                        <div class="product-image">
+                            <img src="${item.product.imageURL}" alt="${item.product.name}">
+                        </div>
+                        <div class="product-details">
+                            <h2 class="product-name">${item.product.name}</h2>
+                            <p class="product-description">${item.product.description}</p>
+                            <div class="quantity">
+                                <span>Số lượng: ${item.quantity}</span>
+                            </div>
+                        </div>
+                        <div class="product-price">
+                            <span>${item.product.price * item.quantity} VND</span>
+                            <a href="remove-from-cart?pid=${item.product.productID}" class="remove-item">Xóa</a>
+                        </div>
+                    </div>
+                </c:forEach>
 				</div>
 
-				<div class="cart-item">
-					<div class="product-image">
-						<img src="img/image3.png" alt="Product Image">
-					</div>
-					<div class="product-details">
-						<h2 class="product-name">Product 2</h2>
-						<p class="product-description">Stylish and durable material.</p>
-						<div class="quantity">
-							<label for="quantity2">Quantity:</label> <input type="number"
-								id="quantity2" value="2" min="1">
-						</div>
-					</div>
-					<div class="product-price">
-						<span>$89.99</span>
-						<button class="remove-item">Remove</button>
-					</div>
-				</div>
+				
 			</div>
 
-			<!-- Tổng thanh toán -->
-			<div class="cart-summary">
-				<h2>Order Summary</h2>
-				<div class="summary-item">
-					<span>Subtotal</span> <span>$229.97</span>
-				</div>
-				<div class="summary-item">
-					<span>Shipping</span> <span>Free</span>
-				</div>
-				<div class="summary-item">
-					<span>Total</span> <span class="total-price">$229.97</span>
-				</div>
-				<button class="checkout-btn">Proceed to Checkout</button>
-			</div>
-		</div>
-	</div>
-
-
-	<jsp:include page="Footer.jsp" />
-
+			 <!-- Tổng thanh toán -->
+            <div class="cart-summary">
+                <h2>Tổng thanh toán</h2>
+                <div class="summary-item">
+                    <span>Tổng:</span> 
+                    <span>
+                        <c:set var="totalPrice" value="0" />
+                        <c:forEach var="item" items="${sessionScope.cart}">
+                            <c:set var="totalPrice" value="${totalPrice + (item.product.price * item.quantity)}" />
+                        </c:forEach>
+                        ${totalPrice} VND
+                    </span>
+                </div>
+                <button class="checkout-btn">Thanh toán</button>
+            </div>
+        </div>
+    </div>
+    <jsp:include page="Footer.jsp" />
 </body>
 </html>

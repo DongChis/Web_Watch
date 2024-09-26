@@ -165,7 +165,7 @@ public class DAO {
 	
 	
 	public Product getProductByID(String id) {
-		String query = "select * from product \n" + "where id = ?";
+		String query = "SELECT * FROM Products WHERE ProductID = ?";
 		try {
 			conn = new DBContext().getConnection();// mo ket noi voi sql
 			ps = conn.prepareStatement(query);

@@ -38,6 +38,7 @@
 								</p>
 								<a href="detail?pid=${product.productID}"
 									class="btn btn-primary">Xem chi tiết</a>
+							 <button onclick="addToCart(${product.productID}, 1)">Thêm vào giỏ hàng</button>
 							</div>
 						</div>
 					</div>
@@ -61,6 +62,7 @@
 								</p>
 								<a href="detail?pid=${product.productID}"
 									class="btn btn-primary">Xem chi tiết</a>
+								 <button onclick="addToCart(${product.productID}, 1)">Thêm vào giỏ hàng</button>
 							</div>
 						</div>
 					</div>
@@ -126,6 +128,20 @@
 	<jsp:include page="Footer.jsp" />
 
 	<script src="js/slide.js"></script>
+	<script >
+	function addToCart(productId, quantity) {
+	    var xhr = new XMLHttpRequest();
+	    xhr.open("POST", "add-to-cart", true);
+	    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+	    xhr.onreadystatechange = function () {
+	        if (xhr.readyState == 4 && xhr.status == 200) {
+	            // Cập nhật giao diện người dùng (thông báo thành công, hoặc cập nhật số lượng trong giỏ hàng)
+	            alert("Sản phẩm đã được thêm vào giỏ hàng!");
+	        }
+	    };
+	    xhr.send("id=" + productId + "&quantity=" + quantity);
+	}
+</script>
 </body>
 </html>
 
