@@ -17,7 +17,7 @@
 			<div class="cart-items">
 				<!-- Sản phẩm trong giỏ hàng -->
 				<div class="cart-item">
-					 <c:forEach var="item" items="${sessionScope.cart}">
+					 <c:forEach var="item" items="${sessionScope.cart}" >
                     <div class="cart-item">
                         <div class="product-image">
                             <img src="${item.product.imageURL}" alt="${item.product.name}">
@@ -31,7 +31,7 @@
                         </div>
                         <div class="product-price">
                             <span>${item.product.price * item.quantity} VND</span>
-                            <a href="remove-from-cart?pid=${item.product.productID}" class="remove-item">Xóa</a>
+                          <button onclick="removeFromCart(${item.product.productID})">Xóa</button>
                         </div>
                     </div>
                 </c:forEach>
@@ -58,5 +58,9 @@
         </div>
     </div>
     <jsp:include page="Footer.jsp" />
+    <script type="text/javascript">
+    var contextPath = "${pageContext.request.contextPath}";
+</script>
+    <script src ="js/cart.js"></script>
 </body>
 </html>
