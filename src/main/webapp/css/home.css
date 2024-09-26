@@ -66,10 +66,9 @@ h1 {
 }
 
 
-/* Container chính cho danh sách sản phẩm */
+
 .container-list {
-	/*  margin-top: 50px;
-    margin-bottom: 50px;*/
+
 
 	background: #fff;
 	padding: 20px;
@@ -100,9 +99,11 @@ h1 {
 	overflow: hidden;
 	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 	margin: 15px;
+
 	padding: 10px;
 	/*width: 100%;*/
 	width: 250px;
+
 	transition: transform 0.3s, box-shadow 0.3s;
 }
 
@@ -174,7 +175,6 @@ h1 {
 }
 
 
-
 /* Hiệu ứng hover cho nút */
 .card .btn:hover {
 	background-color: #025aa5;
@@ -182,6 +182,7 @@ h1 {
 }
 
 /* Đảm bảo các card được canh giữa và có kích thước phù hợp */
+
 .col-md-4-l {
 	display: flex;
 	justify-content: center;

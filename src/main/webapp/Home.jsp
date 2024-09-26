@@ -5,6 +5,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
+
 <link href="css/home.css" rel="stylesheet">
 <!-- link rel="stylesheet"
 	href="https://use.fontawesome.com/releases/v6.4.2/css/all.css"> -->
@@ -14,13 +15,14 @@
 	<jsp:include page="Header.jsp" />
 
 	<div class="container">
+
 		<div class="slideshow-container">
 			<div class="slides">
-				<img src="img/image1.png" alt="Ảnh 1"> <img
-					src="img/image2.jpg" alt="Ảnh 2"> <img src="img/image3.png"
-					alt="Ảnh 3">
-			</div>
+				<img src="img/image1.png" alt="Ảnh 1"> <img src="img/image2.jpg"
+					alt="Ảnh 2"> <img src="img/image3.png" alt="Ảnh 3">
+			</div>		
 		</div>
+
 
 		<div class="container-list">
 			<h2 class="text-center">Sản phẩm mới ra mắt</h2>
@@ -46,6 +48,7 @@
 				</c:forEach>
 			</div>
 		</div>
+
 		<div class="container-list">
 			<h2 class="text-center">Sản phẩm bán chạy</h2>
 			<div class="row">
@@ -128,3 +131,4 @@
 	<script src="js/slide.js"></script>
 </body>
 </html>
+
