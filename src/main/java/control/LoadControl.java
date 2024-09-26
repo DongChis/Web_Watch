@@ -22,9 +22,7 @@ public class LoadControl extends HttpServlet {
 		Product p = DAO.getInstance().getProductByID(id);
 		request.setAttribute("detail", p);
 
-		 if(id != null) {      	
-		       System.err.println("id null");
-		 }
+		 
 
 	}
 
