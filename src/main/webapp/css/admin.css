@@ -1,0 +1,265 @@
+@charset "UTF-8";
+
+body {
+	font-family: Arial Narrow;
+	margin: 0;
+	padding: 0;
+	background-color: #f4f4f4;
+}
+
+.top-element {
+	display: flex;
+	background-color: rgb(192, 192, 192);
+	height: 50px;
+}
+
+.logo {
+	display: flex;
+	align-items: center;
+	float: left;
+
+}
+
+.logo h1 {
+	font-size: 30px;
+	color: #b03060;
+	margin: 0 0 0 75px;
+	font-family: 'Courier New', Courier, monospace;
+
+}
+
+.body-element {
+	width: 100%;
+	display: flex;
+
+}
+
+.left-element {
+	width: 20%;
+	padding: 15px;
+	margin: 20px;
+	background-color: blueviolet;
+	border-radius: 20px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+ul {
+	list-style-type: none;
+	padding-left: 0;
+
+	color: white;
+
+}
+
+li {
+	margin: 8px 0;
+	padding: 10px;
+	color: white;
+	cursor: pointer;
+	border: 1px solid #ccc;
+	border-radius: 10px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.child {
+	display: none;
+	margin-left: 20px;
+}
+
+
+.main-element {
+	width: 80%;
+	padding: 20px;
+
+}
+
+.main-element-top {
+	display: flex;
+	width: auto;
+	justify-content: space-between;
+
+}
+
+.hero__search_form input {
+	font-size: 20px;
+	margin-left: 5px;
+	width: 320px;
+	height: 50px;
+	border: 2px solid #ccc;
+	border-radius: 10px;
+	padding-left: 18px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+
+}
+
+.hero__search_form button {
+	font-size: 18px;
+	height: 50px;
+	background: blueviolet;
+	color: white;
+	padding: 0 25px;
+	border: none;
+	cursor: pointer;
+	border-radius: 10px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.info {
+	display: flex;
+	float: right;
+	align-items: center;
+
+}
+
+.info .btn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: #00008b;
+	border: none;
+	border-radius: 50px;
+	cursor: pointer;
+	padding: 5px 10px;
+	margin-right: 10px;
+	color: white;
+	font-size: 16px;
+}
+
+.statistical-info {
+	margin: 10px 0 10px;
+	height: 100px;
+	display: flex;
+	justify-content: space-between;
+	width: 100%;
+
+}
+
+.statistical-info .box {
+	
+	flex: 1;
+	margin: 5px;
+	text-align: center;
+	justify-content: center;
+	align-items: center;
+	font-size: 22px;
+	font-weight: bold;
+	border-radius: 10px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+	color: blueviolet;
+	display: flex;
+}
+
+.statistical-text {
+	display: flex;
+	flex-direction: column;
+	width: 150px;
+	margin-left: 10px;
+}
+.statistical-text span {
+	display: flex;
+	flex-direction: column;
+	color: black;
+	font-weight: bold;
+	font-size: 17px;
+	margin-top: 5px;
+	
+}
+
+.statistical-info-icon {
+	display: flex;
+	width: 50px;
+	height: 50px;
+	background-color: papayawhip;	
+	align-items: center;
+	justify-content: center;
+	border: 1px solid rgb(192, 192, 192);
+	border-radius: 10px;
+}
+
+.date-info {
+	display: flex;
+	justify-content: space-between;
+
+	margin: 10px 0 10px;
+	height: 50px;
+}
+
+.time-control {
+	display: flex;
+	justify-content: space-around;
+	background-color: blueviolet;
+	border-radius: 10px;
+	padding: 5px;
+	margin-left: 5px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+
+}
+
+.nav-item {
+	padding: 10px 20px;
+	cursor: pointer;
+	font-size: 16px;
+	background-color: rgb(255, 255, 255);
+	transition: background-color 0.3s;
+
+}
+
+/* Màu khi được chọn */
+.active {
+	background-color: blueviolet;
+	color: white;
+
+}
+
+.filter-bar {
+	display: flex;
+	margin: 10px 50px;
+
+}
+
+.date-input {
+	font-size: 22px;
+	font-family: "Arial";
+	border-radius: 10px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+	border: 2px solid #ccc;
+
+}
+
+.data-table {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	grid-template-rows: repeat(3, 1fr);
+	gap: 10px;
+	margin: auto;
+
+}
+
+.box-data {
+	display: flex;
+	align-items: center;
+	margin: 5px;
+	float: left;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+	justify-content: center;
+	height: 100px;
+	font-size: 17px;
+	border-radius: 10px;
+	color: rgb(153, 147, 111);
+}
+
+.customer-info {
+	display: flex;
+	flex-direction: column;
+	width: 270px;
+	
+}
+
+.customer-info span {
+	color: black;
+	font-weight: bold;
+	font-size: 17px;
+	margin-top: 5px;
+	margin-right: 100px;
+	/* Khoảng cách giữa "Khách hàng" và số */
+}
