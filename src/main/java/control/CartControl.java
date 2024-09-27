@@ -22,7 +22,7 @@ public class CartControl extends HttpServlet {
 	
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
        
-        response.sendRedirect("Cart.jsp");
+       response.sendRedirect("Cart.jsp");
     }
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -54,7 +54,7 @@ public class CartControl extends HttpServlet {
         }
 
         session.setAttribute("cart", cart);
-        response.setStatus(HttpServletResponse.SC_OK);
-   
+       response.setStatus(HttpServletResponse.SC_OK);
+        
     }
 }
