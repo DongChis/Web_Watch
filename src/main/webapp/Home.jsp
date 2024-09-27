@@ -135,9 +135,7 @@
 	<jsp:include page="Footer.jsp" />
 
 	<script src="js/slide.js"></script>
-	<script src="js/cart.js" >
-	
-</script>
+	<script src="js/cart.js" ></script>
 </body>
 </html>
 

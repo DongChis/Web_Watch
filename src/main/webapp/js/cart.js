@@ -17,22 +17,27 @@ function addToCart(productId, quantity) {
     xhr.send("id=" + productId + "&quantity=" + quantity);
 }
 
-    var contextPath = "${pageContext.request.contextPath}";
+ const contextPath = '${pageContext.request.contextPath}';
 
-
- function removeFromCart(productId) {
-    var xhr = new XMLHttpRequest();
-    // Sử dụng biến contextPath để xây dựng URL
-    xhr.open("POST", contextPath + "/remove-from-cart", true);
-    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState == 4 && xhr.status == 200) {
-            // Sau khi xóa thành công, tải lại trang
-            window.location.reload();
-        } else if (xhr.readyState == 4 && xhr.status != 200) {
-            console.error("Lỗi khi xóa sản phẩm:", xhr.responseText);
-        }
-    };
-    xhr.send("id=" + productId);
-}
+    function removeFromCart(productId) {
+        const url = '/Web_Watch' + '/remove-from-cart';
+		
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                'id': productId
+            })
+        }).then(response => {
+            if (response.ok) {
+				console.assert('url', contextPath);
+                window.location.href = '/Web_Watch' + '/Cart.jsp';  // Chuyển hướng về giỏ hàng
+            } else {
+                console.error('Lỗi khi xóa sản phẩm:', response);
+            }
+        }).catch(error => {
+            console.error('Lỗi khi xóa sản phẩm:', error);
+        });
+    }

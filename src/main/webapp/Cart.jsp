@@ -58,9 +58,7 @@
         </div>
     </div>
     <jsp:include page="Footer.jsp" />
-    <script type="text/javascript">
-    var contextPath = "${pageContext.request.contextPath}";
-</script>
-    <script src ="js/cart.js"></script>
+   
+  	<script src="js/cart.js" ></script>
 </body>
 </html>

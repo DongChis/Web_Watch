@@ -13,28 +13,38 @@ import entity.CartItem;
 
 @WebServlet(name = "RemoveFromCartControl", urlPatterns = {"/remove-from-cart"})
 public class RemoveFromCartControl extends HttpServlet {
-    private static final long serialVersionUID = 1L;
+	  @Override
+	    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	        // Nếu người dùng truy cập URL này trực tiếp bằng GET, chuyển hướng về giỏ hàng hoặc trang chủ
+	        response.sendRedirect(request.getContextPath() + "/Cart.jsp");
+	    }
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-       
-  
-    }
+	    @Override
+	    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	        // Xử lý logic xóa sản phẩm trong giỏ hàng bằng POST
+	        String productIdStr = request.getParameter("id");
+	        if (productIdStr == null) {
+	            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+	            return;
+	        }
 
-    
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String productIdStr = request.getParameter("id");
-        int productId = Integer.parseInt(productIdStr);
+	        int productId;
+	        try {
+	            productId = Integer.parseInt(productIdStr);
+	        } catch (NumberFormatException e) {
+	            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+	            return;
+	        }
 
-        HttpSession session = request.getSession();
-        List<CartItem> cart = (List<CartItem>) session.getAttribute("cart");
+	        HttpSession session = request.getSession();
+	        List<CartItem> cart = (List<CartItem>) session.getAttribute("cart");
 
-        if (cart != null) {
-            cart.removeIf(item -> item.getProduct().getProductID() == productId);
+	        if (cart != null) {
+	            cart.removeIf(item -> item.getProduct().getProductID() == productId);
+	            session.setAttribute("cart", cart);
+	        }
 
-            session.setAttribute("cart", cart);
-        }
-
-        response.setStatus(HttpServletResponse.SC_OK);
-    }
+	        response.setStatus(HttpServletResponse.SC_OK);
+	        response.sendRedirect(request.getContextPath() + "/Cart.jsp");
+	    }
 }
