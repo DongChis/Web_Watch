@@ -32,8 +32,8 @@ function addToCart(productId, quantity) {
             })
         }).then(response => {
             if (response.ok) {
-				console.assert('url', contextPath);
-                window.location.href = '/Web_Watch' + '/Cart.jsp';  // Chuyển hướng về giỏ hàng
+				//console.assert('url', contextPath);
+                window.location.href = '/Web_Watch' + '/Cart.jsp';
             } else {
                 console.error('Lỗi khi xóa sản phẩm:', response);
             }
