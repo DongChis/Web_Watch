@@ -79,9 +79,9 @@
 							style="margin-right: 20px; color: green;"
 							style="margin-right: 10px;"></i></a>
 						<c:if test="${not empty sessionScope.accSession}">
-							<h3>
-								Xin chào ${sessionScope.accSession.username}
-								<h3>
+							<div style="margin-right: 10px;">Xin chào ${sessionScope.accSession.username}</div>
+								
+							
 									<button class="btn btn-primary" onclick="redirectToServlet()">
 										<i class="fas fa-user" style="margin-right: 7px;"></i> Đăng
 										Xuất
@@ -210,5 +210,6 @@
 	</div>
 
 	<script src="js/admin.js"></script>
+	<script src="js/login.js"></script>
 </body>
 </html>
