@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import context.DBContext;
@@ -109,6 +110,41 @@ public class DAO {
 		}
 		return null;
 	}
+	
+	public boolean isAdmin(User user) {
+	    String query = "SELECT Role FROM Users WHERE UserID = ?";
+	    Connection conn = null;
+	    PreparedStatement ps = null;
+	    ResultSet rs = null;
+
+	    try {
+	        conn = new DBContext().getConnection();
+	        ps = conn.prepareStatement(query);
+	        
+	        ps.setInt(1, user.getUserID());
+
+	        rs = ps.executeQuery();
+	      
+	        if (rs.next()) {
+	            String roleInDb = rs.getString("Role");
+	            return "Admin".equals(roleInDb);  
+	        }
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    } finally {
+	       
+	        try {
+	            if (rs != null) rs.close();
+	            if (ps != null) ps.close();
+	            if (conn != null) conn.close();
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	    }
+	    return false;
+	}
+
 
 	public void signUp(String username, String password, String email) throws Exception {
 		if (isUsernameTaken(username)) {
@@ -186,8 +222,10 @@ public class DAO {
 	
 	public static void main(String[] args) throws Exception {
 		DAO d = new DAO();
+		
 	//	System.out.println(d.getUserByUsername("chia"));
-		System.out.println(d.getAllProducts());
+	//	System.out.println(d.getAllProducts());
 		//d.signUp("dung1","1");
+	//	System.out.println(d.isAdmin(d.getUserByUsername("chia")));
 	}
 }

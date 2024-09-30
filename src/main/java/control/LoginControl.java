@@ -23,18 +23,28 @@ public class LoginControl extends HttpServlet {
 		String userName = request.getParameter("user");
 		String password = request.getParameter("pass");
 
+		HttpSession session = request.getSession();
+		System.out.println(userName);
+		System.out.println(password);
+
 
 		User acc = DAO.getInstance().login(userName, password);
+		// System.out.println(acc);
 		if (acc == null) {
 			request.setAttribute("mess", "Wrong user or password");
-			
 			request.getRequestDispatcher("Login.jsp").forward(request, response);
-			
 		} else {
-			HttpSession session = request.getSession();
-			session.setAttribute("accSession", acc);
-			response.sendRedirect("home");
+			if (DAO.getInstance().isAdmin(acc)) {
+				session.setAttribute("accSession", acc);
+				/* request.getRequestDispatcher("admin").forward(request, response); */	
+				response.sendRedirect("admin");
+			}else {
+				session.setAttribute("accSession", acc);
+				/* request.getRequestDispatcher("home").forward(request, response); */
+				response.sendRedirect("home");
+			}		
 		}
+		
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
