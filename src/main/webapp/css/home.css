@@ -177,7 +177,7 @@ h1 {
 
 /* Hiệu ứng hover cho nút */
 .card .btn:hover {
-	background-color: #025aa5;
+	background-color: rgb(255, 0, 128);
 	text-decoration: none;
 }
 
