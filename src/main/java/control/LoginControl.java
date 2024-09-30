@@ -22,11 +22,9 @@ public class LoginControl extends HttpServlet {
 		request.setCharacterEncoding("UTF-8");
 		String userName = request.getParameter("user");
 		String password = request.getParameter("pass");
-//		System.out.println(userName);
-//		System.out.println(password);
+
 
 		User acc = DAO.getInstance().login(userName, password);
-		System.out.println(acc);
 		if (acc == null) {
 			request.setAttribute("mess", "Wrong user or password");
 			

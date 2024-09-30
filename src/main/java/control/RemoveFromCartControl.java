@@ -15,13 +15,11 @@ import entity.CartItem;
 public class RemoveFromCartControl extends HttpServlet {
 	  @Override
 	    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-	        // Nếu người dùng truy cập URL này trực tiếp bằng GET, chuyển hướng về giỏ hàng hoặc trang chủ
 	        response.sendRedirect(request.getContextPath() + "/Cart.jsp");
 	    }
 
 	    @Override
 	    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-	        // Xử lý logic xóa sản phẩm trong giỏ hàng bằng POST
 	        String productIdStr = request.getParameter("id");
 	        if (productIdStr == null) {
 	            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
