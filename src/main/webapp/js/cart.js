@@ -9,7 +9,7 @@ function addToCart(productId, quantity) {
             alert("Sản phẩm đã được thêm vào giỏ hàng!");
 
             // Chuyển hướng đến trang giỏ hàng sau khi thêm sản phẩm
-            window.location.href = "Cart.jsp";  // Chuyển hướng sang trang Cart.jsp
+           // window.location.href = "Home.jsp";  // Chuyển hướng sang trang Cart.jsp
         }
     };
     
