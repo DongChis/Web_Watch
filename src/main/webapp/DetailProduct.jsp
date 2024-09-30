@@ -12,13 +12,36 @@
 
 	<jsp:include page="Header.jsp" />
 	<div class="container">
-		<div class="product-detail">
+		<%-- <div class="product-detail">
 
 			<h2>${detail.name}</h2>
 			<img src="${detail.imageURL}" alt="${detail.name}">
 			<p>${detail.description}</p>
 			<p>Giá: ${detail.price} VND</p>
-		</div>
+		</div> --%>
+		
+		 <div class="product-detail">
+            <div class="product-images">
+                <div class="main-image">
+                    <img id="displayed-image" src="${detail.imageURL}" alt="Product Image">
+                </div>
+                <div class="thumbnails">
+                    <img src="${detail.imageURL}" alt="Thumbnail 1" onclick="changeImage('${detail.imageURL}')">
+                    <img src="${detail.imageURL}" alt="Thumbnail 2" onclick="changeImage('${detail.imageURL}')">
+                    <img src="${detail.imageURL}" alt="Thumbnail 3" onclick="changeImage('${detail.imageURL}')">
+                </div>
+            </div>
+            <div class="product-info">
+                <h1 class="product-title">${detail.name}</h1>
+                <p class="product-description">
+                    ${detail.description}
+                </p>
+                <div class="product-price">
+                    <span>${detail.price}</span>
+                </div>
+                <button onclick="addToCart(${sessionScope.productID}, 1)">Add to Cart</button>
+            </div>
+        </div>
 
 		<!-- Phần Đánh Giá Sản Phẩm -->
 		<div class="product-reviews">
@@ -103,6 +126,7 @@
 			document.getElementById('displayed-image').src = imageSrc;
 		}
 	</script>
+	<script src="js/cart.js" ></script>
 
 
 </body>
