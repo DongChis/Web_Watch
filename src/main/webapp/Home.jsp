@@ -42,7 +42,7 @@
 
 								<a href="detail?pid=${product.productID}"
 									class="btn btn-primary">Xem chi tiết</a>
-								<button onclick="addToCart(${product.productID}, 1)">Thêm
+								<button onclick="addToCart(${product.productID}, 1)" >Thêm
 									vào giỏ hàng</button>
 
 							</div>

@@ -39,7 +39,7 @@
                 <div class="product-price">
                     <span>${detail.price}</span>
                 </div>
-                <button onclick="addToCart(${sessionScope.productID}, 1)">Add to Cart</button>
+                <button onclick="addToCart(${idProduct}, 1)">Add to Cart</button>
             </div>
         </div>
 
