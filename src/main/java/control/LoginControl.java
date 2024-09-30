@@ -29,20 +29,15 @@ public class LoginControl extends HttpServlet {
 
 
 		User acc = DAO.getInstance().login(userName, password);
-		// System.out.println(acc);
+	
 		if (acc == null) {
 			request.setAttribute("mess", "Wrong user or password");
 			request.getRequestDispatcher("Login.jsp").forward(request, response);
 		} else {
-			if (DAO.getInstance().isAdmin(acc)) {
 				session.setAttribute("accSession", acc);
-				/* request.getRequestDispatcher("admin").forward(request, response); */	
+				session.setAttribute("role", acc.getRole());
 				response.sendRedirect("admin");
-			}else {
-				session.setAttribute("accSession", acc);
-				/* request.getRequestDispatcher("home").forward(request, response); */
-				response.sendRedirect("home");
-			}		
+				
 		}
 		
 	}

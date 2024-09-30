@@ -26,31 +26,12 @@ public class AdminControl extends HttpServlet {
 		HttpSession session = request.getSession();
 
 	
-		
-		if(session != null ) {
 			request.getRequestDispatcher("Admin.jsp").forward(request, response);
-		}
-		
 
-		
 
 	}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
-	 *      response)
-	 */
-	/*
-	 * protected void doPost(HttpServletRequest request, HttpServletResponse
-	 * response) throws ServletException, IOException {
-	 * 
-	 * response.setContentType("text/html;charset=UTF-8");
-	 * request.setCharacterEncoding("UTF-8");
-	 * 
-	 * request.getRequestDispatcher("Admin.jsp").forward(request, response);
-	 * 
-	 * doPost(request, response); }
-	 */
+
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
