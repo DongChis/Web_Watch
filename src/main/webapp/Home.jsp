@@ -38,10 +38,11 @@
 								<p>
 									<strong>${product.price} VND</strong>
 								</p>
-							</div>
-							<div class="card-btn">
-								<a href="detail?pid=${product.productID}" class="btn-view">Xem</a>
-								<a href="detail?pid=${product.productID}" class="btn-add">Add</a>
+
+								<a href="detail?pid=${product.productID}"
+									class="btn btn-primary">Xem chi tiết</a>
+							 <button    onclick="addToCart(${product.productID}, 1)">Thêm vào giỏ hàng</button>
+
 							</div>
 						</div>
 					</div>
@@ -63,6 +64,11 @@
 								<p>
 									<strong>${product.price} VND</strong>
 								</p>
+
+								<a href="detail?pid=${product.productID}"
+									class="btn btn-primary">Xem chi tiết</a>
+								 <button   onclick="addToCart(${product.productID}, 1)">Thêm vào giỏ hàng</button>
+
 							</div>
 							<div class="card-btn">
 							<a href="detail?pid=${product.productID}" class="btn-view">Xem</a>
@@ -129,6 +135,7 @@
 	<jsp:include page="Footer.jsp" />
 
 	<script src="js/slide.js"></script>
+	<script src="js/cart.js" ></script>
 </body>
 </html>
 
