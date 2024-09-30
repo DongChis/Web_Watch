@@ -43,24 +43,24 @@
 		</div>
 	</div>
 
-	<!-- Main Header -->
-	<div class="main-header">
-		<div class="logo">
-			<h1>WATCH STORE</h1>
-		</div>
-		<div class="nav-menu">
-			<ul>
-				<li><a href="home">Trang chủ</a></li>
-				<li><a href="about.jsp">Giới thiệu</a></li>
-				<li><a href="productList">Sản phẩm</a></li>
-				<li><a href="blogs.jsp">Bài viết</a></li>
-				<li><a href="detail">Liên hệ</a></li>
-			</ul>
-		</div>
-		<div class="header-cart">
-			<a href="cart"><i class="fas fa-shopping-cart"></i><span>2</span></a>
-		</div>
-	</div>
+ 
+    <div class="main-header">
+        <div class="logo">
+            <h1>WATCH STORE</h1>
+        </div>
+        <div class="nav-menu">
+            <ul>
+                <li><a href="home">Trang chủ</a></li>
+                <li><a href="about.jsp">Giới thiệu</a></li>
+                <li><a href="productList">Sản phẩm</a></li>
+                <li><a href="blogs.jsp">Bài viết</a></li>
+                <li><a href="detail">Liên hệ</a></li>
+            </ul>
+        </div>
+        <div class="header-cart">
+            <a href="cart"><i class="fas fa-shopping-cart"></i><span>	</span></a>
+        </div>
+    </div>
 
 	<!-- Categories and Search Bar -->
 	<div class="heros__categories_container">
