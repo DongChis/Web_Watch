@@ -1,3 +1,6 @@
+
+
+
 function addToCart(productId, quantity) {
     var xhr = new XMLHttpRequest();
     xhr.open("POST", "add-to-cart", true);  // Gửi yêu cầu POST tới servlet
@@ -5,19 +8,17 @@ function addToCart(productId, quantity) {
     
     xhr.onreadystatechange = function () {
         if (xhr.readyState == 4 && xhr.status == 200) {
-            // Khi nhận được phản hồi thành công từ server
+        
             alert("Sản phẩm đã được thêm vào giỏ hàng!");
-
-            // Chuyển hướng đến trang giỏ hàng sau khi thêm sản phẩm
-           // window.location.href = "Home.jsp";  // Chuyển hướng sang trang Cart.jsp
         }
     };
-    
-    // Gửi dữ liệu (productId và quantity) tới servlet
+  
+   
     xhr.send("id=" + productId + "&quantity=" + quantity);
 }
 
- const contextPath = '${pageContext.request.contextPath}';
+
+ 
 
     function removeFromCart(productId) {
         const url = '/Web_Watch' + '/remove-from-cart';
