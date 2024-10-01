@@ -24,10 +24,9 @@ public class HomeControl extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         
         List<Product> listProduct = DAO.getInstance().getAllProducts();
-        
+      
         request.setAttribute("listAllProduct", listProduct);
 
-        
         request.getRequestDispatcher("Home.jsp").forward(request, response);  
 
     }
