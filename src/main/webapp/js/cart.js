@@ -1,9 +1,7 @@
 
-<<<<<<< HEAD
-=======
+
 var lengthCart = 0; //  số sản phẩm trong giõ hàng
 
->>>>>>> b7c2ec775dbd71ab0fb4fd2dad21a712e9ba0197
 function addToCart(productId, quantity) {
     var xhr = new XMLHttpRequest();
     xhr.open("POST", "add-to-cart", true);  // Gửi yêu cầu POST tới servlet

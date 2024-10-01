@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.websocket.Session;
 
 import dao.DAO;
 import entity.CartItem;
@@ -29,17 +28,6 @@ public class CartControl extends HttpServlet {
     }
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		HttpSession session = request.getSession();
-//		Object accSession = session.getAttribute("accSession");
-//        if (accSession == null) {
-//            // Nếu accSession là null, chuyển hướng về trang đăng nhập
-//        	
-//        	System.out.println("session null");
-//           response.sendRedirect("Login.jsp");
-//        
-//          //  return; // Dừng xử lý thêm vào giỏ hàng
-//        }
-//        
 		String productIdStr = request.getParameter("id");
         String quantityStr = request.getParameter("quantity");
 
@@ -56,12 +44,7 @@ public class CartControl extends HttpServlet {
 
         Product product = DAO.getInstance().getProductByID(String.valueOf(productId));
        
-      
-
-<<<<<<< HEAD
-        
-=======
->>>>>>> b7c2ec775dbd71ab0fb4fd2dad21a712e9ba0197
+     
         List<CartItem> cart = (List<CartItem>) session.getAttribute("cart");
  
        
