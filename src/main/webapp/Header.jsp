@@ -58,7 +58,7 @@
             </ul>
         </div>
         <div class="header-cart">
-            <a href="add-to-cart"><i class="fas fa-shopping-cart"></i><span>${sessionScope.cart.size()}</span></a>
+            <a href="add-to-cart" "><i class="fas fa-shopping-cart"></i><span>${cart.size()}</span></a>
         </div>
     </div>
 
@@ -90,17 +90,9 @@
 			</div>
 		</div>
 	</div>
-	<script src="js/login.js">
-  
-    
-    /* function toggleCategory() {
-        var categoryList = document.getElementById('categoryList');
-        if (categoryList.style.display === 'none') {
-            categoryList.style.display = 'block';
-        } else {
-            categoryList.style.display = 'none';
-        }
-    } */
-</script>
+	<script src="js/login.js"></script>
+	<script src="js/cart.js"></script>
+	
+
 </body>
 </html>

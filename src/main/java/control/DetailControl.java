@@ -22,7 +22,8 @@ public class DetailControl extends HttpServlet {
         String id = request.getParameter("pid");
         Product product = DAO.getInstance().getProductByID(id);
         request.setAttribute("detail", product);
-
+        request.setAttribute("idProduct", id);
+        
         request.getRequestDispatcher("DetailProduct.jsp").forward(request, response);
 	}
 

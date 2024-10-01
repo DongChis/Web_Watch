@@ -39,13 +39,11 @@
 								<p>
 									<strong>${product.price} VND</strong>
 								</p>
-
 								<div class="card-btn">
 									<a href="detail?pid=${product.productID}" class="btn-view">Xem</a>
 									<button class="btn btn-add"
 										onclick="addToCart(${product.productID}, 1)">Thêm</button>
 								</div>
-
 							</div>
 						</div>
 					</div>
