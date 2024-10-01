@@ -27,14 +27,14 @@
 						<ul class="child">
 							<li>Danh sách sản phẩm</li>
 							<li>Thêm sản phẩm mới</li>
-							<li>Chỉnh sửa sản phẩm</li>
+							
 
 						</ul></li>
 					<li><i class="fas fa-file-invoice"></i> Đơn hàng <i
 						class="fas fa-caret-down" style="float: right;"></i>
 						<ul class="child">
 							<li>Danh sách đơn hàng</li>
-							<li>Chỉnh sửa đơn hàng</li>
+							
 							<li>Lịch sử đơn hàng</li>
 						</ul></li>
 					<li><i class="fa fa-users"></i> Khách hàng <i
