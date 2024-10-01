@@ -20,8 +20,9 @@
     align-items: center;
 }
 
+
 .main-image img {
-    width: 650px;
+    width: 300px;
     height: auto;
     border-radius: 8px;
     margin-bottom: 25px;
@@ -58,6 +59,7 @@
 .product-info {
     margin-left: 40px;
     flex: 1;
+    padding-left: 30px;
 }
 
 .product-title {

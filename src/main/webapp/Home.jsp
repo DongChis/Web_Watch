@@ -40,10 +40,11 @@
 									<strong>${product.price} VND</strong>
 								</p>
 
-								<a href="detail?pid=${product.productID}"
-									class="btn btn-primary">Xem chi tiết</a>
-								<button onclick="addToCart(${product.productID}, 1)">Thêm
-									vào giỏ hàng</button>
+								<div class="card-btn">
+									<a href="detail?pid=${product.productID}" class="btn-view">Xem</a>
+									<button class="btn btn-add"
+										onclick="addToCart(${product.productID}, 1)">Thêm</button>
+								</div>
 
 							</div>
 						</div>
