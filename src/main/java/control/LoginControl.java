@@ -24,8 +24,8 @@ public class LoginControl extends HttpServlet {
 		String password = request.getParameter("pass");
 
 		HttpSession session = request.getSession();
-		System.out.println(userName);
-		System.out.println(password);
+		System.out.println("session-username:  " + userName);
+		//System.out.println(password);
 
 
 		User acc = DAO.getInstance().login(userName, password);
@@ -39,7 +39,7 @@ public class LoginControl extends HttpServlet {
 				response.sendRedirect("admin");
 				
 		}
-		
+			
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)

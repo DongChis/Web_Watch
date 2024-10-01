@@ -1,14 +1,11 @@
 
-
-
 function addToCart(productId, quantity) {
     var xhr = new XMLHttpRequest();
     xhr.open("POST", "add-to-cart", true);  // Gửi yêu cầu POST tới servlet
     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
     
     xhr.onreadystatechange = function () {
-        if (xhr.readyState == 4 && xhr.status == 200) {
-        
+        if (xhr.readyState == 4 && xhr.status == 200) {      
             alert("Sản phẩm đã được thêm vào giỏ hàng!");
         }
     };

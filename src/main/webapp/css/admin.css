@@ -65,6 +65,10 @@ li {
 	display: none;
 	margin-left: 20px;
 }
+.li-child {
+	text-decoration: none;
+	color: white;
+}
 
 
 .main-element {
