@@ -1,46 +1,9 @@
-# nore class files
-*.classIg
 
-# Ignore package files
-*.jar
-*.war
-
-# Ignore temporary files
-*.log
-*.tmp
-*.out
-*.swp
 
 # Ignore Eclipse/STS/IntelliJ IDEA project files
-/.classpath
-/.project
+
 /.settings/
-/.idea/
-/*.iml
-/.vscode/
 /target/
 /bin/
 /build/
 
-# Ignore Maven or Gradle build directories
-/target/
-/build/
-
-# Ignore MacOS system files
-.DS_Store
-
-# Ignore Windows system files
-Thumbs.db
-desktop.ini
-
-# Ignore generated files from Jetty, Tomcat or other servlet containers
-*.log
-*.pid
-*.tmp
-
-# Ignore node_modules for JavaScript dependencies (if any)
-node_modules/
-
-# Ignore environment files (for security)
-/.env
-*.env
