@@ -70,6 +70,7 @@
 									<a href="detail?pid=${product.productID}" class="btn-view">Xem</a>
 									<button class="btn btn-add"
 										onclick="addToCart(${product.productID}, 1)">Thêm</button>
+		
 								</div>
 
 								<%-- <a href="detail?pid=${product.productID}" class="btn-view">Xem</a>
@@ -137,6 +138,7 @@
 
 	<script src="js/slide.js"></script>
 	<script src="js/cart.js"></script>
+
 </body>
 </html>
 
