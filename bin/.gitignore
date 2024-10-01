@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 
 # Ignore Eclipse/STS/IntelliJ IDEA project files
@@ -7,3 +8,6 @@
 /bin/
 /build/
 
+=======
+/bin/
+>>>>>>> parent of c3d5c9f (fix)
