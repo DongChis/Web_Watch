@@ -1,6 +1,8 @@
 package control;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -10,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import dao.DAO;
+import entity.CartItem;
 import entity.User;
 
 @WebServlet(name = "LoginControl", urlPatterns = { "/login" })
@@ -23,9 +26,14 @@ public class LoginControl extends HttpServlet {
 		String userName = request.getParameter("user");
 		String password = request.getParameter("pass");
 
+<<<<<<< HEAD
 		HttpSession session = request.getSession();
+		System.out.println("session-username:  " + userName);
+		//System.out.println(password);
+=======
 		System.out.println(userName);
 		System.out.println(password);
+>>>>>>> b7c2ec775dbd71ab0fb4fd2dad21a712e9ba0197
 
 
 		User acc = DAO.getInstance().login(userName, password);
@@ -33,13 +41,31 @@ public class LoginControl extends HttpServlet {
 		if (acc == null) {
 			request.setAttribute("mess", "Wrong user or password");
 			request.getRequestDispatcher("Login.jsp").forward(request, response);
+			
 		} else {
-				session.setAttribute("accSession", acc);
-				session.setAttribute("role", acc.getRole());
-				response.sendRedirect("admin");
+			HttpSession currentSession = request.getSession(false); // 
+			 if (currentSession != null && currentSession.getAttribute("accSession") != null) {
+	                
+				 response.sendRedirect("Login.jsp?error=alreadyLoggedIn");
+	                return;
+	            }
 				
 		}
+<<<<<<< HEAD
+			
+=======
+
+		HttpSession session = request.getSession();
+		session.setAttribute("accSession", acc);
+		session.setAttribute("role", acc.getRole());
 		
+		 List<CartItem> cart = new ArrayList<>();
+         session.setAttribute("cart", cart); // Lưu giỏ hàng riêng cho người dùng này
+         
+         
+		response.sendRedirect("admin");
+		
+>>>>>>> b7c2ec775dbd71ab0fb4fd2dad21a712e9ba0197
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)

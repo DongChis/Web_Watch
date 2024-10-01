@@ -8,3 +8,5 @@
     function redirectToServlet() {
         window.location.href = 'logout';
     }
+    
+    

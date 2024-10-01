@@ -5,6 +5,8 @@
 <html>
 <head>
 <link href="css/cart.css" rel="stylesheet">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 <meta charset="UTF-8">
 <title>Gio hang</title>
 </head>
@@ -16,7 +18,7 @@
 
 			<div class="cart-items">
 				<!-- Sản phẩm trong giỏ hàng -->
-				<div class="cart-item">
+				
 					 <c:forEach var="item" items="${sessionScope.cart}" >
                     <div class="cart-item">
                         <div class="product-image">
@@ -31,11 +33,13 @@
                         </div>
                         <div class="product-price">
                             <span>${item.product.price * item.quantity} VND</span>
-                          <button onclick="removeFromCart(${item.product.productID})">Xóa</button>
+                          <button class="remove-item" onclick="removeFromCart(${item.product.productID})">
+                        <i class="fas fa-trash fa-lg"></i>  
+                          </button>
                         </div>
                     </div>
                 </c:forEach>
-				</div>
+				
 
 				
 			</div>

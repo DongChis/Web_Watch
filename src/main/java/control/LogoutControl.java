@@ -29,7 +29,10 @@ public class LogoutControl extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html;charset=UTF-8");
 		HttpSession session = request.getSession();
+		
 		session.removeAttribute("accSession");
+		System.out.println(session.getAttribute("accSession")+ "hien tai");
+	//	System.out.println("xoa session");
 		response.sendRedirect("home");
 	}
 

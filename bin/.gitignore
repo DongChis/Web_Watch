@@ -1,1 +1,9 @@
+
+
+# Ignore Eclipse/STS/IntelliJ IDEA project files
+
+/.settings/
+/target/
 /bin/
+/build/
+
