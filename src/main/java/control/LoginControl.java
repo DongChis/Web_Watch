@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,7 +24,6 @@ public class LoginControl extends HttpServlet {
 		String userName = request.getParameter("user");
 		String password = request.getParameter("pass");
 
-		HttpSession session = request.getSession();
 		System.out.println(userName);
 		System.out.println(password);
 
@@ -33,7 +33,10 @@ public class LoginControl extends HttpServlet {
 		if (acc == null) {
 			request.setAttribute("mess", "Wrong user or password");
 			request.getRequestDispatcher("Login.jsp").forward(request, response);
+			
 		} else {
+
+				HttpSession session = request.getSession();
 				session.setAttribute("accSession", acc);
 				session.setAttribute("role", acc.getRole());
 				response.sendRedirect("admin");

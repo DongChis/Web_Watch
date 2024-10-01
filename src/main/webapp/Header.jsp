@@ -58,7 +58,7 @@
             </ul>
         </div>
         <div class="header-cart">
-            <a href="add-to-cart" "><i class="fas fa-shopping-cart"></i><span>${cart.size()}</span></a>
+            <a href="add-to-cart" ><i class="fas fa-shopping-cart"></i> <span id="cart-count">0</span> </a>
         </div>
     </div>
 

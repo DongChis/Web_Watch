@@ -10,10 +10,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.websocket.Session;
 
 import dao.DAO;
 import entity.CartItem;
 import entity.Product;
+import entity.User;
 
 
 @WebServlet(name = "CartControl", urlPatterns = "/add-to-cart")
@@ -29,12 +31,21 @@ public class CartControl extends HttpServlet {
         String productIdStr = request.getParameter("id");
         String quantityStr = request.getParameter("quantity");
 
+      
+
+        HttpSession session = request.getSession();
+        User user =(User) session.getAttribute("accSession");
+        if (user == null) {
+        	  response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }
         int productId = Integer.parseInt(productIdStr);
         int quantity = Integer.parseInt(quantityStr);
 
         Product product = DAO.getInstance().getProductByID(String.valueOf(productId));
+       
+      
 
-        HttpSession session = request.getSession();
         List<CartItem> cart = (List<CartItem>) session.getAttribute("cart");
         if (cart == null) {
             cart = new ArrayList<>();
@@ -54,6 +65,7 @@ public class CartControl extends HttpServlet {
         }
 
         session.setAttribute("cart", cart);
+       
        response.setStatus(HttpServletResponse.SC_OK);
         
     }
