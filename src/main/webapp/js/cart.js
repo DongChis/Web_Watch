@@ -7,11 +7,11 @@ function addToCart(productId, quantity) {
     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
     xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4) { // Yêu cầu đã hoàn tất
+        if (xhr.readyState === 4) { // Kiểm tra nếu yêu cầu đã hoàn tất
             if (xhr.status === 401) {
                 // Người dùng chưa đăng nhập, chuyển hướng đến trang đăng nhập
                 alert("Bạn phải đăng nhập để thêm sản phẩm vào giỏ hàng.");
-                window.location.href = "/Web_Watch/Login.jsp"; // Chuyển hướng sau khi hiển thị thông báo
+                window.location.href = "/Web_Watch/Login.jsp"; // Chuyển hướng
             } else if (xhr.status === 200) {
                 // Sản phẩm đã được thêm vào giỏ hàng thành công
                 lengthCart++;
