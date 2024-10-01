@@ -23,12 +23,24 @@ public class CartControl extends HttpServlet {
 	
 	
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-       
-       response.sendRedirect("Cart.jsp");
+    	
+		//response.sendRedirect("Cart.jsp");
+    	request.getRequestDispatcher("Cart.jsp").forward(request, response);
     }
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String productIdStr = request.getParameter("id");
+		HttpSession session = request.getSession();
+//		Object accSession = session.getAttribute("accSession");
+//        if (accSession == null) {
+//            // Nếu accSession là null, chuyển hướng về trang đăng nhập
+//        	
+//        	System.out.println("session null");
+//           response.sendRedirect("Login.jsp");
+//        
+//          //  return; // Dừng xử lý thêm vào giỏ hàng
+//        }
+//        
+		String productIdStr = request.getParameter("id");
         String quantityStr = request.getParameter("quantity");
 
       
@@ -46,7 +58,13 @@ public class CartControl extends HttpServlet {
        
       
 
+<<<<<<< HEAD
+        
+=======
+>>>>>>> b7c2ec775dbd71ab0fb4fd2dad21a712e9ba0197
         List<CartItem> cart = (List<CartItem>) session.getAttribute("cart");
+ 
+       
         if (cart == null) {
             cart = new ArrayList<>();
         }

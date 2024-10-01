@@ -1,6 +1,9 @@
 
+<<<<<<< HEAD
+=======
 var lengthCart = 0; //  số sản phẩm trong giõ hàng
 
+>>>>>>> b7c2ec775dbd71ab0fb4fd2dad21a712e9ba0197
 function addToCart(productId, quantity) {
     var xhr = new XMLHttpRequest();
     xhr.open("POST", "add-to-cart", true);  // Gửi yêu cầu POST tới servlet
@@ -44,9 +47,13 @@ function addToCart(productId, quantity) {
     }
     
     xhr.onreadystatechange = function () {
+<<<<<<< HEAD
+        if (xhr.readyState == 4 && xhr.status == 200) {      
+=======
         if (xhr.readyState == 4 && xhr.status == 200) {
 			lengthCart++;
         	document.getElementById("cart-count").innerText = lengthCart;// đếm số sản phẩm thêm vào và hiển thị
+>>>>>>> b7c2ec775dbd71ab0fb4fd2dad21a712e9ba0197
             alert("Sản phẩm đã được thêm vào giỏ hàng!");
         }
     };

@@ -26,8 +26,14 @@ public class LoginControl extends HttpServlet {
 		String userName = request.getParameter("user");
 		String password = request.getParameter("pass");
 
+<<<<<<< HEAD
+		HttpSession session = request.getSession();
+		System.out.println("session-username:  " + userName);
+		//System.out.println(password);
+=======
 		System.out.println(userName);
 		System.out.println(password);
+>>>>>>> b7c2ec775dbd71ab0fb4fd2dad21a712e9ba0197
 
 
 		User acc = DAO.getInstance().login(userName, password);
@@ -45,6 +51,9 @@ public class LoginControl extends HttpServlet {
 	            }
 				
 		}
+<<<<<<< HEAD
+			
+=======
 
 		HttpSession session = request.getSession();
 		session.setAttribute("accSession", acc);
@@ -56,6 +65,7 @@ public class LoginControl extends HttpServlet {
          
 		response.sendRedirect("admin");
 		
+>>>>>>> b7c2ec775dbd71ab0fb4fd2dad21a712e9ba0197
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)

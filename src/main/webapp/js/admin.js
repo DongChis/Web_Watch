@@ -28,6 +28,20 @@ document.querySelectorAll('.parent > li').forEach(parentItem => {
     });
 });
 
+document.addEventListener('DOMContentLoaded', function() {
+    const addProductLink = document.getElementById('addProductLink');
+
+    addProductLink.addEventListener('click', function(event) {
+        event.preventDefault(); // Ngăn không cho chuyển hướng ngay lập tức
+        this.innerText = "Đang thêm sản phẩm..."; // Thay đổi nội dung của liên kết
+        this.style.color = "red"; // Thay đổi màu sắc của liên kết (tùy chọn)
+
+        // Thực hiện điều hướng tới trang thêm sản phẩm sau khi thay đổi nội dung
+        window.location.href = this.getAttribute('href');
+    });
+});
+
+
 
    
  /*function validateDate() {
