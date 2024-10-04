@@ -12,6 +12,13 @@ import javax.servlet.http.HttpSession;
 @WebServlet(urlPatterns = { "/admin" })
 public class AdminControl extends HttpServlet {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+
+
 	public AdminControl() {
 	
 	}
