@@ -1,0 +1,53 @@
+@charset "UTF-8";
+
+.product-list-ad {
+	font-family: Arial, sans-serif;
+	background-color: #f4f4f4;
+	margin: 0;
+	margin-left: 5px;
+}
+
+h1 {
+	text-align: center;
+	color: #333;
+}
+
+.button {
+	background-color: blueviolet;
+	color: white;
+	border: none;
+	border-radius: 4px;
+	padding: 10px 15px;
+	cursor: pointer;
+	font-size: 16px;
+	margin: 10px 0;
+	text-align: center;
+	display: inline-block;
+	text-decoration: none;
+}
+
+.button:hover {
+	background-color: skyblue;
+}
+
+table {
+	width: 100%;
+	border-collapse: collapse;
+	margin-top: 20px;
+}
+
+th,
+td {
+	padding: 10px;
+	border: 1px solid #ccc;
+	text-align: left;
+}
+
+th {
+	background-color: blueviolet;
+	color: white;
+}
+
+tr:nth-child(even) {
+	background-color: #f2f2f2;
+}

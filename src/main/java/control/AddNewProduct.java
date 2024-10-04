@@ -26,8 +26,9 @@ public class AddNewProduct extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		 request.setAttribute("addNewProduct", true);
-		request.getRequestDispatcher("Admin.jsp").forward(request, response);
+		request.setAttribute("addNewProduct", true);
+		request.getRequestDispatcher("productListAdmin").forward(request, response);
+		
 	}
 
 	/**

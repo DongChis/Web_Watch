@@ -52,7 +52,7 @@ ul {
 }
 
 li {
-	margin: 8px 0;
+	margin: 18px 0;
 	padding: 10px;
 	color: white;
 	cursor: pointer;
@@ -119,7 +119,7 @@ li {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	background-color: #00008b;
+	background-color: blueviolet;
 	border: none;
 	border-radius: 50px;
 	cursor: pointer;
