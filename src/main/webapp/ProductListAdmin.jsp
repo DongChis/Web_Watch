@@ -7,6 +7,8 @@
 <head>
 <meta charset="UTF-8">
 <link href="css/productListAdmin.css" rel="stylesheet">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 <title>Insert title here</title>
 </head>
 <body>
@@ -14,22 +16,26 @@
 
 		<c:choose>
 			<c:when test="${not empty addNewProduct}">
-				<h1 style="background-color: blueviolet;
-							border-radius: 8px;
-							color: white;
-							padding: 10px;
-							margin: 10px 0px 0px 5px;">Thêm sản phẩm</h1>
-				<a href="productListAdmin" class="button" style="margin-left: 5px;
-				">Danh Sách sản phẩm</a>
+				<h1
+					style="background-color: blueviolet; border-radius: 8px; color: white; padding: 10px; margin: 10px 0px 0px 0px;">Thêm
+					sản phẩm</h1>
+				<a href="productListAdmin" class="button" style="margin-left: 5px;">Danh
+					Sách sản phẩm</a>
 				<jsp:include page="AddNewProduct.jsp" />
 			</c:when>
 			<c:otherwise>
-				<h1 style="background-color: blueviolet;
-							border-radius: 8px;
-							color: white;
-							padding: 10px;
-							margin: 10px 0px 0px 5px;">Danh sách sản phẩm</h1>
-				<a href="addNewProduct" class="button" style="margin-left: 5px;">Thêm sản phẩm</a>
+				<h1
+					style="background-color: blueviolet; border-radius: 8px; color: white; padding: 10px; margin: 10px 0px 0px 0px;">
+					Danh sách sản phẩm</h1>
+				<div class="button-container">
+					<a href="addNewProduct" class="button">Thêm sản phẩm</a>
+					<div class="search-container">
+						<input type="text" placeholder="Tìm kiếm sản phẩm..." class="search-input">
+						<a href="#" class="button"><i class="fas fa-search"></i></a>
+					</div>
+				</div>
+
+
 				<table>
 					<thead>
 						<tr>
@@ -41,22 +47,16 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr>
-							<td>1</td>
-							<td>Sản phẩm A</td>
-							<td>100,000 VNĐ</td>
-							<td>Mô tả sản phẩm A</td>
-							<td><a href="editProduct.html?id=1" class="button">Sửa</a>
-								<button class="button" onclick="deleteProduct(1)">Xóa</button></td>
-						</tr>
-						<tr>
-							<td>2</td>
-							<td>Sản phẩm B</td>
-							<td>200,000 VNĐ</td>
-							<td>Mô tả sản phẩm B</td>
-							<td><a href="editProduct.html?id=2" class="button">Sửa</a>
-								<button class="button" onclick="deleteProduct(2)">Xóa</button></td>
-						</tr>
+						<c:forEach var="product" items="${productListAdmin}">
+							<tr>
+								<td>${product.productID}</td>
+								<td>${product.name}</td>
+								<td>${product.price}VNĐ</td>
+								<td>${product.title}</td>
+								<td><a href="editProduct.html?id=1" class="button">Sửa</a>
+									<button class="button" onclick="deleteProduct(1)">Xóa</button></td>
+							</tr>
+						</c:forEach>
 						<!-- Add more products as needed -->
 					</tbody>
 				</table>

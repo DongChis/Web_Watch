@@ -1,11 +1,16 @@
 package control;
 
 import java.io.IOException;
+import java.util.List;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import dao.DAO;
+import entity.Product;
 
 /**
  * Servlet implementation class ProductListAdmin
@@ -26,12 +31,13 @@ public class ProductListAdmin extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String[][] products = {
-	            {"1", "Sản phẩm A", "100000", "Mô tả sản phẩm A"},
-	            {"2", "Sản phẩm B", "200000", "Mô tả sản phẩm B"},
-	            {"3", "Sản phẩm C", "150000", "Mô tả sản phẩm C"},
-	        };
-		request.setAttribute("productListAdmin", products);
+		response.setContentType("text/html;charset=UTF-8");
+
+		List<Product> listProduct = DAO.getInstance().getAllProducts();
+
+		request.setAttribute("productListAdmin", listProduct);
+		
+		
 		request.getRequestDispatcher("Admin.jsp").forward(request, response);
 	}
 

@@ -92,7 +92,7 @@
 							</button>
 						</c:if>
 
-						<a href="#"><i class="fas fa-cog fa-lg"></i></a>
+						<a href="#"><i class="fas fa-cog fa-lg" style="color: blueviolet;"></i></a>
 					</div>
 				</div>
 

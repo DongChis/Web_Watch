@@ -42,7 +42,7 @@ public class DAO {
 				products.add(new Product(rs.getInt("ProductID"), rs.getString("Title"), rs.getString("Name"),
 						rs.getString("Description"), rs.getDouble("Price"), rs.getString("ImageURL"),
 						rs.getString("Gender")));
-				
+
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -61,7 +61,6 @@ public class DAO {
 		return products;
 	}
 
-	
 	public User getUserByUsername(String username) {
 		String query = "SELECT * FROM Users WHERE Username = ?";
 		try (Connection conn = new DBContext().getConnection(); PreparedStatement ps = conn.prepareStatement(query)) {
@@ -69,14 +68,14 @@ public class DAO {
 			try (ResultSet rs = ps.executeQuery()) {
 				if (rs.next()) {
 					return new User(rs.getInt("UserID"), rs.getString("Username"), rs.getString("Password"),
-							rs.getString("Email"), rs.getString("Role"), rs.getDate("CreatedAt"));				
-				}	
+							rs.getString("Email"), rs.getString("Role"), rs.getDate("CreatedAt"));
+				}
 			}
 
 		} catch (Exception e) {
 
 			e.printStackTrace();
-			
+
 		}
 		return null;
 	}
@@ -110,63 +109,104 @@ public class DAO {
 		}
 		return null;
 	}
-	
+
 	public boolean isAdmin(User user) {
-	    String query = "SELECT Role FROM Users WHERE UserID = ?";
-	    Connection conn = null;
-	    PreparedStatement ps = null;
-	    ResultSet rs = null;
+		String query = "SELECT Role FROM Users WHERE UserID = ?";
+		Connection conn = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
 
-	    try {
-	        conn = new DBContext().getConnection();
-	        ps = conn.prepareStatement(query);
-	        
-	        ps.setInt(1, user.getUserID());
+		try {
+			conn = new DBContext().getConnection();
+			ps = conn.prepareStatement(query);
 
-	        rs = ps.executeQuery();
-	      
-	        if (rs.next()) {
-	            String roleInDb = rs.getString("Role");
-	            return "Admin".equals(roleInDb);  
-	        }
+			ps.setInt(1, user.getUserID());
 
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    } finally {
-	       
-	        try {
-	            if (rs != null) rs.close();
-	            if (ps != null) ps.close();
-	            if (conn != null) conn.close();
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	        }
-	    }
-	    return false;
+			rs = ps.executeQuery();
+
+			if (rs.next()) {
+				String roleInDb = rs.getString("Role");
+				return "Admin".equals(roleInDb);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+
+			try {
+				if (rs != null)
+					rs.close();
+				if (ps != null)
+					ps.close();
+				if (conn != null)
+					conn.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return false;
 	}
-
 
 	public void signUp(String username, String password, String email) throws Exception {
 		if (isUsernameTaken(username)) {
 			throw new Exception("Tên người dùng đã tồn tại!");
 		}
-		 String query = "INSERT INTO Users (Username, Password, Email, Role, CreatedAt) VALUES (?, ?, ?, 'Customer', GETDATE())";
-	
+		String query = "INSERT INTO Users (Username, Password, Email, Role, CreatedAt) VALUES (?, ?, ?, 'Customer', GETDATE())";
+
 		try {
 			conn = new DBContext().getConnection();
-			
+
 			ps = conn.prepareStatement(query);
 			System.out.println(ps.toString() + " prepareStatement");
 			ps.setString(1, username);
-			ps.setString(2, password); 
+			ps.setString(2, password);
 			ps.setString(3, email);
 
 			ps.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
-			//throw new Exception("Lỗi trong quá trình đăng ký. Vui lòng thử lại sau.");
+			// throw new Exception("Lỗi trong quá trình đăng ký. Vui lòng thử lại sau.");
 		}
 	}
+
+	public void addProduct(int productId, String title, String name, String description, double price, String imageUrl, String gender) throws Exception {
+	    if (isProductNameTaken(name)) {
+	        throw new Exception("Tên sản phẩm đã tồn tại!");
+	    }
+
+	    String query = "INSERT INTO Products (ProductID, Title, Name, Description, Price, ImageURL, Gender, CreatedAt) VALUES (?, ?, ?, ?, ?, ?, ?, GETDATE())";
+
+	    try {
+
+	        conn = new DBContext().getConnection();
+
+	        ps = conn.prepareStatement(query);
+	        System.out.println(ps.toString() + " prepareStatement");
+
+	        ps.setInt(1, productId);
+	        ps.setString(2, title);
+	        ps.setString(3, name);
+	        ps.setString(4, description);
+	        ps.setDouble(5, price);
+	        ps.setString(6, imageUrl);
+	        ps.setString(7, gender);
+
+	        ps.executeUpdate();
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        // Handle exception properly (consider logging or throwing a more specific exception)
+	        throw new Exception("Lỗi trong quá trình thêm sản phẩm. Vui lòng thử lại sau.");
+	    } finally {
+
+	        if (ps != null) ps.close();
+	        if (conn != null) conn.close();
+	    }
+	}
+
+	private boolean isProductNameTaken(String productName) {
+	    return false; 
+	}
+
 
 	private boolean isUsernameTaken(String username) {
 		String query = "SELECT * FROM Users WHERE Username = ?";
@@ -198,8 +238,7 @@ public class DAO {
 		}
 		return false;
 	}
-	
-	
+
 	public Product getProductByID(String id) {
 		String query = "SELECT * FROM Products WHERE ProductID = ?";
 		try {
@@ -208,9 +247,8 @@ public class DAO {
 			ps.setString(1, id);
 			rs = ps.executeQuery();
 			while (rs.next()) {
-				return new Product(rs.getInt(1), rs.getString(2), rs.getString(3),
-						rs.getString(4), rs.getDouble(5), rs.getString(6),
-						rs.getString(7));
+				return new Product(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getDouble(5),
+						rs.getString(6), rs.getString(7));
 			}
 
 		} catch (Exception e) {
@@ -218,14 +256,12 @@ public class DAO {
 		return null;
 	}
 
-
-	
 	public static void main(String[] args) throws Exception {
 		DAO d = new DAO();
-		
-	//	System.out.println(d.getUserByUsername("chia"));
-	//	System.out.println(d.getAllProducts());
-		//d.signUp("dung1","1");
-	//	System.out.println(d.isAdmin(d.getUserByUsername("chia")));
+
+		// System.out.println(d.getUserByUsername("chia"));
+		System.out.println(d.getAllProducts());
+		// d.signUp("dung1","1");
+		// System.out.println(d.isAdmin(d.getUserByUsername("chia")));
 	}
 }

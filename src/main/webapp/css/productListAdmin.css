@@ -33,7 +33,8 @@ h1 {
 table {
 	width: 100%;
 	border-collapse: collapse;
-	margin-top: 20px;
+	margin-top: 10px;
+	
 }
 
 th,
@@ -51,3 +52,44 @@ th {
 tr:nth-child(even) {
 	background-color: #f2f2f2;
 }
+.button-container {
+    display: flex; /* Sử dụng flexbox để sắp xếp các phần tử */
+    justify-content: space-between; /* Căn chỉnh các phần tử ở hai đầu */
+    align-items: center; /* Căn giữa theo chiều dọc */
+    margin-top: 10px; /* Thêm khoảng cách bên ngoài cho container */
+}
+
+.button {
+    background-color: blueviolet;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 16px;
+    text-decoration: none; /* Bỏ gạch chân */
+}
+
+.button:hover {
+    background-color: skyblue; /* Màu nền khi di chuột vào nút */
+}
+
+.search-container {
+    display: flex; /* Sử dụng flexbox cho container tìm kiếm */
+    align-items: center; /* Căn giữa theo chiều dọc */
+}
+
+.search-input {
+    font-size: 16px;
+    padding: 10px;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    width: 300px; /* Chiều rộng ô tìm kiếm */
+    margin-right: 5px; /* Khoảng cách giữa ô tìm kiếm và nút */
+}
+
+.search-input:focus {
+    border-color: blueviolet; /* Đổi màu viền khi ô được chọn */
+    outline: none; /* Bỏ viền mặc định của trình duyệt */
+}
+
