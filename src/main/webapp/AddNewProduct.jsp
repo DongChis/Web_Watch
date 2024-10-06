@@ -10,15 +10,19 @@
 </head>
 <body>
 	<form action="addNewProduct" method="post" class="form-add-product">
-		<label for="productName">Tên sản phẩm:</label> <input class="input-add-form" type="text"
-			id="productName" name="productName" required> <label
-			for="productPrice">Giá sản phẩm:</label> <input class="input-add-form" type="number"
+		<label for="productName">Tên sản phẩm:</label> <input
+			class="input-add-form" type="text" id="productName"
+			name="productName" required> <label for="productName">Tiêu đề:
+			</label> <input class="input-add-form" type="text" id="title"
+			name="title" required> <label for="productPrice">Giá
+			sản phẩm:</label> <input class="input-add-form" type="number"
 			id="productPrice" name="productPrice" required> <label
 			for="productDescription">Mô tả sản phẩm:</label>
 		<textarea id="productDescription" name="productDescription" required></textarea>
 
-		<label for="productImage">Ảnh sản phẩm:</label> <input class="input-add-form" type="file"
-			id="productImage" name="productImage" accept="image/*" required>
+		<label for="productImage">Ảnh sản phẩm:</label> <input
+			class="input-add-form" type="file" id="productImage"
+			name="productImage" accept="image/*" required>
 
 		<button type="submit">Thêm sản phẩm</button>
 	</form>
