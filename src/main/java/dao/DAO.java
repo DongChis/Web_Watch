@@ -169,43 +169,36 @@ public class DAO {
 		}
 	}
 
-	public void addProduct(int productId, String title, String name, String description, double price, String imageUrl, String gender) throws Exception {
-	    if (isProductNameTaken(name)) {
-	        throw new Exception("Tên sản phẩm đã tồn tại!");
-	    }
+	public void insertProduct(String title, String name, String description,  String price,  String image,
+			String gender) {
+		String query = "insert into Products \n" + "VALUES (?,?,?,?,?,?)";
+		try {
+			conn = new DBContext().getConnection();
+			ps = conn.prepareStatement(query);
+			ps.setString(1, title);
+			ps.setString(2, name);
+			ps.setString(3, description);
+			ps.setString(4, price);
+			ps.setString(5, "img/"+image);
+			ps.setString(6, gender);
+			
+			ps.executeUpdate();
+		} catch (Exception e) {
+		}
+	}
+	
+	public void deleteProduct(String pid) {
+		String query = "delete from Products \n" + "where ProductID = ?";
+		try {
+			conn = new DBContext().getConnection();
+			ps = conn.prepareStatement(query);
+			ps.setString(1, pid);
+			ps.executeUpdate();
+		} catch (Exception e) {
+		}
 
-	    String query = "INSERT INTO Products (ProductID, Title, Name, Description, Price, ImageURL, Gender, CreatedAt) VALUES (?, ?, ?, ?, ?, ?, ?, GETDATE())";
-
-	    try {
-
-	        conn = new DBContext().getConnection();
-
-	        ps = conn.prepareStatement(query);
-	        System.out.println(ps.toString() + " prepareStatement");
-
-	        ps.setInt(1, productId);
-	        ps.setString(2, title);
-	        ps.setString(3, name);
-	        ps.setString(4, description);
-	        ps.setDouble(5, price);
-	        ps.setString(6, imageUrl);
-	        ps.setString(7, gender);
-
-	        ps.executeUpdate();
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	        // Handle exception properly (consider logging or throwing a more specific exception)
-	        throw new Exception("Lỗi trong quá trình thêm sản phẩm. Vui lòng thử lại sau.");
-	    } finally {
-
-	        if (ps != null) ps.close();
-	        if (conn != null) conn.close();
-	    }
 	}
 
-	private boolean isProductNameTaken(String productName) {
-	    return false; 
-	}
 
 
 	private boolean isUsernameTaken(String username) {
@@ -260,8 +253,9 @@ public class DAO {
 		DAO d = new DAO();
 
 		// System.out.println(d.getUserByUsername("chia"));
-		System.out.println(d.getAllProducts());
+		//System.out.println(""+d.insertProduct(null, null, null, null, null, null));
 		// d.signUp("dung1","1");
-		// System.out.println(d.isAdmin(d.getUserByUsername("chia")));
+//		d.deleteProduct("3002");
+//		 System.out.println("da xoa" );
 	}
 }

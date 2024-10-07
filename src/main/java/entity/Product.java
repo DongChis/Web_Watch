@@ -3,7 +3,6 @@ package entity;
 
 public class Product {
    
-
 	private int productID;
     private String title;
     private String name;
