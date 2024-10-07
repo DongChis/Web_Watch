@@ -9,7 +9,7 @@
 <title>Thêm sản phẩm mới</title>
 </head>
 <body>
-	<form action="addNewProduct" method="post" class="form-add-product">
+	<form action="addNewProduct" method="post" class="form-add-product" onsubmit="return showAlert();">
 		<label for="productName">Tên sản phẩm:</label> <input
 			class="input-add-form" type="text" id="productName"
 			name="productName" required> <label for="productName">Tiêu đề:
@@ -27,7 +27,16 @@
 		<button type="submit">Thêm sản phẩm</button>
 	</form>
 
-	<script src="js/addform.js"></script>
+	<script src="js/addform.js">
+	
+	</script>
+	<script>
+	function showAlert() {
+	    alert("Sản phẩm đã được thêm thành công!");
+	    return true; // Trả về true để tiếp tục gửi form
+	}
+	</script>
+	
 
 </body>
 </html>

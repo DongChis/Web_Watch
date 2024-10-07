@@ -1,0 +1,55 @@
+@charset "UTF-8";
+
+/* styles.css */
+/*body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 20px;
+}*/
+
+.edit-form {
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.label-edit-form {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.input-edit-form[type="text"],
+.input-edit-form[type="number"],
+textarea,
+select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.input-edit-form[type="file"] {
+    margin-bottom: 20px;
+}
+
+.btn-edit-form {
+    background-color: blueviolet;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.btn-edit-form:hover {
+    background-color: darkviolet;
+}
+
+img {
+    margin-bottom: 10px;
+}
