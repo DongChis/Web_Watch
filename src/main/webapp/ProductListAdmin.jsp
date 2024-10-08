@@ -51,6 +51,7 @@
 							<th>Ảnh sản phẩm</th>
 							<th>Tên sản phẩm</th>
 							<th>Giá</th>
+							<th>Tiêu đề</th>
 							<th>Mô tả</th>
 							<th>Hành động</th>
 						</tr>
@@ -63,7 +64,8 @@
 								<td>${product.name}</td>
 								<td>${product.price}VNĐ</td>
 								<td>${product.title}</td>
-								<td><a href="edit" class="button">Sửa</a>
+								<td>${product.description}</td>
+								<td><a href="loadP?pid=${product.productID}" class="button">Sửa</a>
 									<button class="button"  onclick="deleteProduct(${product.productID})">Xóa</button></td>
 							</tr>
 						</c:forEach>
