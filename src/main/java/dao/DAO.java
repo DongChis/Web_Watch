@@ -198,6 +198,24 @@ public class DAO {
 		}
 
 	}
+	
+	public void editProduct(String title, String name, String description,  String price,  String image, String pid
+			) {
+		String query =  "update Products set [Title] = ?,[Name] = ?,Description = ?,\r\n"
+				+ "[Price] = ?,[ImageURL] = ? where ProductID = ?";
+		try {
+			conn = new DBContext().getConnection();
+			ps = conn.prepareStatement(query);
+			ps.setString(1, title);
+			ps.setString(2, name);
+			ps.setString(3, description);
+			ps.setString(4, price);
+			ps.setString(5, "img/"+image);
+			ps.setString(6, pid);
+			ps.executeUpdate();
+		} catch (Exception e) {
+		}
+	}
 
 
 
@@ -256,6 +274,8 @@ public class DAO {
 		//System.out.println(""+d.insertProduct(null, null, null, null, null, null));
 		// d.signUp("dung1","1");
 //		d.deleteProduct("3002");
-//		 System.out.println("da xoa" );
+		
+		d.editProduct("a", "a", "a", "400", "a","1");
+		System.out.println(d.getProductByID("1"));
 	}
 }

@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -9,33 +10,33 @@
 </head>
 <body>
 
-<form class="edit-form" action="updateProduct" method="post" enctype="multipart/form-data">
-    <input type="hidden" name="ProductID" value="${param.ProductID}"/>
+<form class="edit-form" action="edit?pid=${product.productID}" method="post" onsubmit="return showAlert();">
+    <input type="hidden" name="ProductID" value="${product.productID}"/>
     
     <label class="label-edit-form" for="title">Tiêu đề:</label>
-    <input class="input-edit-form" type="text" id="title" name="title" value="${Title}" required/><br/>
+    <input class="input-edit-form" type="text"  name="title" value="${product.title}" required/><br/>
 
     <label class="label-edit-form" for="name">Tên sản phẩm:</label>
-    <input class="input-edit-form" type="text" id="name" name="name" value="${Name}" required/><br/>
+    <input class="input-edit-form" type="text"  name="name" value="${product.name}" required/><br/>
 
     <label class="label-edit-form" for="description">Mô tả:</label>
-    <textarea id="description" name="description" required>${Description}</textarea><br/>
+    <textarea  name="description" required>${product.description}</textarea><br/>
 
     <label class="label-edit-form" for="price">Giá:</label>
-    <input class="input-edit-form" type="number" id="price" name="price" value="${Price}" required/><br/>
+    <input class="input-edit-form" type="number" name="price" value="${product.price}" required/><br/>
 
     <label class="label-edit-form" for="imageURL">Ảnh sản phẩm:</label>
-    <input class="input-edit-form" type="file" id="imageURL" name="imageURL" accept="image/*"/><br/>
-    <img src="${ImageURL}" alt="Current Image" style="width: 100px; height: auto;"/><br/>
+    <input class="input-edit-form" type="file" name="imageURL" accept="image/*"/><br/>
+    <img src="${product.imageURL}" alt="Current Image" style="width: 100px; height: auto;"/><br/>
 
-    <label class="label-edit-form" for="gender">Giới tính:</label>
-    <select id="gender" name="gender">
-        <option value="Male" ${Gender == 'Male' ? 'selected' : ''}>Nam</option>
-        <option value="Female" ${Gender == 'Female' ? 'selected' : ''}>Nữ</option>
-        <option value="Unisex" ${Gender == 'Unisex' ? 'selected' : ''}>Unisex</option>
-    </select><br/>
 
     <button class="btn-edit-form"type="submit">Cập nhật sản phẩm</button>
 </form>
+	<script>
+	function showAlert() {
+	    alert("Sản phẩm đã được cập nhật!");
+	    return true; // Trả về true để tiếp tục gửi form
+	}
+	</script>
 </body>
 </html>

@@ -2,7 +2,6 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -26,8 +25,7 @@
 						href="admin"> Home</a></li>
 
 					<li><i class="fas fa-truck"></i> <a class="li-child"
-						id="productListAdminLink" href="productListAdmin">
-							Sản phẩm</a></li>
+						id="productListAdminLink" href="productListAdmin"> Sản phẩm</a></li>
 					<li><i class="fas fa-file-invoice"></i> Đơn hàng <i
 						class="fas fa-caret-down" style="float: right;"></i>
 						<ul class="child">
@@ -92,7 +90,9 @@
 							</button>
 						</c:if>
 
-						<a href="#"><i class="fas fa-cog fa-lg" style="color: blueviolet;"></i></a>
+
+						<a href="#"><i class="fas fa-cog fa-lg"
+							style="color: blueviolet;"></i></a>
 					</div>
 				</div>
 
