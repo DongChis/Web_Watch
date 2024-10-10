@@ -23,6 +23,14 @@
 					Sách sản phẩm</a>
 				<jsp:include page="AddNewProduct.jsp" />
 			</c:when>
+			<c:when test="${not empty edit}">
+				<h1
+					style="background-color: blueviolet; border-radius: 8px; color: white; padding: 10px; margin: 10px 0px 0px 0px;">Chỉnh sửa
+					sản phẩm</h1>
+				<a href="productListAdmin" class="button" style="margin-left: 5px;">
+					Danh sách sản phẩm</a>
+				<jsp:include page="EditProduct.jsp" />
+			</c:when>
 			<c:otherwise>
 				<h1
 					style="background-color: blueviolet; border-radius: 8px; color: white; padding: 10px; margin: 10px 0px 0px 0px;">
@@ -40,8 +48,10 @@
 					<thead>
 						<tr>
 							<th>ID</th>
+							<th>Ảnh sản phẩm</th>
 							<th>Tên sản phẩm</th>
 							<th>Giá</th>
+							<th>Tiêu đề</th>
 							<th>Mô tả</th>
 							<th>Hành động</th>
 						</tr>
@@ -50,11 +60,13 @@
 						<c:forEach var="product" items="${productListAdmin}">
 							<tr>
 								<td>${product.productID}</td>
+								<td><img src="${product.imageURL}" style="width: 70px; height: auto;"></td>
 								<td>${product.name}</td>
 								<td>${product.price}VNĐ</td>
 								<td>${product.title}</td>
-								<td><a href="editProduct.html?id=1" class="button">Sửa</a>
-									<button class="button" onclick="deleteProduct(1)">Xóa</button></td>
+								<td>${product.description}</td>
+								<td><a href="loadP?pid=${product.productID}" class="button">Sửa</a>
+									<button class="button"  onclick="deleteProduct(${product.productID})">Xóa</button></td>
 							</tr>
 						</c:forEach>
 						<!-- Add more products as needed -->
@@ -64,12 +76,27 @@
 		</c:choose>
 	</div>
 	<script>
-		function deleteProduct(productId) {
-			if (confirm("Bạn có chắc chắn muốn xóa sản phẩm này?")) {
-				// Add logic to delete the product, e.g., sending a request to the server.
-				alert("Sản phẩm với ID " + productId + " đã được xóa.");
-			}
-		}
+	 function deleteProduct(productId) {
+	        console.log("Product ID to delete js:", productId); // Debug log
+	        if (!productId) {
+	            alert("Product ID is required."); // Hiển thị thông báo nếu không có ID
+	            return; // Dừng hàm nếu không có ID
+	        }
+	        if (confirm("Bạn có chắc chắn muốn xóa sản phẩm này?")) {
+	            // Gọi đến servlet để xóa sản phẩm
+	       
+	            window.location.href = `deleteProduct?pid=`+productId;
+	            alert("Đã xóa thành công!");
+	            
+	           
+	        }
+	    }
+
+	    // Đảm bảo DOM đã được tải trước khi thêm sự kiện
+	    document.addEventListener("DOMContentLoaded", function() {
+	        // Không cần thêm gì ở đây nếu không có mã JavaScript khác
+	    });
+
 	</script>
 </body>
 </html>
