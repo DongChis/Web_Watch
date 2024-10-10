@@ -325,12 +325,8 @@ public class DAO {
 	public void deleteProduct(String pid, String username) {
 	    String selectQuery = "SELECT ProductID, [Name] FROM Products WHERE ProductID = ?";
 	    String deleteQuery = "DELETE FROM Products WHERE ProductID = ?";
-<<<<<<< HEAD
-	    //String deleteRecentDeletedQuery = "DELETE FROM recent_deleted_products WHERE product_id = ?";
-	    String insertDeletedQuery = "INSERT INTO recent_deleted_products (product_id, product_name, deleted_by, deleted_at) VALUES (?, ?, ?, ?)";
-=======
 	    String insertDeletedQuery = "INSERT INTO Deleted_products (product_id, product_name, deleted_by, deleted_at) VALUES (?, ?, ?, ?)";
->>>>>>> 1f33197fc2da5113bc4a440167b2e99aa83622c5
+
 
 	    try {
 	        conn = new DBContext().getConnection();
@@ -345,15 +341,6 @@ public class DAO {
 	           
 	            String productName = rs.getString("Name");
 
-<<<<<<< HEAD
-	            // Xóa các bản ghi trong bảng recent_deleted_products có liên quan đến sản phẩm
-//	            ps = conn.prepareStatement(deleteRecentDeletedQuery);
-//	            ps.setInt(1, productId);
-//	            ps.executeUpdate(); // Xóa tất cả các bản ghi liên quan đến productId
-	            
-	            // Chèn vào bảng recent_deleted_products
-=======
->>>>>>> 1f33197fc2da5113bc4a440167b2e99aa83622c5
 	            String deletedBy = username;
 	            java.sql.Timestamp deletedAt = new java.sql.Timestamp(System.currentTimeMillis());
 	            
@@ -458,7 +445,7 @@ public class DAO {
 		}
 		return null;
 	}
-
+//a
 	public static void main(String[] args) throws Exception {
 		DAO d = new DAO();
 
