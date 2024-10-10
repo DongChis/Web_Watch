@@ -31,6 +31,16 @@ body {
 	font-family: 'Courier New', Courier, monospace;
 
 }
+h5 {
+	font-family: Serif;
+	display: flex;
+	color: white;
+	font-size: 30px;
+	font-weight: bold;
+	justify-content: center;
+	margin: 10px;
+	
+}
 
 .body-element {
     width: 100%;

@@ -23,23 +23,42 @@
 					Sách sản phẩm</a>
 				<jsp:include page="AddNewProduct.jsp" />
 			</c:when>
+
 			<c:when test="${not empty edit}">
 				<h1
-					style="background-color: blueviolet; border-radius: 8px; color: white; padding: 10px; margin: 10px 0px 0px 0px;">Chỉnh sửa
-					sản phẩm</h1>
+					style="background-color: blueviolet; border-radius: 8px; color: white; padding: 10px; margin: 10px 0px 0px 0px;">Chỉnh
+					sửa sản phẩm</h1>
 				<a href="productListAdmin" class="button" style="margin-left: 5px;">
 					Danh sách sản phẩm</a>
 				<jsp:include page="EditProduct.jsp" />
+			</c:when>
+
+			<c:when test="${not empty recentlyDelete}">
+				
+				
+				<h1
+					style="background-color: blueviolet; border-radius: 8px; color: white; padding: 10px; margin: 10px 0px 0px 0px;">
+					Danh sách sản phẩm đã xóa gần đây</h1>
+					
+					<a href="productListAdmin" class="button" style="margin-left: 5px;">
+					Danh sách sản phẩm</a>
+				<jsp:include page="RecentlyDelete.jsp" />
 			</c:when>
 			<c:otherwise>
 				<h1
 					style="background-color: blueviolet; border-radius: 8px; color: white; padding: 10px; margin: 10px 0px 0px 0px;">
 					Danh sách sản phẩm</h1>
 				<div class="button-container">
-					<a href="addNewProduct" class="button">Thêm sản phẩm</a>
+					<a href="addNewProduct" class="button"><i
+						class="fas fa-plus-circle" style="margin-right: 10px;"></i>Thêm
+						sản phẩm</a> <a href="recentlyDelete" class="button"> <i
+						class="fas fa-trash-alt" style="margin-right: 10px;"></i>Đã xóa
+						gần đây
+					</a>
 					<div class="search-container">
-						<input type="text" placeholder="Tìm kiếm sản phẩm..." class="search-input">
-						<a href="#" class="button"><i class="fas fa-search"></i></a>
+						<input type="text" placeholder="Tìm kiếm sản phẩm..."
+							class="search-input"> <a href="#" class="button"><i
+							class="fas fa-search"></i></a>
 					</div>
 				</div>
 
@@ -60,13 +79,22 @@
 						<c:forEach var="product" items="${productListAdmin}">
 							<tr>
 								<td>${product.productID}</td>
-								<td><img src="${product.imageURL}" style="width: 70px; height: auto;"></td>
+								<td><img src="${product.imageURL}"
+									style="width: 70px; height: auto;"></td>
 								<td>${product.name}</td>
 								<td>${product.price}VNĐ</td>
 								<td>${product.title}</td>
 								<td>${product.description}</td>
 								<td><a href="loadP?pid=${product.productID}" class="button">Sửa</a>
-									<button class="button"  onclick="deleteProduct(${product.productID})">Xóa</button></td>
+									<c:if test="${not empty sessionScope.accSession}">
+										<!-- Nếu người dùng đã đăng nhập -->
+										<button class="button"
+											onclick="deleteProduct(${product.productID})">Xóa</button>
+									</c:if> <c:if test="${empty sessionScope.accSession}">
+										<!-- Nếu người dùng chưa đăng nhập -->
+										<button class="button"
+											onclick="window.location.href='login'">Xóa</button>
+									</c:if>
 							</tr>
 						</c:forEach>
 						<!-- Add more products as needed -->

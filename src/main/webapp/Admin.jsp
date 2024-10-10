@@ -20,42 +20,47 @@
 		</div>
 		<div class="body-element">
 			<div class="left-element">
+			<h5><i class="fas fa-tools" style="margin-right: 10px;"></i>Dashboard</h5>
 				<ul class="parent">
-					<li><i class="fas fa-home"></i><a class="li-child"
-						href="admin"> Home</a></li>
+					<a class="li-child" href="admin"><li><i
+							class="fas fa-home"></i> Home</li> </a>
 
-					<li><i class="fas fa-truck"></i> <a class="li-child"
-						id="productListAdminLink" href="productListAdmin"> Sản phẩm</a></li>
-					<li><i class="fas fa-file-invoice"></i> Đơn hàng <i
-						class="fas fa-caret-down" style="float: right;"></i>
-						<ul class="child">
-							<li>Danh sách đơn hàng</li>
+					<a class="li-child" id="productListAdminLink"
+						href="productListAdmin">
+						<li><i class="fas fa-truck"></i> Sản phẩm</li>
+					</a>
 
-							<li>Lịch sử đơn hàng</li>
-						</ul></li>
-					<li><i class="fa fa-users"></i> Khách hàng <i
-						class="fas fa-caret-down" style="float: right;"></i>
-						<ul class="child">
-							<li>Danh sách khách hàng</li>
-							<li>Chỉnh sửa thông tin</li>
+					<li><a class="li-child" href="#"><i
+							class="fas fa-file-invoice"></i> Đơn hàng </a></li>
 
-						</ul></li>
-					<li><i class="fas fa-user-circle"></i> Tài khoản <i
-						class="fas fa-caret-down" style="float: right;"></i>
-						<ul class="child">
-							<li>Danh sách tài khoản</li>
-							<li>Lịch sử đăng nhập</li>
-						</ul></li>
-					<li><i class="fas fa-trash"></i> Đã xóa gần đây <i
+					<a class="li-child" href="#">
+						<li><i class="fa fa-users"></i> Khách hàng</li>
+					</a>
+
+					<a class="li-child" href="#">
+						<li><i class="fas fa-user-circle"></i> Tài khoản</li>
+					</a>
+					
+					<li><i class="fas fa-file"></i> Log File <i
 						class="fas fa-caret-down" style="float: right;"></i>
 						<ul class="child">
 							<li>Sản phẩm</li>
 							<li>Đơn hàng</li>
 							<li>Tài khoản</li>
+							<li>Khách hàng</li>
 						</ul></li>
+					
+					<a class="li-child" href="#">
 					<li><i class="fas fa-store"></i> Cửa hàng</li>
+					</a>
+					
+					<a class="li-child" href="#">
 					<li><i class="fas fa-hashtag"></i> App</li>
+					</a>
+					
+					<a class="li-child" href="#">
 					<li><i class="fas fa-tools"></i> Tùy chỉnh</li>
+					</a>
 				</ul>
 			</div>
 
