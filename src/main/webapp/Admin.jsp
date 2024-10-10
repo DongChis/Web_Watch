@@ -1,7 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-	<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -20,49 +20,47 @@
 		</div>
 		<div class="body-element">
 			<div class="left-element">
+			<h5><i class="fas fa-tools" style="margin-right: 10px;"></i>Dashboard</h5>
 				<ul class="parent">
-					<li><i class="fas fa-home"></i><a class="li-child" 
-								href="admin"> Home</a></li>
+					<a class="li-child" href="admin"><li><i
+							class="fas fa-home"></i> Home</li> </a>
 
-					<li><i class="fas fa-truck"></i> Sản phẩm <i
-						class="fas fa-caret-down" style="float: right;"></i>
-						<ul class="child">
-							<li><a class="li-child">Danh sách sản phẩm</a></li>
-							<li><a class="li-child" id="addProductLink"
-								href="addNewProduct">Thêm sản phẩm mới</a></li>
+					<a class="li-child" id="productListAdminLink"
+						href="productListAdmin">
+						<li><i class="fas fa-truck"></i> Sản phẩm</li>
+					</a>
 
+					<li><a class="li-child" href="#"><i
+							class="fas fa-file-invoice"></i> Đơn hàng </a></li>
 
-						</ul></li>
-					<li><i class="fas fa-file-invoice"></i> Đơn hàng <i
-						class="fas fa-caret-down" style="float: right;"></i>
-						<ul class="child">
-							<li>Danh sách đơn hàng</li>
+					<a class="li-child" href="#">
+						<li><i class="fa fa-users"></i> Khách hàng</li>
+					</a>
 
-							<li>Lịch sử đơn hàng</li>
-						</ul></li>
-					<li><i class="fa fa-users"></i> Khách hàng <i
-						class="fas fa-caret-down" style="float: right;"></i>
-						<ul class="child">
-							<li>Danh sách khách hàng</li>
-							<li>Chỉnh sửa thông tin</li>
-
-						</ul></li>
-					<li><i class="fas fa-user-circle"></i> Tài khoản <i
-						class="fas fa-caret-down" style="float: right;"></i>
-						<ul class="child">
-							<li>Danh sách tài khoản</li>
-							<li>Lịch sử đăng nhập</li>
-						</ul></li>
-					<li><i class="fas fa-trash"></i> Đã xóa gần đây <i
+					<a class="li-child" href="#">
+						<li><i class="fas fa-user-circle"></i> Tài khoản</li>
+					</a>
+					
+					<li><i class="fas fa-file"></i> Log File <i
 						class="fas fa-caret-down" style="float: right;"></i>
 						<ul class="child">
 							<li>Sản phẩm</li>
 							<li>Đơn hàng</li>
 							<li>Tài khoản</li>
+							<li>Khách hàng</li>
 						</ul></li>
+					
+					<a class="li-child" href="#">
 					<li><i class="fas fa-store"></i> Cửa hàng</li>
+					</a>
+					
+					<a class="li-child" href="#">
 					<li><i class="fas fa-hashtag"></i> App</li>
+					</a>
+					
+					<a class="li-child" href="#">
 					<li><i class="fas fa-tools"></i> Tùy chỉnh</li>
+					</a>
 				</ul>
 			</div>
 
@@ -97,84 +95,69 @@
 							</button>
 						</c:if>
 
-						<a href="#"><i class="fas fa-cog fa-lg"></i></a>
+
+						<a href="#"><i class="fas fa-cog fa-lg"
+							style="color: blueviolet;"></i></a>
 					</div>
 				</div>
 
 				<div class="main-element-body">
-					<div class="statistical-info">
-						<div class="box">
-							<div class="statistical-info-icon" style="color: green;">
-								<i class="fas fa-dollar-sign"></i>
-							</div>
-							<div class="statistical-text" style="color: green;">
-								Doanh thu<span>10,352,550</span>
-							</div>
-						</div>
-						<div class="box">
-							<div class="statistical-info-icon" style="color: hotpink;">
-								<i class="fas fa-money-bill"></i>
-							</div>
-							<div class="statistical-text" style="color: hotpink;">
-								Chi phí<span>3,752,350</span>
-							</div>
-						</div>
-						<div class="box">
-							<div class="statistical-info-icon" style="color: blueviolet;">
-								<i class="far fa-smile"></i></i>
-							</div>
-							<div class="statistical-text" style="color: grebluevioleten;">
-								Đánh giá<span>2,232</span>
-							</div>
-						</div>
-						<div class="box">
-							<div class="statistical-info-icon" style="color: lightskyblue;">
-								<i class="fas fa-store "></i>
-							</div>
-							<div class="statistical-text" style="color: lightskyblue;">
-								Cửa hàng<span>65</span>
-							</div>
-						</div>
-					</div>
-					<div class="date-info">
-						<div class="time-control">
-							<div class="nav-item active" onclick="setActive(this)">Ngày</div>
-							<div class="nav-item" onclick="setActive(this)">Tuần</div>
-							<div class="nav-item" onclick="setActive(this)">Tháng</div>
-							<div class="nav-item" onclick="setActive(this)">Năm</div>
-						</div>
 
-						<div class="filter-bar">
-							<div class="filter-item">
-								<input type="date" id="dateInput" class="date-input">
-							</div>
-						</div>
-					</div>
 
 					<c:choose>
-						<c:when
-							test="${not empty addNewProduct}">
-							<!-- Hiển thị form thêm sản phẩm -->
-							<form action="addNewProduct" method="post"
-								class="form-add-product">
-								<label for="productName">Tên sản phẩm:</label> <input
-									type="text" id="productName" name="productName" required>
-
-								<label for="productPrice">Giá sản phẩm:</label> <input
-									type="number" id="productPrice" name="productPrice" required>
-
-								<label for="productDescription">Mô tả sản phẩm:</label>
-								<textarea id="productDescription" name="productDescription"
-									required></textarea>
-
-								<label for="productImage">Ảnh sản phẩm:</label> <input
-									type="file" id="productImage" name="productImage"
-									accept="image/*" required>
-
-								<button type="submit">Thêm sản phẩm</button>
-							</form>
+						<c:when test="${not empty productListAdmin}">
+							<jsp:include page="ProductListAdmin.jsp" />
 						</c:when>
+
 						<c:otherwise>
+							<div class="statistical-info">
+								<div class="box">
+									<div class="statistical-info-icon" style="color: green;">
+										<i class="fas fa-dollar-sign"></i>
+									</div>
+									<div class="statistical-text" style="color: green;">
+										Doanh thu<span>10,352,550</span>
+									</div>
+								</div>
+								<div class="box">
+									<div class="statistical-info-icon" style="color: hotpink;">
+										<i class="fas fa-money-bill"></i>
+									</div>
+									<div class="statistical-text" style="color: hotpink;">
+										Chi phí<span>3,752,350</span>
+									</div>
+								</div>
+								<div class="box">
+									<div class="statistical-info-icon" style="color: blueviolet;">
+										<i class="far fa-smile"></i></i>
+									</div>
+									<div class="statistical-text" style="color: grebluevioleten;">
+										Đánh giá<span>2,232</span>
+									</div>
+								</div>
+								<div class="box">
+									<div class="statistical-info-icon" style="color: lightskyblue;">
+										<i class="fas fa-store "></i>
+									</div>
+									<div class="statistical-text" style="color: lightskyblue;">
+										Cửa hàng<span>65</span>
+									</div>
+								</div>
+							</div>
+							<div class="date-info">
+								<div class="time-control">
+									<div class="nav-item active" onclick="setActive(this)">Ngày</div>
+									<div class="nav-item" onclick="setActive(this)">Tuần</div>
+									<div class="nav-item" onclick="setActive(this)">Tháng</div>
+									<div class="nav-item" onclick="setActive(this)">Năm</div>
+								</div>
+
+								<div class="filter-bar">
+									<div class="filter-item">
+										<input type="date" id="dateInput" class="date-input">
+									</div>
+								</div>
+							</div>
 							<div class="data-table">
 								<div class="box-data">
 									<div class="customer-info">
@@ -242,6 +225,6 @@
 
 	<script src="js/admin.js"></script>
 	<script src="js/login.js"></script>
-	
+
 </body>
 </html>

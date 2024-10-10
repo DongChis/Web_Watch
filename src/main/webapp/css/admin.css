@@ -8,10 +8,14 @@ body {
 }
 
 .top-element {
-	display: flex;
-	background-color: rgb(192, 192, 192);
-	height: 50px;
+    display: flex;
+    background-color: rgb(192, 192, 192);
+    height: 50px;
+    position: sticky;
+    top: 0; /* Đảm bảo nó dính vào phía trên */
+    z-index: 1000; /* Đảm bảo nó nằm trên các phần tử khác khi cuộn */
 }
+
 
 .logo {
 	display: flex;
@@ -27,20 +31,35 @@ body {
 	font-family: 'Courier New', Courier, monospace;
 
 }
-
-.body-element {
-	width: 100%;
+h5 {
+	font-family: Serif;
 	display: flex;
-
+	color: white;
+	font-size: 30px;
+	font-weight: bold;
+	justify-content: center;
+	margin: 10px;
+	
 }
 
+.body-element {
+    width: 100%;
+    display: flex;
+    overflow: visible; /* Đảm bảo phần tử cha không chặn hiển thị của sticky */
+}
+
+
 .left-element {
-	width: 20%;
-	padding: 15px;
-	margin: 20px;
-	background-color: blueviolet;
-	border-radius: 20px;
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    width: 20%;
+    padding: 15px;
+    margin: 20px;
+    background-color: blueviolet;
+    border-radius: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    position: sticky;
+    top: 70px;
+    height: 600px; /* Chiều cao cố định */
+    overflow-y: auto; /* Nếu nội dung vượt quá chiều cao */
 }
 
 ul {
@@ -52,7 +71,7 @@ ul {
 }
 
 li {
-	margin: 8px 0;
+	margin: 18px 0;
 	padding: 10px;
 	color: white;
 	cursor: pointer;
@@ -72,10 +91,10 @@ li {
 
 
 .main-element {
-	width: 80%;
-	padding: 20px;
-
+    width: 75%; /* Điều chỉnh lại chiều rộng */
+    padding: 20px;
 }
+
 
 .main-element-top {
 	display: flex;
@@ -119,7 +138,7 @@ li {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	background-color: #00008b;
+	background-color: blueviolet;
 	border: none;
 	border-radius: 50px;
 	cursor: pointer;
@@ -253,17 +272,15 @@ li {
 }
 
 .customer-info {
-	display: flex;
-	flex-direction: column;
-	width: 270px;
-	
+    display: flex;
+    flex-direction: column;
+    width: 270px;
 }
 
 .customer-info span {
-	color: black;
-	font-weight: bold;
-	font-size: 17px;
-	margin-top: 5px;
-	margin-right: 100px;
-	/* Khoảng cách giữa "Khách hàng" và số */
+    color: black;
+    font-weight: bold;
+    font-size: 17px;
+    margin-top: 5px;
+    margin-right: 20px; /* Giảm giá trị margin-right để điều chỉnh */
 }

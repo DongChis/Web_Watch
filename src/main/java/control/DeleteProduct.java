@@ -10,17 +10,19 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import dao.DAO;
-import entity.Product;
 import entity.User;
 
-@WebServlet(urlPatterns = "/loadP")
-public class LoadControl extends HttpServlet {
+/**
+ * Servlet implementation class DeleteProduct
+ */
+@WebServlet(urlPatterns = { "/deleteProduct" })
+public class DeleteProduct extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
-	public LoadControl() {
+	public DeleteProduct() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
@@ -29,32 +31,32 @@ public class LoadControl extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
 	 *      response)
 	 */
-
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		response.setContentType("text/html;charset=UTF-8");
 
-		request.setAttribute("edit", true);
+		HttpSession session = request.getSession(false);
+		String pid = request.getParameter("pid");
 
-		HttpSession session = request.getSession();
 		User user = (User) session.getAttribute("accSession");
 
-		if (user != null) {
-			String id = request.getParameter("pid");
-			Product p = DAO.getInstance().getProductByID(id);
-			request.setAttribute("product", p);
+		System.out.println("Product ID to delete: " + pid); // Ghi log PID
+		System.out.println("User deleting product: " + user.getUsername());
+		System.out.println("Product ID to delete: " + pid); // Ghi log PID
 
-			if (id != null) {
-				request.getRequestDispatcher("edit").forward(request, response);
-			}
-		} else {
-			response.sendRedirect("login");
-		}
+		DAO.getInstance().deleteProduct(pid, user.getUsername());
+
+		request.getRequestDispatcher("productListAdmin").forward(request, response);
 
 	}
 
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+	 *      response)
+	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		// TODO Auto-generated method stub
 		doGet(request, response);
 	}
 

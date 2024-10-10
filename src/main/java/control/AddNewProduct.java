@@ -8,50 +8,53 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import dao.DAO;
+import entity.User;
+
 /**
  * Servlet implementation class AddNewProduct
  */
-@WebServlet(urlPatterns = {"/addNewProduct"})
+@WebServlet(urlPatterns = { "/addNewProduct" })
 public class AddNewProduct extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-       
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public AddNewProduct() {
-        super();
-    }
 
 	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 * @see HttpServlet#HttpServlet()
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		 request.setAttribute("addNewProduct", true);
-		request.getRequestDispatcher("Admin.jsp").forward(request, response);
+	public AddNewProduct() {
+		super();
 	}
 
 	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+	 *      response)
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		request.setAttribute("addNewProduct", true);
+		request.getRequestDispatcher("productListAdmin").forward(request, response);
 
+	}
+
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+	 *      response)
+	 */
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		// Retrieve parameters from the request
+		String title = request.getParameter("title"); // Updated to title
 		String productName = request.getParameter("productName");
-		String productPrice = request.getParameter("productPrice");
+		String productPriceStr = request.getParameter("productPrice");
 		String productDescription = request.getParameter("productDescription");
-	
-		if (productName == null || productName.isEmpty() ||
-		    productPrice == null || productPrice.isEmpty()) {
-		
-			request.setAttribute("errorMessage", "Vui lòng nhập đầy đủ thông tin sản phẩm.");
-			request.getRequestDispatcher("Admin.jsp").forward(request, response);
-			return;
-		}
+		String imageUrl = request.getParameter("productImage"); // Assuming you have an image URL parameter
 
-	
 		HttpSession session = request.getSession();
-		session.setAttribute("successMessage", "Sản phẩm mới đã được thêm thành công!");
+		User acc = (User) session.getAttribute("accSession");
+		String gender = acc.getRole();
 
-		//response.sendRedirect("Admin.jsp");
+		DAO.getInstance().insertProduct(title, productName, productDescription, productPriceStr, imageUrl, gender);
+		request.getRequestDispatcher("productListAdmin").forward(request, response);
 	}
 
 }
