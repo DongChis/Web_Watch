@@ -20,7 +20,8 @@
 			</tr>
 		</thead>
 		<tbody>
-			<c:forEach var="delproduct" items="${listDeletedProduct}">
+				<c:forEach var="delproduct" items="${listDeletedProduct}">
+
 				<tr>
 					<td>${delproduct.productId}</td>
 					<td>${delproduct.productName}</td>
@@ -36,6 +37,9 @@
 		<button class="clear-button" onclick="clearDeletedProducts()">Xóa
 			tất cả sản phẩm đã xóa gần đây</button>
 	</table>
+
+		
+		
 
 	<script>
 		function restoreProduct(productName) {

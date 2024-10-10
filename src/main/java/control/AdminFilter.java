@@ -13,7 +13,11 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 
+<<<<<<< HEAD
 @WebFilter(urlPatterns = {"/admin/*","/Admin.jsp/*"}) 
+=======
+@WebFilter(urlPatterns = {"/admin/*" ,"/Admin.jsp/*" }) 
+>>>>>>> 1f33197fc2da5113bc4a440167b2e99aa83622c5
 public class AdminFilter implements Filter  {
 	
 	@Override
