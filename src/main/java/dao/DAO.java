@@ -327,6 +327,7 @@ public class DAO {
 	    String deleteQuery = "DELETE FROM Products WHERE ProductID = ?";
 	    String insertDeletedQuery = "INSERT INTO Deleted_products (product_id, product_name, deleted_by, deleted_at) VALUES (?, ?, ?, ?)";
 
+
 	    try {
 	        conn = new DBContext().getConnection();
 	        conn.setAutoCommit(false); // Bắt đầu giao dịch
@@ -444,7 +445,7 @@ public class DAO {
 		}
 		return null;
 	}
-
+//a
 	public static void main(String[] args) throws Exception {
 		DAO d = new DAO();
 
