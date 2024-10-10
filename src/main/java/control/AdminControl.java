@@ -9,14 +9,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-@WebServlet(urlPatterns = { "/admin" })
+@WebServlet(urlPatterns = {"/admin"})
 public class AdminControl extends HttpServlet {
-    private static final long serialVersionUID = 1L;
 
-    public AdminControl() {
-        super();
-    }
 
+  
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
     	response.setContentType("text/html;charset=UTF-8");
