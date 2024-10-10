@@ -38,6 +38,7 @@ public class RencentlyDelete extends HttpServlet {
 
 		List<DeletedProduct> listDeletedProduct = DAO.getInstance().getRecentlyDeletedProducts();
 		
+		
 		request.setAttribute("listDeletedProduct", listDeletedProduct);
 		
 		request.getRequestDispatcher("productListAdmin").forward(request, response);

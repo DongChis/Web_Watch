@@ -67,13 +67,7 @@ public class DAO {
 
 	public List<DeletedProduct> getRecentlyDeletedProducts() {
 		List<DeletedProduct> deletedProducts = new ArrayList<>();
-		String query = "SELECT product_id, product_name, deleted_by, deleted_at FROM recent_deleted_products ORDER BY deleted_at DESC"; // Sắp
-																																		// xếp
-																																		// theo
-																																		// thời
-																																		// gian
-																																		// xóa
-
+		String query = "SELECT product_id, product_name, deleted_by, deleted_at FROM Deleted_products ORDER BY deleted_at DESC"; // Sắp																																	// x
 		try {
 			conn = new DBContext().getConnection();
 			ps = conn.prepareStatement(query);
@@ -246,7 +240,7 @@ public class DAO {
 //	}
 
 	public void clearRecentDeletedProducts() {
-		String query = "DELETE FROM recent_deleted_products"; // Truy vấn để xóa tất cả dữ liệu
+		String query = "DELETE FROM Deleted_products"; // Truy vấn để xóa tất cả dữ liệu
 
 		Connection conn = null;
 		PreparedStatement ps = null;
@@ -331,8 +325,7 @@ public class DAO {
 	public void deleteProduct(String pid, String username) {
 	    String selectQuery = "SELECT ProductID, [Name] FROM Products WHERE ProductID = ?";
 	    String deleteQuery = "DELETE FROM Products WHERE ProductID = ?";
-	    String deleteRecentDeletedQuery = "DELETE FROM recent_deleted_products WHERE product_id = ?";
-	    String insertDeletedQuery = "INSERT INTO recent_deleted_products (product_id, product_name, deleted_by, deleted_at) VALUES (?, ?, ?, ?)";
+	    String insertDeletedQuery = "INSERT INTO Deleted_products (product_id, product_name, deleted_by, deleted_at) VALUES (?, ?, ?, ?)";
 
 	    try {
 	        conn = new DBContext().getConnection();
@@ -344,19 +337,14 @@ public class DAO {
 	        ResultSet rs = ps.executeQuery();
 	        
 	        if (rs.next()) {
-	            int productId = rs.getInt("ProductID");
+	           
 	            String productName = rs.getString("Name");
 
-	            // Xóa các bản ghi trong bảng recent_deleted_products có liên quan đến sản phẩm
-	            ps = conn.prepareStatement(deleteRecentDeletedQuery);
-	            ps.setInt(1, productId);
-	            ps.executeUpdate(); // Xóa tất cả các bản ghi liên quan đến productId
-	            
-	            // Chèn vào bảng recent_deleted_products
 	            String deletedBy = username;
 	            java.sql.Timestamp deletedAt = new java.sql.Timestamp(System.currentTimeMillis());
+	            
 	            ps = conn.prepareStatement(insertDeletedQuery);
-	            ps.setInt(1, productId);
+	            ps.setString(1, pid);
 	            ps.setString(2, productName);
 	            ps.setString(3, deletedBy);
 	            ps.setTimestamp(4, deletedAt);

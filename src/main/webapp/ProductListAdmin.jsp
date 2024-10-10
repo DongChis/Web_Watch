@@ -34,8 +34,7 @@
 			</c:when>
 
 			<c:when test="${not empty recentlyDelete}">
-				
-				
+							
 				<h1
 					style="background-color: blueviolet; border-radius: 8px; color: white; padding: 10px; margin: 10px 0px 0px 0px;">
 					Danh sách sản phẩm đã xóa gần đây</h1>
