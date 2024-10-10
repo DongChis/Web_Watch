@@ -24,7 +24,7 @@ public class AdminControl extends HttpServlet {
 		HttpSession session = request.getSession();
 
 	
-			request.getRequestDispatcher("Admin.jsp").forward(request, response);
+		request.getRequestDispatcher("Admin.jsp").forward(request, response);
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
