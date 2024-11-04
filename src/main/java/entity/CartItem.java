@@ -1,31 +1,49 @@
 package entity;
 
 public class CartItem {
-    private Product product;
-    private int quantity;
+	private Product product;
+	private int quantity;
+	private double price;
 
-    public CartItem(Product product, int quantity) {
-        this.product = product;
-        this.quantity = quantity;
-    }
+	public double getPrice() {
+		return price;
+	}
 
-    public Product getProduct() {
-        return product;
-    }
+	public void setPrice(double price) {
+		this.price = price;
+	}
 
-    public void setProduct(Product product) {
-        this.product = product;
-    }
+	public CartItem(Product product, int quantity) {
+		this.product = product;
+		this.quantity = quantity;
+		
+	}
 
-    public int getQuantity() {
-        return quantity;
-    }
+	public Product getProduct() {
+		return product;
+	}
 
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
+	public void setProduct(Product product) {
+		this.product = product;
+	}
 
-    public double getTotalPrice() {
-        return product.getPrice() * quantity;
-    }
+	public int getQuantity() {
+		return quantity;
+	}
+
+	public void setQuantity(int quantity) {
+		this.quantity = quantity;
+	}
+	
+
+	@Override
+	public String toString() {
+		return "CartItem [product=" + product + ", quantity=" + quantity + "]";
+	}
+
+	
+	public double getTotalPrice() {
+		return Double.parseDouble(product.getPrice()) * quantity;
+	}
+
 }
