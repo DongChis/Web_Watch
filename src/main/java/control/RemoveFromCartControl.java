@@ -43,7 +43,6 @@ public class RemoveFromCartControl extends HttpServlet {
 	            cart.removeIf(item -> item.getProduct().getProductID() == productId);
 	            session.setAttribute("cart", cart);
 	        }
-
 	        response.setStatus(HttpServletResponse.SC_OK);
 	        response.sendRedirect(request.getContextPath() + "/Cart.jsp");
 	    }

@@ -7,11 +7,22 @@ public class Product {
     private String title;
     private String name;
     private String description;
-    private double price;
+    private String price;
     private String imageURL;
     private String gender;
+    private int quantityP;
 
-    public Product(int productID, String title, String name, String description, double price, String imageURL, String gender) {
+    public int getQuantityP() {
+		return quantityP;
+	}
+
+
+	public void setQuantityP(int quantityP) {
+		this.quantityP = quantityP;
+	}
+
+
+	public Product(int productID, String title, String name, String description, String price, String imageURL, String gender) {
         this.productID = productID;
         this.title = title;
         this.name = name;
@@ -54,11 +65,11 @@ public class Product {
         this.description = description;
     }
 
-    public double getPrice() {
+    public String getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(String price) {
         this.price = price;
     }
 

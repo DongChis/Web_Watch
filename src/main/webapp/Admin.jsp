@@ -30,8 +30,13 @@
 						<li><i class="fas fa-truck"></i> Sản phẩm</li>
 					</a>
 
-					<li><a class="li-child" href="#"><i
-							class="fas fa-file-invoice"></i> Đơn hàng </a></li>
+					<a class="li-child" id="orderByAdminLink"
+						href="orderListAdmin">
+						<li><i
+							class="fas fa-file-invoice"></i> Đơn hàng</li>
+					</a>
+							
+							
 
 					<a class="li-child" href="#">
 						<li><i class="fa fa-users"></i> Khách hàng</li>
@@ -108,7 +113,10 @@
 						<c:when test="${not empty productListAdmin}">
 							<jsp:include page="ProductListAdmin.jsp" />
 						</c:when>
-
+						<c:when test="${not empty orderListAdmin}">
+							<jsp:include page="OrderListAdmin.jsp" />
+						</c:when>
+						
 						<c:otherwise>
 							<div class="statistical-info">
 								<div class="box">
