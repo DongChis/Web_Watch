@@ -8,8 +8,9 @@ function showSlides() {
         slideIndex = 0;
     }
     slides.style.transform = `translateX(-${slideIndex * 100}%)`;
-    setTimeout(showSlides, 3000); // Thay đổi slide mỗi 3 giây
+    setTimeout(showSlides, 3000);
 }
 
 // Khởi động slideshow
 showSlides();
+
