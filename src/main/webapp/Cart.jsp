@@ -57,7 +57,7 @@
                         ${totalPrice} VND
                     </span>
                 </div>
-                <button class="checkout-btn">Thanh toán</button>
+                <button class="checkout-btn" onclick="location.href='CheckOut.jsp';">Thanh toán</button>
             </div>
         </div>
     </div>

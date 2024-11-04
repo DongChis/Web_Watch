@@ -28,7 +28,7 @@
 					<td>${delproduct.deletedAt}</td>
 					<td>${delproduct.deletedBy}</td>
 					<td><button class="restore-button"
-							onclick="restoreProduct('Sản phẩm 1')">Khôi phục</button></td>
+							onclick="RestoreProduct(${delproduct.productId})">Khôi phục</button></td>
 				</tr>
 			</c:forEach>
 		</tbody>
@@ -42,9 +42,9 @@
 		
 
 	<script>
-		function restoreProduct(productName) {
-			alert("Đã khôi phục: " + productName);
-			// Thêm logic để xử lý yêu cầu khôi phục sản phẩm tại đây
+		function RestoreProduct(productId) {
+			alert("Đã khôi phục: " + productId);
+			 window.location.href = `restore?pid=`+productId;
 		}
 		function clearDeletedProducts() {
 			// Xác nhận hành động xóa

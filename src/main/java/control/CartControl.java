@@ -21,7 +21,12 @@ import entity.User;
 public class CartControl extends HttpServlet {
 	
 	
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     	
 		//response.sendRedirect("Cart.jsp");
     	request.getRequestDispatcher("Cart.jsp").forward(request, response);
@@ -30,7 +35,7 @@ public class CartControl extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String productIdStr = request.getParameter("id");
         String quantityStr = request.getParameter("quantity");
-
+        //String priceStr = request.getParameter("price");
       
 
         HttpSession session = request.getSession();
@@ -41,6 +46,7 @@ public class CartControl extends HttpServlet {
         }
         int productId = Integer.parseInt(productIdStr);
         int quantity = Integer.parseInt(quantityStr);
+       // double price = Double.parseDouble(priceStr);
 
         Product product = DAO.getInstance().getProductByID(String.valueOf(productId));
        
