@@ -1,14 +1,11 @@
 package dao;
 
 import java.sql.Connection;
-import java.sql.Date;
-
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import context.DBContext;
@@ -65,6 +62,75 @@ public class DAO {
 			}
 		}
 		return products;
+	}
+	
+	public boolean updateOrder(Order updatedOrder, int orderID) throws Exception {
+	    String updateOrderQuery = "UPDATE Orders1 SET CustomerName = ?, CustomerEmail = ?, CustomerPhone = ?, CustomerAddress = ?, PaymentMethod = ?, OrderDate = ? WHERE OrderID = ?";
+	    String updateOrderItemQuery = "UPDATE OrderItems1 SET Quantity = ?, Price = ? WHERE OrderID = ?";
+
+	    boolean isUpdated = false;
+
+	    try (Connection conn = new DBContext().getConnection();
+	         PreparedStatement orderStmt = conn.prepareStatement(updateOrderQuery);
+	         PreparedStatement orderItemStmt = conn.prepareStatement(updateOrderItemQuery)) {
+
+	        conn.setAutoCommit(false); // Start transaction
+
+	        // Update order details
+	        orderStmt.setString(1, updatedOrder.getCustomerName());
+	        orderStmt.setString(2, updatedOrder.getCustomerEmail());
+	        orderStmt.setString(3, updatedOrder.getCustomerPhone());
+	        orderStmt.setString(4, updatedOrder.getCustomerAddress());
+	        orderStmt.setString(5, updatedOrder.getPaymentMethod());
+	        orderStmt.setTimestamp(6, new Timestamp(updatedOrder.getOrderDate().getTime()));
+	        orderStmt.setInt(7, orderID);
+
+	        int orderRowsUpdated = orderStmt.executeUpdate();
+
+	        // Update each order item
+	        for (CartItem item : updatedOrder.getCartItems()) {
+	            orderItemStmt.setInt(1, item.getQuantity());
+	            orderItemStmt.setDouble(2, item.getPrice());
+	            orderItemStmt.setInt(3, orderID); // Ensure using OrderItemID
+
+	            orderItemStmt.addBatch();
+	        }
+
+	        int[] orderItemsRowsUpdated = orderItemStmt.executeBatch();
+
+	        // Commit transaction if all updates were successful
+	        isUpdated = orderRowsUpdated > 0 && orderItemsRowsUpdated.length == updatedOrder.getCartItems().size();
+	        conn.commit();
+
+	    } catch (SQLException e) {
+	        System.err.println("SQL error occurred: " + e.getMessage());
+	        e.printStackTrace();
+	    }
+
+	    return isUpdated;
+	}
+	
+	public void deleteOrder(String orderID, String username) throws Exception {
+	    String deleteQuery = "DELETE FROM Orders1 WHERE OrderID = ?";
+
+	    // Establish database connection
+	    try (Connection conn = new DBContext().getConnection();
+	         PreparedStatement stmt = conn.prepareStatement(deleteQuery)) {
+
+	        // Set the OrderID parameter
+	        stmt.setString(1, orderID);
+
+	        // Execute the DELETE query
+	        int rowsAffected = stmt.executeUpdate();
+
+	        if (rowsAffected > 0) {
+	            System.out.println("Order with ID " + orderID + " has been deleted successfully.");
+	        } else {
+	            System.out.println("No order found with ID " + orderID);
+	        }
+	    } catch (SQLException e) {
+	        System.err.println("SQL error occurred: " + e.getMessage());
+	    }
 	}
 	
 	public Order getOrderDetailByOrderID(int orderID) throws Exception {
@@ -811,3 +877,4 @@ public class DAO {
 
 	}
 }
+

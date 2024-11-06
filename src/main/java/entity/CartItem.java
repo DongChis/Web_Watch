@@ -14,10 +14,12 @@ public class CartItem {
 	}
 
 	public CartItem(Product product, int quantity) {
+		//this.orderIDItem = orderIDItem;
 		this.product = product;
 		this.quantity = quantity;
 		
 	}
+	//
 
 	public Product getProduct() {
 		return product;
@@ -38,7 +40,7 @@ public class CartItem {
 
 	@Override
 	public String toString() {
-		return "CartItem [product=" + product + ", quantity=" + quantity + "]";
+		return "CartItem [product=" + product + ", quantity=" + quantity + ", price =" + price +"]";
 	}
 
 	

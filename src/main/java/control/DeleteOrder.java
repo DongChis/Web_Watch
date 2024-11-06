@@ -2,28 +2,27 @@ package control;
 
 import java.io.IOException;
 
-
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import dao.DAO;
-import entity.Order;
-
+import entity.User;
 
 /**
- * Servlet implementation class OrderDetailControl
+ * Servlet implementation class DeleteOrder
  */
-@WebServlet(urlPatterns = {"/orderDetail"})
-public class OrderDetailControl extends HttpServlet {
+@WebServlet(urlPatterns = {"/deleteOrder"})
+public class DeleteOrder extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public OrderDetailControl() {
+    public DeleteOrder() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -33,24 +32,20 @@ public class OrderDetailControl extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html;charset=UTF-8");
-		request.setAttribute("orderDetail", true);
-		int orderID = Integer.parseInt(request.getParameter("orderID"));
-		 
-		Order od = null;
+
+		HttpSession session = request.getSession(false);
+		String orderID = request.getParameter("orderID");
+
+		User user = (User) session.getAttribute("accSession");
+
+		
 		try {
-			od = DAO.getInstance().getOrderDetailByOrderID(orderID);
+			DAO.getInstance().deleteOrder(orderID, user.getUsername());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
-		
-		
-		request.setAttribute("order", od);
-	//	request.setAttribute("orderDetail", od);
-	//	request.setAttribute("totalPrice", totalPrice);
-		
-		
 		request.getRequestDispatcher("orderListAdmin").forward(request, response);
 	}
 

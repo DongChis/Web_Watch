@@ -13,23 +13,15 @@
 </head>
 <body>
 	<div class="product-list-ad">
-
 		<c:choose>
-			<c:when test="${not empty addNewProduct}">
-				<h1
-					style="background-color: blueviolet; border-radius: 8px; color: white; padding: 10px; margin: 10px 0px 0px 0px;">Thêm
-					sản phẩm</h1>
-				<a href="productListAdmin" class="button" style="margin-left: 5px;">Danh
-					Sách sản phẩm</a>
-				<jsp:include page="AddNewProduct.jsp" />
-			</c:when>
-
 			<c:when test="${not empty orderDetail}">
 				<h1
 					style="background-color: blueviolet; border-radius: 8px; color: white; padding: 10px; margin: 10px 0px 0px 0px;">Chi
 					tiết đơn hàng</h1>
-				<a href="orderListAdmin" class="button" style="margin-left: 5px;">
-					Danh sách đơn hàng</a>
+				<div class="button-container">
+					<a href="orderListAdmin" class="button">Danh sách đơn hàng</a> <a
+						href="loadOrder?orderID=${order.orderID}" class="button" style="margin-right: 20px;">Edit</a>
+				</div>
 				<jsp:include page="OrderDetail.jsp" />
 			</c:when>
 
@@ -42,6 +34,14 @@
 				<a href="productListAdmin" class="button" style="margin-left: 5px;">
 					Danh sách sản phẩm</a>
 				<jsp:include page="RecentlyDelete.jsp" />
+			</c:when>
+			<c:when test="${not empty orderEdit}">
+			 <h1
+					style="background-color: blueviolet; border-radius: 8px; color: white; padding: 10px; margin: 10px 0px 0px 0px;">
+					Chỉnh sửa đơn hàng</h1> 
+				<!-- 	<a href="ordertListAdmin" class="button" style="margin-left: 5px;">
+					Danh sách đơn hàng</a> -->
+				<jsp:include page="EditOrder.jsp" />
 			</c:when>
 			<c:otherwise>
 				<h1
@@ -59,16 +59,16 @@
 					</div>
 				</div>
 
-
 				<table>
 					<thead>
 						<tr>
 							<th>ID</th>
 							<th>Khách hàng</th>
-							<th>Số lượng sản phẩm</th>
+							<th>Số lượng</th>
 							<th>Giá trị đơn hàng</th>
 							<th>Ngày đặt hàng</th>
 							<th>Thông tin đơn hàng</th>
+							<th>Hành động</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -85,7 +85,14 @@
 								<td>${order.orderDate}</td>
 								<td><a href="orderDetail?orderID=${order.orderID}">Xem
 										chi tiết</a></td>
-
+								<td><c:if test="${not empty sessionScope.accSession}">
+										<!-- Nếu người dùng đã đăng nhập -->
+										<button class="button"
+											onclick="deleteOrder(${order.orderID})">Xóa</button>
+									</c:if> <c:if test="${empty sessionScope.accSession}">
+										<!-- Nếu người dùng chưa đăng nhập -->
+										<button class="button" onclick="window.location.href='login'">Xóa</button>
+									</c:if>
 							</tr>
 						</c:forEach>
 						<!-- Add more products as needed -->
@@ -95,16 +102,16 @@
 		</c:choose>
 	</div>
 	<script>
-		function deleteProduct(productId) {
-			console.log("Product ID to delete js:", productId); // Debug log
-			if (!productId) {
-				alert("Product ID is required."); // Hiển thị thông báo nếu không có ID
+		function deleteOrder(orderID) {
+			console.log("orderID ID to delete js:", orderID); // Debug log
+			if (!orderID) {
+				alert("orderID ID is required."); // Hiển thị thông báo nếu không có ID
 				return; // Dừng hàm nếu không có ID
 			}
-			if (confirm("Bạn có chắc chắn muốn xóa sản phẩm này?")) {
+			if (confirm("Bạn có chắc chắn muốn xóa đơn hàng này?")) {
 				// Gọi đến servlet để xóa sản phẩm
 
-				window.location.href = `deleteProduct?pid=` + productId;
+				window.location.href = `deleteOrder?orderID=` + orderID;
 				alert("Đã xóa thành công!");
 
 			}
