@@ -876,6 +876,5 @@ public class DAO {
 		System.out.println(d.getOrderDetailByOrderID(15));
 
 	}
-
-	
 }
+
