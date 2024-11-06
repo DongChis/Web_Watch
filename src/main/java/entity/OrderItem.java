@@ -3,12 +3,13 @@ package entity;
 import dao.DAO;
 
 public class OrderItem {
+	
 	private String productId;
 	private String quantityOrder;
 	private Double totalPrice;
 
 	public OrderItem(String productId, String quantityOrder, Double totalPrice) {
-
+		
 		this.productId = productId;
 		this.quantityOrder = quantityOrder;
 		this.totalPrice = totalPrice;

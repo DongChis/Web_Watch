@@ -11,7 +11,12 @@ h1 {
 	text-align: center;
 	color: #333;
 }
-
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px; /* Adjust based on your layout */
+    padding: 0 10px;  /* Optional padding for spacing */
+}
 .button {
 	background-color: blueviolet;
 	color: white;
