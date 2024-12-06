@@ -1,0 +1,148 @@
+/* Reset CSS */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f8f9fa;
+  color: #343a40;
+  line-height: 1.6;
+}
+
+.order-confirmation {
+  max-width: 1200px;
+  margin: 50px auto;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+  text-align: center;
+  font-size: 2.5rem;
+  color: #007bff;
+  margin-bottom: 30px;
+}
+
+section {
+  margin-bottom: 30px;
+}
+
+h2 {
+  font-size: 1.8rem;
+  color: #495057;
+  margin-bottom: 10px;
+  border-bottom: 2px solid #007bff;
+  display: inline-block;
+  padding-bottom: 5px;
+}
+
+p, table {
+  font-size: 1rem;
+  color: #343a40;
+}
+
+.card-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.card {
+  flex: 1;
+  min-width: 280px;
+  background-color: #ffffff;
+  border: 1px solid #dee2e6;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.card h2 {
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+}
+
+.card table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.card table th,
+.card table td {
+  text-align: left;
+  padding: 8px;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.card table th {
+  width: 40%;
+  color: #495057;
+}
+
+.product {
+  margin-top: 20px;
+}
+
+.product-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.product-table th,
+.product-table td {
+  text-align: left;
+  padding: 10px;
+  border: 1px solid #dee2e6;
+}
+
+.product-image {
+  max-width: 80px;
+  height: auto;
+  border-radius: 5px;
+}
+
+.product-name {
+  font-weight: bold;
+  color: #007bff;
+}
+
+.total-price {
+  text-align: right;
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-top: 10px;
+  color: #28a745;
+}
+
+.btn {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: #ffffff;
+  text-decoration: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+  
+}
+
+.btn:hover {
+  background-color: #0056b3;
+}
+
+.hash {
+  background: #e9ecef;
+  padding: 10px;
+  border-radius: 5px;
+  font-family: 'Courier New', Courier, monospace;
+  word-break: break-all;
+  font-size: 0.9rem;
+  color: #495057;
+}
