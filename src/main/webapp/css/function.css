@@ -1,0 +1,111 @@
+/* General Container Styling */
+.container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Two columns layout */
+    grid-gap: 20px; /* Space between the cards */
+    margin: 30px; /* Space for the last card */
+}
+
+/* Card Styling */
+.card {
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    height: auto; /* Allow card height to adjust based on content */
+    min-height: 250px; /* Optional: To prevent cards from shrinking too much */
+}
+
+/* Key Display Styling */
+.key-display {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px; /* Space between key items */
+    flex-wrap: wrap; /* Wrap items on smaller screens */
+}
+
+/* Key Item Styling (For individual key blocks) */
+.key-item {
+    flex: 1; /* Take up equal width */
+    min-width: 250px; /* Prevent columns from becoming too narrow */
+    position: relative; /* Needed for positioning buttons */
+}
+
+/* Button Styling */
+.btn {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    font-size: 16px;
+    margin-top: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: auto;
+}
+
+.btn:hover {
+    background-color: #45a049; /* Darker green on hover */
+}
+
+/* Input Field Styling */
+input[type="text"] {
+    width: calc(100% - 120px); /* Ensure enough space for buttons */
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+    box-sizing: border-box;
+    margin-bottom: 10px; /* Space below the input */
+}
+
+/* Wrapper for input and buttons */
+.input-wrapper {
+    display: flex;
+    align-items: center;
+    width: 100%; /* Ensure full width */
+}
+
+/* Adjusting the copy and download button layout */
+.input-wrapper button {
+    margin-left: 10px; /* Space between the buttons */
+    padding: 6px 12px; /* Adjust padding */
+    font-size: 14px;
+    white-space: nowrap; /* Prevent buttons from breaking into multiple lines */
+}
+
+/* Styling for the form group */
+.form-group {
+    margin-bottom: 15px;
+}
+/* Style for the Back button */
+#backButton {
+    position: fixed; /* Fixes the button at the top */
+    bottom: 20px; /* Distance from the top of the viewport */
+    left: 20px; /* Distance from the left of the viewport */
+    z-index: 1000; /* Ensures the button stays on top of other elements */
+    background-color: #4CAF50; /* Button background color */
+    color: white; /* Text color */
+    padding: 10px 20px; /* Padding for the button */
+    border-radius: 5px; /* Rounded corners */
+    font-size: 16px; /* Font size */
+    cursor: pointer; /* Pointer cursor on hover */
+}
+
+#backButton:hover {
+    background-color: #45a049; /* Darker green on hover */
+}
+
+
+/* Label Styling */
+label {
+    display: block;
+    font-size: 16px;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
