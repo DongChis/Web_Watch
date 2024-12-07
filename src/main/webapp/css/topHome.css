@@ -2,85 +2,85 @@
 
 
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
 }
 
 body {
-    font-family: Arial, sans-serif;
-    background-color: #fff;
+	font-family: Arial, sans-serif;
+	background-color: #fff;
 }
 
 header {
-    width: 100%;
+	width: 100%;
 }
 
 
 .header__top {
-    background-color: #f5f5f5;
-    padding: 10px 0;
-    height: 55px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 16px;
-    color: #b03060;
+	background-color: #f5f5f5;
+	padding: 10px 0;
+	height: 55px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	font-size: 16px;
+	color: #b03060;
 }
 
 .header__top .left-info {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    margin-left: 20px;
+	display: flex;
+	align-items: center;
+	gap: 15px;
+	margin-left: 20px;
 }
 
 .header__top .right-info {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-right: 20px;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin-right: 20px;
 }
 
 .header__top .right-info a {
-    font-size: 18px;
-    color: #b03060;
+	font-size: 18px;
+	color: #b03060;
 }
 
 .header__top .right-info button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #00008b;
-    border: none;
-    border-radius: 50px;
-    cursor: pointer;
-    padding: 5px 10px;
-    color: white;
-    font-size: 16px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: #00008b;
+	border: none;
+	border-radius: 50px;
+	cursor: pointer;
+	padding: 5px 10px;
+	color: white;
+	font-size: 16px;
 }
 
 /* Main Header */
 .main-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 0;
-    background-color: #fff;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 10px 0;
+	background-color: #fff;
 }
 
 .logo {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
 }
 
 .logo h1 {
-    font-size: 36px;
-    color: #b03060;
-    margin : 0 0 0 75px;
-    font-family: 'Courier New', Courier, monospace;
+	font-size: 36px;
+	color: #b03060;
+	margin: 0 0 0 75px;
+	font-family: 'Courier New', Courier, monospace;
 
 }
 
@@ -90,134 +90,140 @@ header {
 }
 
 .nav-menu ul {
-    list-style-type: none;
-    display: flex;
-    gap: 85px;
+	list-style-type: none;
+	display: flex;
+	gap: 85px;
 }
 
 .nav-menu ul li a {
-    text-decoration: none;
-    color: #333;
-    font-weight: bold;
-    font-size: 16px;
-    text-transform: uppercase;
+	text-decoration: none;
+	color: #333;
+	font-weight: bold;
+	font-size: 16px;
+	text-transform: uppercase;
 }
 
 .nav-menu ul li a:hover {
-    color: #b03060;
+	color: #b03060;
 }
 
 .header-cart {
-    display: flex;
-    align-items: center;
-    margin-right: 180px;
+	display: flex;
+	align-items: center;
+	margin-right: 180px;
 }
 
 .header-cart a {
-    text-decoration: none;
-    font-size: 20px;
-    color: #00008b;
-    position: relative;
+	text-decoration: none;
+	font-size: 20px;
+	color: #00008b;
+	position: relative;
 }
 
 .header-cart a span {
-    position: absolute;
-    top: -10px;
-    right: -10px;
-    background-color: #00008b;
-    color: white;
-    font-size: 12px;
-    padding: 2px 5px;
-    border-radius: 50%;
+	position: absolute;
+	top: -10px;
+	right: -10px;
+	background-color: #00008b;
+	color: white;
+	font-size: 12px;
+	padding: 2px 5px;
+	border-radius: 50%;
 }
 
 /* Phần danh sách sản phẩm */
 .heros__categories_container {
 	display: flex;
 	align-items: center;
-    padding: 0 80px 15px;
-    color: rgb(0, 0, 255);
-    gap: 10px;
+	padding: 0 80px 15px;
+	color: rgb(0, 0, 255);
+	gap: 10px;
 }
 
 
-.heros__categories  {
-    display: flex;
-    align-items: center;
-    background: #3333cc;
-    color: white;
-    padding: 15px;
-    font-weight: bold;
-    border-radius: 5px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
-    
-    
+.heros__categories {
+	display: flex;
+	align-items: center;
+	background: #3333cc;
+	color: white;
+	padding: 15px;
+	font-weight: bold;
+	border-radius: 5px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+
+
 }
+
 .menu-icon {
 	margin-right: 7px;
 
 }
 
 .hero__search_form {
-    display: flex;
-    align-items: center;
-    background-color: #f0f0f5;
-    padding: 15px; 
-    border-radius: 10px; 
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    margin: 0 50px 0 50px;
-    
+	display: flex;
+	align-items: center;
+	background-color: #f0f0f5;
+	padding: 15px;
+	border-radius: 10px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+	margin: 0 50px 0 50px;
+
 }
 
 .hero__search_form input {
-    font-size: 20px; /* Tăng kích thước font chữ */
-    width: 620px;
-    height: 50px; /* Tăng chiều cao của input */
+	font-size: 20px;
+	/* Tăng kích thước font chữ */
+	width: 620px;
+	height: 50px;
+	/* Tăng chiều cao của input */
 
-    padding: 0 15px;
-    border: 2px solid #ccc; 
-    border-radius: 5px;
-    flex-grow: 2;
+	padding: 0 15px;
+	border: 2px solid #ccc;
+	border-radius: 5px;
+	flex-grow: 2;
 
 }
 
 .hero__search_form button {
-    font-size: 18px; 
-    height: 50px;
-    background: #3333cc;
-    color: white;
-    padding: 0 25px;
-    border: none;
-    cursor: pointer;
-    border-radius: 5px;
+	font-size: 18px;
+	height: 50px;
+	background: #3333cc;
+	color: white;
+	padding: 0 25px;
+	border: none;
+	cursor: pointer;
+	border-radius: 5px;
 }
 
 .hero__search_phone {
-    display: flex;
-    align-items: center;
-    background-color: #f0f0f5; 
-    padding:  15px;
-    border-radius: 5px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    min-width: 220px;
+	display: flex;
+	align-items: center;
+	background-color: #f0f0f5;
+	padding: 15px;
+	border-radius: 5px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+	min-width: 220px;
 }
 
 .hero__search_phone_icon {
-    font-size: 25px;
-    background: #fff; /* Màu trắng để nổi bật icon */
-    color: #3333cc;
-    padding: 10px;
-    border-radius: 50%;
-    margin-right: 10px;
+	font-size: 25px;
+	background: #fff;
+	/* Màu trắng để nổi bật icon */
+	color: #3333cc;
+	padding: 10px;
+	border-radius: 50%;
+	margin-right: 10px;
 }
 
 .hero__search_phone_text p {
-    font-weight: bold;
-    margin: 0;
-    color: #333;
+	font-weight: bold;
+	margin: 0;
+	color: #333;
 }
 
 .hero__search_phone_text span {
-    color: #6f6f6f;
-    font-size: 14px;
+	color: #6f6f6f;
+	font-size: 14px;
 }
+
+
