@@ -6,24 +6,44 @@ function redirectToServlet() {
 	window.location.href = 'logout';
 }
 
+// Khi trang được tải
 window.onload = function() {
-    // Kiểm tra nếu có bất kỳ tab Admin nào đã được mở
-    console.log("onload")
-    if (localStorage.getItem("adminAccessed")) {
-        // Nếu đã có tab Admin, chuyển hướng về trang home
-        window.location.href = "/home";
-    } else {
-        // Nếu chưa có tab Admin nào, đánh dấu tab Admin đã được mở
-        localStorage.setItem("adminAccessed", "true");
+   
+    if (window.location.pathname.indexOf('/admin') !== -1) {
+        if (localStorage.getItem("adminTabOpened") === "true") {
+         
+            window.location.href = 'login';
+        } else {
+            // Nếu đây là tab Admin đầu tiên, đánh dấu là tab chính
+            localStorage.setItem("adminTabOpened", "true");
+        }
+    }
+   
+};
+
+// Khi người dùng đóng tab, kiểm tra và xóa trạng thái khi tất cả tab Admin đã đóng
+window.onbeforeunload = function() {
+    if (window.location.pathname.indexOf('/admin') !== -1) {
+        setTimeout(function() {
+            // Kiểm tra xem có còn tab Admin nào khác đang mở không
+            if (localStorage.getItem("adminTabOpened") === "true" && window.localStorage.length === 1) {
+                localStorage.removeItem("adminTabOpened");
+            }
+        }, 0);
     }
 };
 
-// Khi người dùng đóng tab, xóa trạng thái trong localStorage
-window.onbeforeunload = function() {
-    // Chỉ xóa trạng thái khi không còn tab nào khác đang mở
-    setTimeout(function() {
-        if (localStorage.getItem("adminAccessed") === "true") {
-            localStorage.removeItem("adminAccessed");
+// Lắng nghe sự kiện storage khi một tab thay đổi localStorage
+window.addEventListener("storage", function(event) {
+    // Kiểm tra nếu có sự thay đổi đối với "adminTabOpened"
+    if (event.key === "adminTabOpened") {
+        if (event.newValue === "true") {
+            // Nếu trạng thái là "true", chuyển hướng tất cả các tab còn lại tới trang login
+            if (window.location.pathname.indexOf('/admin') !== -1) {
+                window.location.href = 'login';  // Chuyển hướng tới trang login nếu không phải là tab chính
+            }
+        } else {
+            // Nếu trạng thái được xóa, bạn có thể xử lý cho các tab còn lại theo cách bạn muốn
         }
-    }, 0);
-};
+    }
+});
