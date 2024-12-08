@@ -34,5 +34,4 @@ public class AdminFilter implements Filter  {
 	    	 httpResponse.sendRedirect(httpRequest.getContextPath() + "/home");
 		}
 	}
-	
 }

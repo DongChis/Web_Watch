@@ -32,7 +32,8 @@ public class LogoutControl extends HttpServlet {
 		
 		session.removeAttribute("accSession");
 		System.out.println(session.getAttribute("accSession")+ "hien tai");
-	//	System.out.println("xoa session");
+
+
 		response.sendRedirect("home");
 	}
 
