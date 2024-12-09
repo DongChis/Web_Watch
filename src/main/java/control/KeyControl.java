@@ -23,7 +23,7 @@ public class KeyControl extends HttpServlet {
         super();
     }
 
-    // Handle GET requests for displaying the Function.jsp page
+  
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // Check if user is logged in (example check, adjust based on your session management)
         if (request.getSession().getAttribute("accSession") == null) {

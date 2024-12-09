@@ -3,9 +3,10 @@
 .container-checkout {
     max-width: 1200px;
     margin: 0 auto;
-   display: flex;
-    justify-content: space-between;
-  
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    
 }
 
 .card {
@@ -105,18 +106,20 @@
     border-color: #007BFF;
     outline: none;
 }
-
-button[type="submit"], .checkout-btn {
+.card button[type="submit"] {
     background-color: #007BFF;
     color: white;
     border: none;
-    padding: 10px 15px;
-    border-radius: 5px;
+    padding: 12px 20px;
+    border-radius: 8px;
     cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s;
+    font-size: 18px;
+    width: 100%;
+    transition: background-color 0.3s ease;
 }
 
-button[type="submit"]:hover, .checkout-btn:hover {
+.card button[type="submit"]:hover {
     background-color: #0056b3;
 }
+
+

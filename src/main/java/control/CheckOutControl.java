@@ -84,7 +84,7 @@ public class CheckOutControl extends HttpServlet {
 		
 
 		// Redirect or forward to a confirmation page
-		response.sendRedirect("authenUserControl");
+		response.sendRedirect("userVerificationControl");
 
 	}
 

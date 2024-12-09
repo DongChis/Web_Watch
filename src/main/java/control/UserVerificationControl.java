@@ -10,14 +10,14 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Servlet implementation class AuthenUserControl
  */
-@WebServlet(urlPatterns = {"/authenUserControl"})
-public class AuthenUserControl extends HttpServlet {
+@WebServlet(urlPatterns = {"/userVerificationControl"})
+public class UserVerificationControl extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public AuthenUserControl() {
+    public UserVerificationControl() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -29,7 +29,7 @@ public class AuthenUserControl extends HttpServlet {
 		// TODO Auto-generated method stub
 	
 		
-		request.getRequestDispatcher("AuthUser.jsp").forward(request, response);
+		request.getRequestDispatcher("userVerification.jsp").forward(request, response);
 	}
 
 	/**
