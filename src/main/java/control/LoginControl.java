@@ -55,6 +55,7 @@ public class LoginControl extends HttpServlet {
 
 		HttpSession session = request.getSession();
 		session.setAttribute("accSession", acc);
+		 session.setAttribute("userId", acc.getUserID());
 		session.setAttribute("role", acc.getRole());
 		
 		 List<CartItem> cart = new ArrayList<>();
