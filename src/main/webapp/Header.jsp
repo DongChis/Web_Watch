@@ -99,7 +99,7 @@
 	<script src="js/login.js"></script>
 	<script src="js/cart.js"></script>
 	<script>
-    // Get the session data from the server-side (assuming you have a way to pass this value)
+    
     const isLoggedIn = ${not empty sessionScope.accSession}; // Assuming this logic is available in your JSP
 
     // Adding the click event for the key button
@@ -110,7 +110,7 @@
             // Redirect the user to the login page if not logged in
             window.location.href = 'login';
         }
-        // If logged in, nothing happens because the default link behavior will occur
+     
     });
 </script>
 	

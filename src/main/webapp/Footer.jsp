@@ -58,16 +58,7 @@
 						<li><i class="fa fa-print mr-2"></i> + 0333 868 686</li>
 					</ul>
 				</div>
-				<div class="col-12 copyright mt-3">
-					<p class="float-left">
-						<button onclick="scrollToTop()" id="backToTopBtn">↑</button>
-					</p>
-					<p class="text-right text-muted">
-						Sản phẩm được tạo bởi <i class="fa fa-heart"></i><a
-							href="https://t-php.fr/43-theme-ecommerce-bootstrap-4.html"><i>Java
-								Servlet & JSP</i></a> | <span>v. 1.0</span>
-					</p>
-				</div>
+				
 			</div>
 		
 	</footer>
