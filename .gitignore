@@ -1,14 +1,11 @@
 
 
 # Ignore Eclipse/STS/IntelliJ IDEA project files
-.classpath
 /.settings/
 /target/
 /bin/
 /build/
-DBContext.java
-*.class
 
 src/main/java/context/DBContext.java
 build/classes/context/DBContext.class
-build/classes/context/DBContext.class
+.classpath
