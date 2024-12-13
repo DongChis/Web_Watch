@@ -8,7 +8,7 @@ public class DBContext {
 
 
 	
-	String url = "jdbc:sqlserver://DESKTOP-RDMJ7GI\\MSSQLSERVER02:1433;databaseName=DongHo;encrypt=false";
+	String url = "jdbc:sqlserver://DESKTOP-RDMJ7GI\\MSSQLSERVER02:1433;databaseName=DongHo_v1;encrypt=false";
 	String userName = "sa";
 	String password = "123";
 
