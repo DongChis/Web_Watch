@@ -6,8 +6,7 @@ import java.sql.DriverManager;
 
 public class DBContext {
 
-
-
+	
 	
 	String url = "jdbc:sqlserver://DESKTOP-RDMJ7GI\\MSSQLSERVER02:1433;databaseName=DongHo_v1;encrypt=false";
 	String userName = "sa";
