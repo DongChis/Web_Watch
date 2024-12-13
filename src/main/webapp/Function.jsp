@@ -18,78 +18,87 @@
 	</button>
 
 	<div class="container">
-<!-- Feedback Message -->
-<c:if test="${not empty message}">
-    <div class="${messageType == 'success' ? 'alert alert-success' : 'alert alert-danger'}">
-        ${message}
-    </div>
-</c:if>
+		<!-- Feedback Message -->
+		<c:if test="${not empty message}">
+			<div
+				class="${messageType == 'success' ? 'alert alert-success' : 'alert alert-danger'}">
+				${message}</div>
+		</c:if>
 
-<!-- Card: Key Information -->
-<div class="card">
-    <h2>Thông tin khóa đang sử dụng</h2>
-    <div class="key-info">
-        <form action="keyControl" method="post">
-            <p>
-                <strong>Tài khoản sở hữu:</strong> <span>${sessionScope.accSession.username}</span>
-            </p>
-            <p>
-                <strong>Thời gian tạo:</strong>
-                <input type="text" id="createdTime" name="createTime" value="${createTime}" />
-            </p>
-            <p>
-                <strong>Hiệu lực đến:</strong>
-                <input type="text" id="validUntil" name="endTime" value="${endTime}" />
-            </p>
-            <div class="key-display">
-                <!-- Public Key Display -->
-                <c:choose>
-                    <c:when test="${not empty publicKey}">
-                        <div class="key-item">
-                            <p><strong>Public Key:</strong></p>
-                            <div class="input-wrapper">
-                                <input type="text" id="publicKey" name="publicKey" readonly value="${publicKey}" />
-                                <button type="button" id="copyPublicKey" onclick="copyToClipboard('publicKey')">
-                                    <i class="far fa-copy"></i>
-                                </button>
-                                <button type="button" id="downloadPublicKey" onclick="downloadKey('publicKey')">
-                                    <i class="fas fa-arrow-down"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </c:when>
-                    <c:otherwise>
-                        <div class="key-item">
-                            <p><strong>Public Key:</strong></p>
-                            <span>Chưa có khóa công khai</span>
-                        </div>
-                    </c:otherwise>
-                </c:choose>
+		<!-- Card: Key Information -->
+		<div class="card">
+			<h2>Thông tin khóa đang sử dụng</h2>
+			<div class="key-info">
+				<form action="keyControl" method="post">
+					<p>
+						<strong>Tài khoản sở hữu:</strong> <span>${sessionScope.accSession.username}</span>
+					</p>
+					<p>
+						<strong>Thời gian tạo:</strong> <input type="text"
+							id="createdTime" name="createTime" value="${createTime}" />
+					</p>
+					<p>
+						<strong>Hiệu lực đến:</strong> <input type="text" id="validUntil"
+							name="endTime" value="${endTime}" />
+					</p>
+					<div class="key-display">
+						<!-- Public Key Display -->
+						<c:choose>
+							<c:when test="${not empty publicKey}">
+								<div class="key-item">
+									<p>
+										<strong>Public Key:</strong>
+									</p>
+									<div class="input-wrapper">
+										<input type="text" id="publicKey" name="publicKey" readonly
+											value="${publicKey}" />
+										<button type="button" id="copyPublicKey"
+											onclick="copyToClipboard('publicKey')">
+											<i class="far fa-copy"></i>
+										</button>
+										<button type="button" id="downloadPublicKey"
+											onclick="downloadKey('publicKey')">
+											<i class="fas fa-arrow-down"></i>
+										</button>
+									</div>
+								</div>
+							</c:when>
+							<c:otherwise>
+								<div class="key-item">
+									<p>
+										<strong>Public Key:</strong>
+									</p>
+									<span>Chưa có khóa công khai</span>
+								</div>
+							</c:otherwise>
+						</c:choose>
 
-                <!-- Private Key Display -->
-                <div class="key-item">
-                    <p><strong>Private Key:</strong></p>
-                    <div class="input-wrapper">
-                        <input type="text" id="privateKey" name="privateKey" readonly value="${privateKey}" />
-                        <button type="button" id="copyPrivateKey" onclick="copyToClipboard('privateKey')">
-                            <i class="far fa-copy"></i>
-                        </button>
-                        <button type="button" id="downloadPrivateKey" onclick="downloadKey('privateKey')">
-                            <i class="fas fa-arrow-down"></i>
-                        </button>
-                    </div>
-                </div>
+						<!-- Private Key Display -->
+						<div class="key-item">
+							<p>
+								<strong>Tải xuống Private Key</strong>
+							</p>
+							<div class="input-wrapper">
+								<input type="hidden" id="privateKey" name="privateKey" readonly
+									value="${privateKey}" />
 
-                <!-- Hidden input to specify the action -->
-                <input type="hidden" name="action" value="importKey" />
+								<button type="button" id="downloadPrivateKey"
+									onclick="downloadKey('privateKey')">
+									<i class="fas fa-arrow-down"></i>
+								</button>
+							</div>
+						</div>
 
-                <div class="form-group">
-                    <button type="submit" class="btn">Lưu</button>
-                </div>
-            </div>
-        </form>
-    </div>
-</div>
+						<!-- Hidden input to specify the action -->
+						<input type="hidden" name="action" value="importKey" />
+
+						<div class="form-group">
+							<button type="submit" class="btn">Lưu</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
 
 		<!-- Card: Create New Key -->
 		<div class="card">
@@ -138,21 +147,28 @@
 			<form id="keyImportForm" action="keyControl" method="POST"
 				enctype="multipart/form-data">
 				<input type="hidden" name="action" value="importKey" />
+				<!-- Điều này sẽ gửi action -->
+
+				<!-- Public Key File Upload -->
 				<div class="form-group">
-					<label for="privateKeyFile">Tải lên file khóa Public:</label> <input
-						type="file" id="privateKeyFile" name="privateKeyFile"
+					<label for="publicKeyFile">Tải lên file khóa Public:</label> <input
+						type="file" id="publicKeyFile" name="publicKeyFile"  
 						accept=".key, .txt" />
 				</div>
+
+				<!-- Public Key Input -->
 				<div class="form-group">
-					<label for="privateKeyText">Hoặc nhập trực tiếp khóa
-						Public:</label>
-					<textarea id="privateKeyText" name="privateKeyText"></textarea>
+					<label for="publicKeyText">Hoặc nhập trực tiếp khóa Public:</label>
+					<input type="text" id="publicKey" name="publicKey" />
 				</div>
+
+				<!-- Submit Button -->
 				<div class="form-group">
 					<button type="submit" class="btn">Load Khóa</button>
 				</div>
 			</form>
 		</div>
+
 
 		<!-- Card: Report Key -->
 		<div class="card">
