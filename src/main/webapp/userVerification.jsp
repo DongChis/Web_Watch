@@ -29,7 +29,7 @@
 			<div id="textSignature" class="form-group">
 				<label for="signatureText">Chữ ký của bạn:</label> <input
 					type="text" id="signatureText" name="signatureText"
-					placeholder="Nhập chữ ký của bạn" >
+					placeholder="Nhập chữ ký của bạn">
 			</div>
 
 			<div id="fileSignature" class="form-group" style="display: none;">
@@ -39,39 +39,66 @@
 			<!-- Hiển thị thông báo kết quả -->
 			<div id="resultMessage" style="color: ${messageColor};">
 				${resultMessage != null ? resultMessage : " "}</div>
+
+			<p>
+				Nếu bạn chưa có chữ ký? <a href="javascript:void(0);"
+					id="createSignatureLink">Tạo chữ ký</a>
+			</p>
 			<button type="submit">Xác Minh</button>
+
+
+
 		</form>
 
 
 	</div>
-<<<<<<< HEAD
-=======
 	
-		<jsp:include page="Footer.jsp" />
+	<!-- Dialog box -->
+	<div id="dialog" class="dialog-overlay">
+		<div class="dialog-box">
+			<h3>Bạn đã có Key chưa?</h3>
+			<button class="yes" onclick="handleResponse(true)">Có</button>
+			<button class="no" onclick="handleResponse(false)">Chưa</button>
+		</div>
+	</div>
 
->>>>>>> main
 	<script>
+		// Khi nhấp vào "Tạo chữ ký", hiển thị dialog hỏi người dùng có khóa chữ ký chưa
+		document.getElementById("createSignatureLink").onclick = function() {
+			document.getElementById("dialog").style.display = "flex"; // Hiển thị dialog
+		};
+		
+		 // Hàm xử lý khi người dùng trả lời dialog
+	    function handleResponse(hasKey) {
+	        if (hasKey) {
+	            alert("Vui lòng Tải tool để tạo Chữ ký bằng private key");
+	            window.location.href = "loadInfoUser";
+	        } else {
+	            window.location.href = "Function.jsp";
+	        }
+	        // Đóng dialog
+	        document.getElementById("dialog").style.display = "none";
+	    }
+		
 		function toggleSignatureInput() {
 			var signatureOption = document.getElementById('signatureOption').value; // Lấy giá trị của signatureOption
 			console.log("Lựa chọn phương thức ký: " + signatureOption); // Kiểm tra giá trị của signatureOption
 
-<<<<<<< HEAD
 			// Ẩn cả hai phần tử
 			document.getElementById('textSignature').style.display = 'none';
 			document.getElementById('fileSignature').style.display = 'none';
-=======
-    // Hàm xử lý khi người dùng trả lời dialog
-    function handleResponse(hasKey) {
-        if (hasKey) {
-            alert("Vui lòng Tải tool để tạo Chữ ký bằng private key");
-            window.location.href = "loadInfoUser";
-        } else {
-            window.location.href = "Function.jsp";
-        }
-        // Đóng dialog
-        document.getElementById("dialog").style.display = "none";
-    }
->>>>>>> main
+
+			// Hàm xử lý khi người dùng trả lời dialog
+			function handleResponse(hasKey) {
+				if (hasKey) {
+					alert("Vui lòng Tải tool để tạo Chữ ký bằng private key");
+					window.location.href = "loadInfoUser";
+				} else {
+					window.location.href = "function";
+				}
+				// Đóng dialog
+				document.getElementById("dialog").style.display = "none";
+			}
 
 			// Hiển thị phần tương ứng
 			if (signatureOption === 'text') {

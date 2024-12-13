@@ -105,8 +105,13 @@ public class UserVerification extends HttpServlet {
 		request.setAttribute("resultMessage", message);
 		request.setAttribute("messageColor", messageColor);
 
-		// Chuyển tiếp đến trang JSP để hiển thị thông báo
-		request.getRequestDispatcher("userVerification.jsp").forward(request, response);
+		if (isVerified) {
+		     request.getRequestDispatcher("CheckOut.jsp").forward(request, response);
+		} else {
+		    // Handle failure (if needed)
+		    request.getRequestDispatcher("userVerification.jsp").forward(request, response);
+		}
+		
 	}
 
 	// Lấy PublicKey từ chuỗi Base64
