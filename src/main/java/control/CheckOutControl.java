@@ -38,10 +38,7 @@ public class CheckOutControl extends HttpServlet {
 
 	}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
-	 *      response)
-	 */
+
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		response.setContentType("text/html;charset=UTF-8");
@@ -58,7 +55,6 @@ public class CheckOutControl extends HttpServlet {
 		String optionPay3 = "cash-on-delivery";
 
 		if (paymentMethod != null && !paymentMethod.isEmpty()) {
-			// Use the payment method for your logic
 			
 			 if (paymentMethod.equals(optionPay1)) {
 				paymentMethod = "The Tin Dung";
@@ -85,7 +81,11 @@ public class CheckOutControl extends HttpServlet {
 		
 
 		// Redirect or forward to a confirmation page
+<<<<<<< HEAD
 		response.sendRedirect("OrderConfirm.jsp");
+=======
+		response.sendRedirect("");
+>>>>>>> main
 
 	}
 
