@@ -57,7 +57,7 @@
                         ${totalPrice} VND
                     </span>
                 </div>
-                <button class="checkout-btn" onclick="location.href='CheckOut.jsp';">Tiếp Tục</button>
+                <button class="checkout-btn" onclick="location.href='userVerification';">Tiếp Tục</button>
             </div>
         </div>
     </div>
