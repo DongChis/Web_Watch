@@ -6,7 +6,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import context.DBContext;
 import entity.CartItem;
@@ -186,73 +188,63 @@ public class DAO {
 	// get all order
 
 	public List<Order> getAllOrders() {
-		List<Order> orders = new ArrayList<>();
-		String orderQuery = "SELECT o.OrderID, o.CustomerName, o.CustomerEmail, "
-				+ "o.CustomerPhone, o.CustomerAddress, o.PaymentMethod, " + "oi.ProductID, oi.Quantity, oi.Price "
-				+ "FROM Orders1 o " + "JOIN OrderItems1 oi ON o.OrderID = oi.OrderID";
+	    List<Order> orders = new ArrayList<>();
+	    Map<Integer, Order> orderMap = new HashMap<>(); // To track orders by OrderID
 
-		Connection conn = null;
-		PreparedStatement stmt = null;
-		ResultSet rs = null;
+	    String orderQuery = "SELECT o.OrderID, o.CustomerName, o.CustomerEmail, " +
+	                        "o.CustomerPhone, o.CustomerAddress, o.PaymentMethod, " +
+	                        "o.OrderDate, o.Signature, " +
+	                        "oi.ProductID, oi.Quantity, oi.Price " +
+	                        "FROM Orders1 o " +
+	                        "JOIN OrderItems1 oi ON o.OrderID = oi.OrderID";
 
-		try {
-			conn = new DBContext().getConnection(); // Get the database connection
-			stmt = conn.prepareStatement(orderQuery);
-			rs = stmt.executeQuery();
+	    try (Connection conn = new DBContext().getConnection();
+	         PreparedStatement stmt = conn.prepareStatement(orderQuery);
+	         ResultSet rs = stmt.executeQuery()) {
 
-			while (rs.next()) {
-				int orderID = rs.getInt("OrderID");
-				System.out.println("Retrieved OrderID: " + orderID); // Debugging line
+	        while (rs.next()) {
+	            int orderID = rs.getInt("OrderID");
+	            String customerName = rs.getString("CustomerName");
+	            String customerEmail = rs.getString("CustomerEmail");
+	            String customerPhone = rs.getString("CustomerPhone");
+	            String customerAddress = rs.getString("CustomerAddress");
+	            String paymentMethod = rs.getString("PaymentMethod");
+	            Timestamp orderDate = rs.getTimestamp("OrderDate"); // Get directly from result
+	            String signature = rs.getString("Signature");
 
-				String customerName = rs.getString("CustomerName");
-				String customerEmail = rs.getString("CustomerEmail");
-				String customerPhone = rs.getString("CustomerPhone");
-				String customerAddress = rs.getString("CustomerAddress");
-				String paymentMethod = rs.getString("PaymentMethod");
-				Timestamp orderDate = getOrderDateById(orderID); // Ensure this method is defined correctly
+	            // Handle product information
+	            String productId = rs.getString("ProductID"); // Assuming ProductID is an integer
+	            int quantity = rs.getInt("Quantity");
+	            double price = rs.getDouble("Price");
 
-				String productId = rs.getString("ProductID");
-				int quantity = rs.getInt("Quantity");
-				double price = rs.getDouble("Price");
+	            // Create CartItem for this product
+	            CartItem cartItem = new CartItem(getProductByID(productId), quantity);
 
-				CartItem cartItem = new CartItem(getProductByID(productId), quantity);
+	            // Check if the order already exists in the map
+	            Order order = orderMap.get(orderID);
+	            if (order == null) {
+	                // If the order doesn't exist, create a new one
+	                List<CartItem> items = new ArrayList<>();
+	                items.add(cartItem);
+	                order = new Order(orderID, items, customerName, customerEmail, customerPhone, customerAddress,
+	                        paymentMethod, orderDate, signature);
+	                orders.add(order);
+	                orderMap.put(orderID, order); // Put the new order in the map
+	            } else {
+	                // If the order exists, just add the CartItem to it
+	                order.getCartItems().add(cartItem);
+	            }
+	        }
 
-				// Check if the order already exists in the list
-				Order order = orders.stream().filter(o -> o.getOrderID() == orderID
-						&& o.getCustomerName().equals(customerName) && o.getCustomerEmail().equals(customerEmail)
-						&& o.getCustomerPhone().equals(customerPhone) && o.getCustomerAddress().equals(customerAddress)
-						&& o.getPaymentMethod().equals(paymentMethod)).findFirst().orElse(null);
+	    } catch (SQLException e) {
+	        System.err.println("SQL error occurred: " + e.getMessage());
+	    } catch (Exception e) {
+	        System.err.println("An error occurred: " + e.getMessage());
+	    }
 
-				if (order == null) {
-					// If the order does not exist, create a new one
-					List<CartItem> items = new ArrayList<>();
-					items.add(cartItem);
-					orders.add(new Order(orderID, items, customerName, customerEmail, customerPhone, customerAddress,
-							paymentMethod, orderDate));
-				} else {
-					// If the order exists, add the CartItem to the existing order
-					order.getCartItems().add(cartItem);
-				}
-			}
-		} catch (SQLException e) {
-			System.err.println("SQL error occurred: " + e.getMessage());
-		} catch (Exception e) {
-			System.err.println("An error occurred: " + e.getMessage());
-		} finally {
-			// Close resources
-			try {
-				if (rs != null)
-					rs.close();
-				if (stmt != null)
-					stmt.close();
-				if (conn != null)
-					conn.close();
-			} catch (SQLException e) {
-				System.err.println("Failed to close resources: " + e.getMessage());
-			}
-		}
-		return orders;
+	    return orders;
 	}
+
 
 	public List<Product> getListProduct(int orderDetailID) {
 		String query = "SELECT p.ProductID, p.Name, p.Price, p.ImageURL " + "FROM Products p "
@@ -892,7 +884,7 @@ public class DAO {
 		// d.deleteProduct(session,"3002");
 
 		// System.out.println(d.getOrderDateById(13));
-		System.out.println(d.getOrderDetailByOrderID(15));
+		System.out.println(d.getAllOrders());
 
 	}
 }
