@@ -49,7 +49,7 @@ public class CartControl extends HttpServlet {
        // double price = Double.parseDouble(priceStr);
 
         Product product = DAO.getInstance().getProductByID(String.valueOf(productId));
-       
+        
      
         List<CartItem> cart = (List<CartItem>) session.getAttribute("cart");
  

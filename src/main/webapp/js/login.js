@@ -26,7 +26,7 @@ function toggleCategory() {
     } else {
         categoryList.style.display = "none"; // Ẩn danh sách
     }
-}s
+}
 function toggleCategory() {
     var categoryList = document.getElementById('categoryList');
     if (categoryList.style.display === 'none' || categoryList.style.display === '') {
@@ -41,7 +41,7 @@ window.onload = function() {
    
     if (window.location.pathname.indexOf('/admin') !== -1) {
         if (localStorage.getItem("adminTabOpened") === "true") {
-         
+         console.log("h")
             window.location.href = 'login';
         } else {
             // Nếu đây là tab Admin đầu tiên, đánh dấu là tab chính
