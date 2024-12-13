@@ -48,6 +48,8 @@
 			<button class="no" onclick="handleResponse(false)">Chưa</button>
 		</div>
 	</div>
+	
+		<jsp:include page="Footer.jsp" />
 
 	<script>
     // Khi nhấp vào "Tạo chữ ký", hiển thị dialog hỏi người dùng có khóa chữ ký chưa
@@ -59,7 +61,7 @@
     function handleResponse(hasKey) {
         if (hasKey) {
             alert("Vui lòng Tải tool để tạo Chữ ký bằng private key");
-            
+            window.location.href = "loadInfoUser";
         } else {
             window.location.href = "Function.jsp";
         }
