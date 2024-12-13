@@ -52,10 +52,7 @@
 
 
 	</div>
-<<<<<<< HEAD
 
-=======
->>>>>>> main
 	
 	<!-- Dialog box -->
 	<div id="dialog" class="dialog-overlay">

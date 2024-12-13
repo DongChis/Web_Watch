@@ -81,11 +81,9 @@ public class CheckOutControl extends HttpServlet {
 		
 
 		// Redirect or forward to a confirmation page
-<<<<<<< HEAD
+
 		response.sendRedirect("OrderConfirm.jsp");
-=======
-		response.sendRedirect("");
->>>>>>> main
+
 
 	}
 
