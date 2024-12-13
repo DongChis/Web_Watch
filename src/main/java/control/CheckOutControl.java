@@ -51,7 +51,8 @@ public class CheckOutControl extends HttpServlet {
 		String customerPhone = request.getParameter("customer-phone");
 		String customerAddress = request.getParameter("customer-address");
 		String paymentMethod = request.getParameter("payment-method");
-
+		String sign = request.getParameter("sign");
+		
 		String optionPay1 = "credit-card";
 		String optionPay2 = "bank-transfer";
 		String optionPay3 = "cash-on-delivery";
@@ -80,11 +81,11 @@ public class CheckOutControl extends HttpServlet {
 		
 		// Call insertOrder method
 		DAO.getInstance().insertOrder(cartItems, customerName, customerEmail, customerPhone, customerAddress,
-				paymentMethod);
+				paymentMethod,sign);
 		
 
 		// Redirect or forward to a confirmation page
-		response.sendRedirect("userVerification");
+		response.sendRedirect("OrderConfirm.jsp");
 
 	}
 

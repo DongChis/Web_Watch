@@ -44,8 +44,7 @@
 
 
 	</div>
-<<<<<<< HEAD
-=======
+
 	
 		<jsp:include page="Footer.jsp" />
 
