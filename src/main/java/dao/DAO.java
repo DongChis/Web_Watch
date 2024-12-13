@@ -336,6 +336,25 @@ public class DAO {
 		}
 		return null;
 	}
+	
+	public User getUserByID(String id) {
+		String query = "SELECT * FROM Users WHERE UserID = ?";
+		try (Connection conn = new DBContext().getConnection(); PreparedStatement ps = conn.prepareStatement(query)) {
+			ps.setString(1, id);
+			try (ResultSet rs = ps.executeQuery()) {
+				if (rs.next()) {
+					return new User(rs.getInt("UserID"), rs.getString("Username"), rs.getString("Password"),
+							rs.getString("Email"), rs.getString("Role"), rs.getDate("CreatedAt"));
+				}
+			}
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+
+		}
+		return null;
+	}
 
 	// Phương thức để đăng nhập
 	public User login(String user, String pass) {

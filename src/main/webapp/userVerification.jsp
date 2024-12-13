@@ -44,14 +44,34 @@
 
 
 	</div>
+<<<<<<< HEAD
+=======
+	
+		<jsp:include page="Footer.jsp" />
+
+>>>>>>> main
 	<script>
 		function toggleSignatureInput() {
 			var signatureOption = document.getElementById('signatureOption').value; // Lấy giá trị của signatureOption
 			console.log("Lựa chọn phương thức ký: " + signatureOption); // Kiểm tra giá trị của signatureOption
 
+<<<<<<< HEAD
 			// Ẩn cả hai phần tử
 			document.getElementById('textSignature').style.display = 'none';
 			document.getElementById('fileSignature').style.display = 'none';
+=======
+    // Hàm xử lý khi người dùng trả lời dialog
+    function handleResponse(hasKey) {
+        if (hasKey) {
+            alert("Vui lòng Tải tool để tạo Chữ ký bằng private key");
+            window.location.href = "loadInfoUser";
+        } else {
+            window.location.href = "Function.jsp";
+        }
+        // Đóng dialog
+        document.getElementById("dialog").style.display = "none";
+    }
+>>>>>>> main
 
 			// Hiển thị phần tương ứng
 			if (signatureOption === 'text') {
