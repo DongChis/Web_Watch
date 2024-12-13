@@ -486,8 +486,8 @@ public class DAO {
 	}
 
 	public void insertOrder(List<CartItem> cartItems, String customerName, String customerEmail, String customerPhone,
-			String customerAddress, String paymentMethod) {
-		String orderQuery = "INSERT INTO Orders1 (CustomerName, CustomerEmail, CustomerPhone, CustomerAddress, PaymentMethod, OrderDate) VALUES (?, ?, ?, ?, ?, ?)";
+			String customerAddress, String paymentMethod,String sign) {
+		String orderQuery = "INSERT INTO Orders1 (CustomerName, CustomerEmail, CustomerPhone, CustomerAddress, PaymentMethod, OrderDate, Signature) VALUES (?, ?, ?, ?, ?, ?, ?)";
 		String orderItemQuery = "INSERT INTO OrderItems1 (OrderID, ProductID, Quantity, Price) VALUES (?, ?, ?, ?)";
 
 		try (Connection conn = new DBContext().getConnection()) {
@@ -502,7 +502,7 @@ public class DAO {
 				orderStmt.setString(4, customerAddress);
 				orderStmt.setString(5, paymentMethod);
 				orderStmt.setTimestamp(6, new Timestamp(System.currentTimeMillis())); // Set current date
-
+				orderStmt.setString(7, sign);
 				int affectedRows = orderStmt.executeUpdate();
 
 				if (affectedRows == 0) {
