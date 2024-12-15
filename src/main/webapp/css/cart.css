@@ -211,3 +211,46 @@
 .checkout-btn:enabled:hover {
     background-color: #218838;
 }
+
+/* Đặt một vài thuộc tính cơ bản cho phần quantity */
+.quantity {
+	
+    display: flex;
+    align-items: center;  /* Căn giữa theo chiều dọc */
+    justify-content: left;  /* Căn giữa theo chiều ngang */
+    gap: 10px;  /* Khoảng cách giữa các phần tử */
+    font-size: 16px;
+}
+
+/* Cập nhật kiểu cho các nút cộng/trừ */
+.quantity-btn {
+    background-color: #f2f2f2;  /* Màu nền sáng */
+    border: 1px solid #ccc;  /* Đường viền mỏng */
+    color: #333;  /* Màu chữ */
+    padding: 8px 12px;  /* Kích thước nút */
+    font-size: 20px;  /* Kích thước chữ trong nút */
+    cursor: pointer;  /* Con trỏ khi hover */
+    border-radius: 5px;  /* Bo góc */
+    transition: background-color 0.3s ease;  /* Hiệu ứng chuyển màu nền */
+}
+
+/* Màu nền của nút khi hover */
+.quantity-btn:hover {
+    background-color: #e0e0e0;
+}
+
+/* Cập nhật kiểu cho số lượng */
+.quantity-display {
+    font-weight: bold;  /* Làm đậm số lượng */
+    padding: 5px 10px;  /* Khoảng cách xung quanh số lượng */
+    border: 1px solid #ccc;  /* Đường viền mỏng */
+    border-radius: 5px;  /* Bo góc */
+    text-align: center;  /* Căn giữa số lượng */
+    min-width: 40px;  /* Đảm bảo chiều rộng tối thiểu */
+}
+
+/* Đảm bảo rằng số lượng luôn có chiều rộng ổn định */
+.quantity-btn:disabled {
+    background-color: #ddd;  /* Màu nền khi nút bị vô hiệu */
+    cursor: not-allowed;  /* Không cho phép click */
+}

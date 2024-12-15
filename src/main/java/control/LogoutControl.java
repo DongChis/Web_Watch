@@ -31,6 +31,7 @@ public class LogoutControl extends HttpServlet {
 		HttpSession session = request.getSession();
 		
 		session.removeAttribute("accSession");
+		session.removeAttribute("totalQuantity");
 		System.out.println(session.getAttribute("accSession")+ "hien tai");
 
 
