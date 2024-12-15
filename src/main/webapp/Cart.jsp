@@ -11,11 +11,11 @@
 <title>Giỏ hàng</title>
 </head>
 <body>
-	<jsp:include page="Header.jsp" />
+	<jsp:include page="Header.jsp"/>
 
 	<div class="container">
 		<div class="cart-detail">
-			<h1 class="page-title">Shopping Cart</h1>
+			<h1 class="page-title">Giỏ hàng</h1>
 
 			<div class="cart-items">
 				<!-- Kiểm tra xem giỏ hàng có rỗng không -->
@@ -34,7 +34,10 @@
 							<h2 class="product-name">${item.product.name}</h2>
 							<p class="product-description">${item.product.description}</p>
 							<div class="quantity">
-								<span>Số lượng: ${item.quantity}</span>
+								<!-- Nút trừ, số lượng, nút cộng -->
+								<button class="quantity-btn" onclick="updateQuantity(${item.product.productID},-1)">-</button>
+								<span  class="quantity-display">${item.quantity}</span>
+								<button class="quantity-btn" onclick="updateQuantity(${item.product.productID},1">+</button>
 							</div>
 						</div>
 						<div class="product-price">
@@ -48,16 +51,18 @@
 				</c:forEach>
 			</div>
 
-			<!-- Tổng thanh toán -->
-			<div class="cart-summary">
-				<h2 class="summary-title">Tổng thanh toán</h2>
-				<div class="summary-item">
-					<span class="summary-label">Tổng:</span> <span
-						class="summary-value">150.0 VND</span>
+				<!-- Tổng thanh toán  -->
+			<c:if test="${not empty sessionScope.cart}">
+				<div class="cart-summary">
+					<h2 class="summary-title">Tổng thanh toán</h2>
+					<div class="summary-item">
+						<span class="summary-label">Tổng:</span> <span
+							class="summary-value">150.0 VND</span>
+					</div>
+					<button class="checkout-btn"
+						onclick="location.href='userVerification';">Tiếp Tục</button>
 				</div>
-				<button class="checkout-btn"
-					onclick="location.href='userVerification';">Tiếp Tục</button>
-			</div>
+			</c:if>
 		</div>
 	</div>
 

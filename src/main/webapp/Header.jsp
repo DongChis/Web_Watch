@@ -23,8 +23,8 @@
 		<div class="right-info">
 			<a href="#"><i class="fas fa-heart"></i></a> <a href="#"><i
 				class="fas fa-twitter"></i></a> <a href="#"><i class="fas fa-star"></i></a>
-			<a href="keyControl" id="keyButton"> <i
-				class="fas fa-key fa-lg" style="color: blue;"></i>
+			<a href="keyControl" id="keyButton"> <i class="fas fa-key fa-lg"
+				style="color: blue;"></i>
 			</a>
 
 
@@ -63,7 +63,8 @@
 		</div>
 		<div class="header-cart">
 			<a href="add-to-cart"> <i class="fas fa-shopping-cart"></i> <span
-				id="cart-count">0</span>
+				id="cart-count"> ${sessionScope.totalQuantity != null ? sessionScope.totalQuantity : 0}
+			</span>
 			</a>
 		</div>
 	</div>
@@ -113,7 +114,7 @@
      
     });
 </script>
-	
+
 
 
 </body>
