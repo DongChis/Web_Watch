@@ -142,32 +142,32 @@
 		</div>
 
 		<!-- Card: Import Key -->
-		<div class="card">
-			<h2>Nhập Khóa Đã Có</h2>
-			<form id="keyImportForm" action="keyControl" method="POST"
-				enctype="multipart/form-data">
-				<input type="hidden" name="action" value="importKey" />
-				<!-- Điều này sẽ gửi action -->
+		<!-- Card: Import Key -->
+<div class="card">
+    <h2>Nhập Khóa Công Khai</h2>
+    <form id="keyImportForm" action="keyControl" method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="action" value="importKey" />
 
-				<!-- Public Key File Upload -->
-				<div class="form-group">
-					<label for="publicKeyFile">Tải lên file khóa Public:</label> <input
-						type="file" id="publicKeyFile" name="publicKeyFile"  
-						accept=".key, .txt" />
-				</div>
+        <!-- Public Key File Upload -->
+        <div class="form-group">
+            <label for="publicKeyFile">Tải lên tệp khóa công khai:</label> 
+            <input type="file" id="publicKeyFile" name="publicKeyFile" accept=".key, .txt" />
+        </div>
 
-				<!-- Public Key Input -->
-				<div class="form-group">
-					<label for="publicKeyText">Hoặc nhập trực tiếp khóa Public:</label>
-					<input type="text" id="publicKey" name="publicKey" />
-				</div>
+        <!-- Public Key Input -->
+        <div class="form-group">
+            <label for="publicKeyText">Hoặc nhập trực tiếp khóa công khai:</label>
+            <input type="text" id="publicKey" name="publicKey" />
+        </div>
 
-				<!-- Submit Button -->
-				<div class="form-group">
-					<button type="submit" class="btn">Load Khóa</button>
-				</div>
-			</form>
-		</div>
+        <!-- Submit Button -->
+        <div class="form-group">
+            <button type="submit" class="btn">Tải Khóa Lên</button>
+        </div>
+    </form>
+</div>
+
+
 
 
 		<!-- Card: Report Key -->

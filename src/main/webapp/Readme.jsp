@@ -59,12 +59,12 @@
               
             };
 
-            const blob = new Blob([JSON.stringify(signatureData, null, 2)], { type: 'application/json' });
+            const blob = new Blob([JSON.stringify(signatureData, null, 2)], { type: '.txt' });
             const url = URL.createObjectURL(blob);
 
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'signature-info.json';
+            a.download = 'signature-info.txt';
             a.click();
 
             URL.revokeObjectURL(url);
