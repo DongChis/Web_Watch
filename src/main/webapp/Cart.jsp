@@ -26,7 +26,7 @@
 				</c:if>
 
 				<c:forEach var="item" items="${sessionScope.cart}">
-					<div class="cart-item" data-id="${item.product.productID}" >
+					<div class="cart-item" data-id="${item.product.productID}">
 						<div class="product-image">
 							<img src="${item.product.imageURL}" alt="${item.product.name}">
 						</div>
