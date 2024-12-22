@@ -8,6 +8,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import dao.DAO;
 import entity.CartItem;
@@ -53,6 +54,21 @@ public class CheckOutControl extends HttpServlet {
 		String optionPay1 = "credit-card";
 		String optionPay2 = "bank-transfer";
 		String optionPay3 = "cash-on-delivery";
+		
+		HttpSession session = request.getSession(false); // Use false to not create a new session
+		if (session == null) {
+			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Session expired. Please log in again.");
+			return;
+		}
+		
+		Integer userIdObj = (Integer) session.getAttribute("userId");
+		if (userIdObj == null) {
+			// userID attribute is missing from session
+			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User not logged in");
+			return;
+		}
+
+		int userId = userIdObj;
 
 		if (paymentMethod != null && !paymentMethod.isEmpty()) {
 			
@@ -77,7 +93,7 @@ public class CheckOutControl extends HttpServlet {
 		
 		// Call insertOrder method
 		DAO.getInstance().insertOrder(cartItems, customerName, customerEmail, customerPhone, customerAddress,
-				paymentMethod,sign);
+				paymentMethod,sign,userId);
 		
 
 		// Redirect or forward to a confirmation page

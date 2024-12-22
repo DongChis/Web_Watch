@@ -1,11 +1,10 @@
 package control;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
@@ -27,31 +26,31 @@ import entity.Alg_KEY;
 public class KeyControl extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
-	 protected void doPost(HttpServletRequest request, HttpServletResponse response)
-	            throws ServletException, IOException {
-		 String action = request.getParameter("action");
-		 System.out.println("Received action: " + action);
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		String action = request.getParameter("action");
+		System.out.println("Received action: " + action);
 
-		 if (action == null) {
-		     response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Action is missing");
-		     return;
-		 }
+		if (action == null) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Action is missing");
+			return;
+		}
 
-	        switch (action) {
-	            case "generateKey":
-	                generateKey(request, response);
-	                break;
-	            case "importKey":
-	                importKey(request, response);
-	                break;
-	            case "reportKey":
-	                reportKey(request, response);
-	                break;
-	            default:
-	                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid action.");
-	                break;
-	        }
-	    }
+		switch (action) {
+		case "generateKey":
+			generateKey(request, response);
+			break;
+		case "importKey":
+			importKey(request, response);
+			break;
+		case "reportKey":
+			reportKey(request, response);
+			break;
+		default:
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid action.");
+			break;
+		}
+	}
 
 	public void generateKey(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -122,80 +121,124 @@ public class KeyControl extends HttpServlet {
 	}
 
 	private void importKey(HttpServletRequest request, HttpServletResponse response)
-	        throws ServletException, IOException {
-		 try {
-	            // Get the key information from the request
-	            String publicKey = request.getParameter("publicKey");	           
-	            
-	            Part filePart = request.getPart("publicKeyFile");  // For file uploads
-	            String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
-	            String uploadDir = getServletContext().getRealPath("/") + "uploads"; // Absolute directory path on the server
-	            File uploads = new File(uploadDir);
-	            if (!uploads.exists()) {
-	                uploads.mkdir();
-	            }
-	            File file = new File(uploads, fileName);
-	            
-	            String src = file.getAbsolutePath();
-	            System.out.println("path :  " + src);
-	           
+			throws ServletException, IOException {
+		try {
+			// Lấy thông tin khóa công khai từ yêu cầu
+			String publicKey = request.getParameter("publicKey");
 
-	            DAOKey daoKey = new DAOKey();
-	            Date createTime = new Date();
-	            Calendar calendar = Calendar.getInstance();
-	            calendar.setTime(createTime);
-	            calendar.add(Calendar.HOUR, 12);
-	            Date endTime = calendar.getTime();
+			// Lấy tệp khóa công khai từ yêu cầu
+			Part filePart = request.getPart("publicKeyFile"); // Tải file khóa
+			String fileName = null;
+			String filePath = null;
 
-	            if ((publicKey == null || publicKey.isEmpty()) && (filePart == null || filePart.getSize() == 0)) {
-	                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Public Key or Public Key File is required");
-	                return;
-	            }
+			// Nếu có tệp được tải lên, lưu tệp vào thư mục uploads
+			if (filePart != null && filePart.getSize() > 0) {
+				// Lấy tên tệp và lưu tệp vào thư mục uploads
+				fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
+				String uploadDir = getServletContext().getRealPath("/") + "uploads"; // Đường dẫn tuyệt đối trên server
 
-	            // Retrieve userId from the session
-	            HttpSession session = request.getSession(false);
-	            if (session == null || session.getAttribute("userId") == null) {
-	                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User not logged in");
-	                return;
-	            }
+				// Đảm bảo thư mục uploads tồn tại
+				File uploads = new File(uploadDir);
+				if (!uploads.exists()) {
+					uploads.mkdir(); // Tạo thư mục nếu không tồn tại
+				}
 
-	            Integer userIdObj = (Integer) session.getAttribute("userId");
-	            int userId = userIdObj != null ? userIdObj : -1;
-	            if (userId == -1) {
-	                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User not logged in");
-	                return;
-	            }
+				// Tạo file mới trên server và ghi dữ liệu tệp vào
+				File file = new File(uploads, fileName);
+				filePart.write(file.getAbsolutePath()); // Lưu file vào thư mục
 
-	            // Save the public key to the database if it exists
-	            boolean isPublicKeySaved = false;
-	            if (publicKey != null && !publicKey.isEmpty()) {
-	                isPublicKeySaved = daoKey.savePublicKey(userId, publicKey, createTime, endTime);
-	            }
-	            if (!isPublicKeySaved) {
-	                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error saving Public Key");
-	                return;
-	            }
-	            System.out.println("path: "+src);
-	            
-	            if (filePart != null ) {
-	                boolean isPublicKeyFileSaved = daoKey.savePublicKeyFile(userId, src, createTime, endTime);
-	                if (!isPublicKeyFileSaved) {
-	                    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error saving Public Key File");
-	                    return;
-	                }
-	            }
+				filePath = file.getAbsolutePath(); // Lấy đường dẫn tệp đã lưu trên server
+				System.out.println("Đã lưu tệp khóa tại: " + filePath);
 
-	            request.setAttribute("message", "Khóa đã được lưu thành công!");
-	            response.sendRedirect("keyControl");
+				// Đọc nội dung tệp để xử lý (giả sử tệp là văn bản chứa khóa công khai)
+				String fileContent = readFile(filePath);
+				System.out.println("Nội dung khóa công khai: " + fileContent);
 
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error saving key information");
-	        }
-	    
-    
+				// Nếu có khóa công khai trong tệp, lưu vào cơ sở dữ liệu
+				if (fileContent != null && !fileContent.isEmpty()) {
+					// Giả sử bạn có phương thức lưu khóa vào cơ sở dữ liệu
+					DAOKey daoKey = new DAOKey();
+					Date createTime = new Date();
+					Calendar calendar = Calendar.getInstance();
+					calendar.setTime(createTime);
+					calendar.add(Calendar.HOUR, 12); // Thời gian hết hạn là 12 giờ sau
+					Date endTime = calendar.getTime();
+
+					
+					HttpSession session = request.getSession();
+					Integer userIdObj = (Integer) session.getAttribute("userId");
+					int userId = userIdObj != null ? userIdObj : -1;
+					if (userId == -1) {
+						response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Người dùng chưa đăng nhập.");
+						return;
+					}
+
+					boolean isPublicKeySaved = daoKey.savePublicKey(userId, fileContent, createTime, endTime);
+					if (!isPublicKeySaved) {
+						response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Lỗi khi lưu khóa công khai.");
+						return;
+					}
+				}
+			}
+
+			// Kiểm tra nếu không có khóa công khai hoặc tệp khóa, trả về lỗi
+			if ((publicKey == null || publicKey.isEmpty()) && (filePart == null || filePart.getSize() == 0)) {
+				response.sendError(HttpServletResponse.SC_BAD_REQUEST,
+						"Khóa công khai hoặc tệp khóa công khai là bắt buộc.");
+				return;
+			}
+
+			// Lấy userId từ session
+			HttpSession session = request.getSession(false);
+			if (session == null || session.getAttribute("userId") == null) {
+				response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Người dùng chưa đăng nhập.");
+				return;
+			}
+
+			Integer userIdObj = (Integer) session.getAttribute("userId");
+			int userId = userIdObj != null ? userIdObj : -1;
+			if (userId == -1) {
+				response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Người dùng chưa đăng nhập.");
+				return;
+			}
+
+			// Lưu khóa công khai vào cơ sở dữ liệu nếu có
+			if (publicKey != null && !publicKey.isEmpty()) {
+				DAOKey daoKey = new DAOKey();
+				Date createTime = new Date();
+				Calendar calendar = Calendar.getInstance();
+				calendar.setTime(createTime);
+				calendar.add(Calendar.HOUR, 12); // Thời gian hết hạn là 12 giờ sau
+				Date endTime = calendar.getTime();
+
+				boolean isPublicKeySaved = daoKey.savePublicKey(userId, publicKey, createTime, endTime);
+				if (!isPublicKeySaved) {
+					response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Lỗi khi lưu khóa công khai.");
+					return;
+				}
+			}
+
+			// Chuyển hướng đến trang kiểm soát khóa sau khi lưu thành công
+			request.setAttribute("message", "Khóa công khai đã được lưu thành công!");
+			response.sendRedirect("keyControl");
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Lỗi khi xử lý thông tin khóa.");
+		}
 	}
 
+	// Phương thức để đọc nội dung tệp
+	private String readFile(String filePath) throws IOException {
+		StringBuilder content = new StringBuilder();
+		BufferedReader reader = new BufferedReader(new FileReader(filePath));
+		String line;
+		while ((line = reader.readLine()) != null) {
+			content.append(line).append("\n");
+		}
+		reader.close();
+		return content.toString();
+	}
 
 	private void reportKey(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
