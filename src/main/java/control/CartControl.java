@@ -21,69 +21,58 @@
 	public class CartControl extends HttpServlet {
 		
 		private static final long serialVersionUID = 1L;
-	
+		@Override
 		protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	    	
 	    	request.getRequestDispatcher("Cart.jsp").forward(request, response);
 	    }
-	
+		@Override
 		protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-			String productIdStr = request.getParameter("id");
-	        String quantityStr = request.getParameter("quantity");
-	     
-	      
+		    String productIdStr = request.getParameter("id");
+		    String quantityStr = request.getParameter("quantity");
+
+		    HttpSession session = request.getSession();
+		    User user = (User) session.getAttribute("accSession");
+		    if (user == null) {
+		        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+		        return;
+		    }
+
+		    int productId = Integer.parseInt(productIdStr);
+		    int quantity = Integer.parseInt(quantityStr);
+
+		    Product product = DAO.getInstance().getProductByID(String.valueOf(productId));
+		    List<CartItem> cart = (List<CartItem>) session.getAttribute("cart");
+
+		    if (cart == null) {
+		        cart = new ArrayList<>();
+		    }
+		
+
+		    boolean exist = false;
+		    for (CartItem item : cart) {
+		        if (item.getProduct().getProductID() == productId) {
+		            item.setQuantity(item.getQuantity() + quantity);
+		            exist = true;
+		            break;
+		        }
+		    }
+
+		    if (!exist) {
 	
-	        HttpSession session = request.getSession();
-	        User user =(User) session.getAttribute("accSession");
-	        if (user == null) {
-	        	  response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-	            return;
-	        }
-	        int productId = Integer.parseInt(productIdStr);
-	        int quantity = Integer.parseInt(quantityStr);
-	
-	        Product product = DAO.getInstance().getProductByID(String.valueOf(productId));
-	        
-	     
-	        List<CartItem> cart = (List<CartItem>) session.getAttribute("cart");
-	 
-	       
-	        if (cart == null) {
-	            cart = new ArrayList<>();
-	        }
-	
-	        boolean exist = false;
-	        for (CartItem item : cart) {
-	            if (item.getProduct().getProductID() == productId) {
-	                item.setQuantity(item.getQuantity() + quantity);
-	                
-	                exist = true;
-	                break;
-	            }
-	        }
-	
-	        if (!exist) {
-	        	
-	            cart.add(new CartItem(product, quantity));
-	            
-	        }
-	        int totalQuantity = 0;
-	        for (CartItem item : cart) {
-	            totalQuantity += item.getQuantity();
-	        }
-	 
-	        session.setAttribute("cart", cart);
-	    
-	        session.setAttribute("totalQuantity", totalQuantity); 
-	        
-	       
-	       
-	       response.setStatus(HttpServletResponse.SC_OK);
-	       // Trả lại thông tin tổng số lượng dưới dạng JSON
-	        response.setContentType("application/json");
-	        response.getWriter().write("{\"totalQuantity\": " + totalQuantity + "}");
-	       
-	       
-	        
-	    }
+		        cart.add(new CartItem(product, quantity));
+		       
+		    	
+		    }
+		    
+		    
+
+		    int totalQuantity = cart.stream().mapToInt(CartItem::getQuantity).sum();
+		    session.setAttribute("cart", cart);
+		    session.setAttribute("totalQuantity", totalQuantity);
+
+		    response.setStatus(HttpServletResponse.SC_OK);
+		    response.setContentType("application/json");
+		    response.getWriter().write("{\"totalQuantity\": " + totalQuantity + "}");
+		}
 	}
