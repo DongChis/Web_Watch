@@ -1,6 +1,8 @@
 package control;
 
 import java.io.IOException;
+import java.util.List;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -9,19 +11,19 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import dao.DAO;
-import entity.User;
+import entity.Order;
 
 /**
- * Servlet implementation class loadInfoUser
+ * Servlet implementation class HisOrderControl
  */
-@WebServlet(urlPatterns = { "/loadInfoUser" })
-public class loadInfoUser extends HttpServlet {
+@WebServlet(urlPatterns = { "/hisOrder" })
+public class HisOrderControl extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
-	public loadInfoUser() {
+	public HisOrderControl() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
@@ -32,8 +34,9 @@ public class loadInfoUser extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		// TODO Auto-generated method stub
 		response.setContentType("text/html;charset=UTF-8");
-
+		// Get the session
 		HttpSession session = request.getSession(false); // Use false to not create a new session
 		if (session == null) {
 			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Session expired. Please log in again.");
@@ -46,15 +49,16 @@ public class loadInfoUser extends HttpServlet {
 			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User not logged in");
 			return;
 		}
-	 
+
+		int userId = userIdObj; // Get user ID from session
 		
-		User user = DAO.getInstance().getUserByID(userIdObj);
 		
-		request.setAttribute("username", user.getUsername());
-		request.setAttribute("password", user.getPassword());
-		request.setAttribute("email", user.getEmail());
-		
-		request.getRequestDispatcher("Readme.jsp").forward(request, response);
+
+		List<Order> listHisOrder = DAO.getInstance().getHisOrders(userId);
+
+		request.setAttribute("hisOrder", listHisOrder);
+
+		request.getRequestDispatcher("HisOrder.jsp").forward(request, response);
 	}
 
 	/**

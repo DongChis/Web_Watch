@@ -21,7 +21,7 @@
 				class="fas fa-car"></i> Free ship trên toàn quốc</span>
 		</div>
 		<div class="right-info">
-			<a href="#"><i class="fas fa-heart"></i></a> <a href="#"><i
+			<a href="#"><i class="fas fa-heart"></i></a> <a href="hisOrder"><i
 				class="fas fa-twitter"></i></a> <a href="#"><i class="fas fa-star"></i></a>
 				<a href="keyControl" id="keyButton" > <i class="fas fa-key fa-lg"
 					style="color: blue;"></i>

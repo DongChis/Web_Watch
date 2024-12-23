@@ -66,8 +66,22 @@ public class DAO {
 		return products;
 	}
 	
+	public void updateOrderStatus(int orderID, String status) {
+	    String sql = "UPDATE Orders SET status = ? WHERE orderID = ?";
+	    try {
+	    	conn = new DBContext().getConnection();
+			ps = conn.prepareStatement(sql);
+	        ps.setString(1, status);
+	        ps.setInt(2, orderID);
+	        ps.executeUpdate();
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	}
+
+	
 	public boolean updateOrder(Order updatedOrder, int orderID) throws Exception {
-	    String updateOrderQuery = "UPDATE Orders1 SET CustomerName = ?, CustomerEmail = ?, CustomerPhone = ?, CustomerAddress = ?, PaymentMethod = ?, OrderDate = ? WHERE OrderID = ?";
+	    String updateOrderQuery = "UPDATE Orders1 SET CustomerName = ?, CustomerEmail = ?, CustomerPhone = ?, CustomerAddress = ?, PaymentMethod = ?, OrderDate = ? , Signature = ? WHERE OrderID = ?";
 	    String updateOrderItemQuery = "UPDATE OrderItems1 SET Quantity = ?, Price = ? WHERE OrderID = ?";
 
 	    boolean isUpdated = false;
@@ -84,8 +98,9 @@ public class DAO {
 	        orderStmt.setString(3, updatedOrder.getCustomerPhone());
 	        orderStmt.setString(4, updatedOrder.getCustomerAddress());
 	        orderStmt.setString(5, updatedOrder.getPaymentMethod());
-	        orderStmt.setTimestamp(6, new Timestamp(updatedOrder.getOrderDate().getTime()));
-	        orderStmt.setInt(7, orderID);
+	        orderStmt.setTimestamp(6, new Timestamp(System.currentTimeMillis()));
+	        orderStmt.setString(7, updatedOrder.getSign());
+	        orderStmt.setInt(8, orderID);
 
 	        int orderRowsUpdated = orderStmt.executeUpdate();
 
@@ -189,50 +204,121 @@ public class DAO {
 
 	public List<Order> getAllOrders() {
 	    List<Order> orders = new ArrayList<>();
-	    Map<Integer, Order> orderMap = new HashMap<>(); // To track orders by OrderID
+	    Map<Integer, Order> orderMap = new HashMap<>(); // Lưu trữ các đơn hàng theo OrderID để tránh trùng lặp
 
-	    String orderQuery = "SELECT o.OrderID, o.CustomerName, o.CustomerEmail, " +
-	                        "o.CustomerPhone, o.CustomerAddress, o.PaymentMethod, " +
-	                        "o.OrderDate, o.Signature, " +
-	                        "oi.ProductID, oi.Quantity, oi.Price " +
-	                        "FROM Orders1 o " +
-	                        "JOIN OrderItems1 oi ON o.OrderID = oi.OrderID";
+	    String orderQuery = """
+	        SELECT o.OrderID, o.CustomerName, o.CustomerEmail, 
+	               o.CustomerPhone, o.CustomerAddress, o.PaymentMethod, 
+	               o.OrderDate, o.Signature,  
+	               oi.ProductID, oi.Quantity, oi.Price
+	        FROM Orders1 o 
+	        JOIN OrderItems1 oi ON o.OrderID = oi.OrderID
+	    """;
 
 	    try (Connection conn = new DBContext().getConnection();
 	         PreparedStatement stmt = conn.prepareStatement(orderQuery);
 	         ResultSet rs = stmt.executeQuery()) {
 
 	        while (rs.next()) {
+	            // Lấy thông tin đơn hàng
 	            int orderID = rs.getInt("OrderID");
 	            String customerName = rs.getString("CustomerName");
 	            String customerEmail = rs.getString("CustomerEmail");
 	            String customerPhone = rs.getString("CustomerPhone");
 	            String customerAddress = rs.getString("CustomerAddress");
 	            String paymentMethod = rs.getString("PaymentMethod");
-	            Timestamp orderDate = rs.getTimestamp("OrderDate"); // Get directly from result
+	            Timestamp orderDate = rs.getTimestamp("OrderDate");
 	            String signature = rs.getString("Signature");
 
-	            // Handle product information
-	            String productId = rs.getString("ProductID"); // Assuming ProductID is an integer
+	            // Lấy thông tin sản phẩm
+	            String productId = rs.getString("ProductID");
 	            int quantity = rs.getInt("Quantity");
 	            double price = rs.getDouble("Price");
 
-	            // Create CartItem for this product
+	            // Tạo đối tượng CartItem cho sản phẩm
 	            CartItem cartItem = new CartItem(getProductByID(productId), quantity);
 
-	            // Check if the order already exists in the map
+	            // Kiểm tra nếu đơn hàng đã tồn tại trong map
 	            Order order = orderMap.get(orderID);
 	            if (order == null) {
-	                // If the order doesn't exist, create a new one
+	                // Tạo đơn hàng mới nếu chưa tồn tại
 	                List<CartItem> items = new ArrayList<>();
 	                items.add(cartItem);
 	                order = new Order(orderID, items, customerName, customerEmail, customerPhone, customerAddress,
 	                        paymentMethod, orderDate, signature);
 	                orders.add(order);
-	                orderMap.put(orderID, order); // Put the new order in the map
+	                orderMap.put(orderID, order); // Lưu đơn hàng vào map
 	            } else {
-	                // If the order exists, just add the CartItem to it
+	                // Nếu đã tồn tại, thêm CartItem vào danh sách sản phẩm
 	                order.getCartItems().add(cartItem);
+	            }
+	        }
+
+	    } catch (SQLException e) {
+	        // Log chi tiết hơn nếu có lỗi
+	        System.err.println("SQL error occurred while fetching orders: " + e.getMessage());
+	        e.printStackTrace();
+	    } catch (Exception e) {
+	        System.err.println("An unexpected error occurred: " + e.getMessage());
+	        e.printStackTrace();
+	    }
+
+	    return orders;
+	}
+
+	
+	public List<Order> getHisOrders(int userId) {
+	    List<Order> orders = new ArrayList<>();
+	    Map<Integer, Order> orderMap = new HashMap<>(); // Để theo dõi đơn hàng theo OrderID
+
+	    // Cập nhật câu truy vấn SQL để lọc theo userId
+	    String orderQuery = "SELECT o.OrderID, o.CustomerName, o.CustomerEmail, " +
+	                        "o.CustomerPhone, o.CustomerAddress, o.PaymentMethod, " +
+	                        "o.OrderDate, o.Signature, " +
+	                        "oi.ProductID, oi.Quantity, oi.Price " +
+	                        "FROM Orders1 o " +
+	                        "JOIN OrderItems1 oi ON o.OrderID = oi.OrderID " +
+	                        "WHERE o.UserID = ?";  // Thêm điều kiện lọc theo UserID
+
+	    try (Connection conn = new DBContext().getConnection();
+	         PreparedStatement stmt = conn.prepareStatement(orderQuery)) {
+
+	        // Thiết lập tham số userId vào câu lệnh SQL
+	        stmt.setInt(1, userId); // Truyền userId vào câu truy vấn
+
+	        try (ResultSet rs = stmt.executeQuery()) {
+	            while (rs.next()) {
+	                int orderID = rs.getInt("OrderID");
+	                String customerName = rs.getString("CustomerName");
+	                String customerEmail = rs.getString("CustomerEmail");
+	                String customerPhone = rs.getString("CustomerPhone");
+	                String customerAddress = rs.getString("CustomerAddress");
+	                String paymentMethod = rs.getString("PaymentMethod");
+	                Timestamp orderDate = rs.getTimestamp("OrderDate"); // Lấy trực tiếp từ kết quả
+	                String signature = rs.getString("Signature");
+
+	                // Lấy thông tin sản phẩm
+	                String productId = rs.getString("ProductID"); // Giả sử ProductID là một chuỗi
+	                int quantity = rs.getInt("Quantity");
+	                double price = rs.getDouble("Price");
+
+	                // Tạo CartItem cho sản phẩm này
+	                CartItem cartItem = new CartItem(getProductByID(productId), quantity);
+
+	                // Kiểm tra xem đơn hàng đã tồn tại trong map chưa
+	                Order order = orderMap.get(orderID);
+	                if (order == null) {
+	                    // Nếu đơn hàng chưa tồn tại, tạo đơn hàng mới
+	                    List<CartItem> items = new ArrayList<>();
+	                    items.add(cartItem);
+	                    order = new Order(orderID, items, customerName, customerEmail, customerPhone, customerAddress,
+	                            paymentMethod, orderDate, signature);
+	                    orders.add(order);
+	                    orderMap.put(orderID, order); // Thêm đơn hàng mới vào map
+	                } else {
+	                    // Nếu đơn hàng đã tồn tại, chỉ cần thêm CartItem vào đơn hàng
+	                    order.getCartItems().add(cartItem);
+	                }
 	            }
 	        }
 
@@ -244,6 +330,7 @@ public class DAO {
 
 	    return orders;
 	}
+
 
 
 	public List<Product> getListProduct(int orderDetailID) {
@@ -329,10 +416,10 @@ public class DAO {
 		return null;
 	}
 	
-	public User getUserByID(String id) {
+	public User getUserByID(int id) {
 		String query = "SELECT * FROM Users WHERE UserID = ?";
 		try (Connection conn = new DBContext().getConnection(); PreparedStatement ps = conn.prepareStatement(query)) {
-			ps.setString(1, id);
+			ps.setInt(1, id);
 			try (ResultSet rs = ps.executeQuery()) {
 				if (rs.next()) {
 					return new User(rs.getInt("UserID"), rs.getString("Username"), rs.getString("Password"),
@@ -478,50 +565,54 @@ public class DAO {
 	}
 
 	public void insertOrder(List<CartItem> cartItems, String customerName, String customerEmail, String customerPhone,
-			String customerAddress, String paymentMethod,String sign) {
-		String orderQuery = "INSERT INTO Orders1 (CustomerName, CustomerEmail, CustomerPhone, CustomerAddress, PaymentMethod, OrderDate, Signature) VALUES (?, ?, ?, ?, ?, ?, ?)";
-		String orderItemQuery = "INSERT INTO OrderItems1 (OrderID, ProductID, Quantity, Price) VALUES (?, ?, ?, ?)";
+			String customerAddress, String paymentMethod, String sign, int userID) {
+		
+	// Câu lệnh SQL cho bảng Orders1 (bao gồm UserID)
+	String orderQuery = "INSERT INTO Orders1 (CustomerName, CustomerEmail, CustomerPhone, CustomerAddress, PaymentMethod, OrderDate, Signature, UserID) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+	String orderItemQuery = "INSERT INTO OrderItems1 (OrderID, ProductID, Quantity, Price) VALUES (?, ?, ?, ?)";
 
-		try (Connection conn = new DBContext().getConnection()) {
-			conn.setAutoCommit(false); // Start transaction
+	try (Connection conn = new DBContext().getConnection()) {
+		conn.setAutoCommit(false); // Start transaction
 
-// Insert customer information and get the generated order ID
-			try (PreparedStatement orderStmt = conn.prepareStatement(orderQuery,
-					PreparedStatement.RETURN_GENERATED_KEYS)) {
-				orderStmt.setString(1, customerName);
-				orderStmt.setString(2, customerEmail);
-				orderStmt.setString(3, customerPhone);
-				orderStmt.setString(4, customerAddress);
-				orderStmt.setString(5, paymentMethod);
-				orderStmt.setTimestamp(6, new Timestamp(System.currentTimeMillis())); // Set current date
-				orderStmt.setString(7, sign);
-				int affectedRows = orderStmt.executeUpdate();
+		// Chèn thông tin khách hàng vào bảng Orders1 và lấy OrderID được tạo
+		try (PreparedStatement orderStmt = conn.prepareStatement(orderQuery, PreparedStatement.RETURN_GENERATED_KEYS)) {
+			orderStmt.setString(1, customerName);
+			orderStmt.setString(2, customerEmail);
+			orderStmt.setString(3, customerPhone);
+			orderStmt.setString(4, customerAddress);
+			orderStmt.setString(5, paymentMethod);
+			orderStmt.setTimestamp(6, new Timestamp(System.currentTimeMillis())); // Set current date
+			orderStmt.setString(7, sign);
+			orderStmt.setInt(8, userID); // Thêm UserID vào câu lệnh SQL
 
-				if (affectedRows == 0) {
-					throw new SQLException("Inserting order failed, no rows affected.");
-				}
+			int affectedRows = orderStmt.executeUpdate();
 
-// Retrieve the generated order ID
-				try (ResultSet generatedKeys = orderStmt.getGeneratedKeys()) {
-					if (generatedKeys.next()) {
-						long orderId = generatedKeys.getLong(1); // Get the order ID
+			if (affectedRows == 0) {
+				throw new SQLException("Inserting order failed, no rows affected.");
+			}
 
-						// Insert each item into the OrderItems1 table
-						insertOrderItems(conn, orderId, cartItems);
-						conn.commit(); // Commit transaction
-						System.out.println("Order and order items successfully inserted.");
-					} else {
-						throw new SQLException("Inserting order failed, no ID obtained.");
-					}
+			// Lấy OrderID được tạo
+			try (ResultSet generatedKeys = orderStmt.getGeneratedKeys()) {
+				if (generatedKeys.next()) {
+					long orderId = generatedKeys.getLong(1); // Lấy OrderID
+
+					// Chèn từng item vào bảng OrderItems1
+					insertOrderItems(conn, orderId, cartItems);
+					conn.commit(); // Commit transaction
+					System.out.println("Order and order items successfully inserted.");
+				} else {
+					throw new SQLException("Inserting order failed, no ID obtained.");
 				}
 			}
-		} catch (SQLException e) {
-			System.err.println("SQL error occurred: " + e.getMessage());
-			//rollbackConnection(); // Call rollback method on error
-		} catch (Exception e) {
-			System.err.println("An error occurred: " + e.getMessage());
 		}
+	} catch (SQLException e) {
+		System.err.println("SQL error occurred: " + e.getMessage());
+		//rollbackConnection(); // Call rollback method on error
+	} catch (Exception e) {
+		System.err.println("An error occurred: " + e.getMessage());
 	}
+}
+
 
 	private void insertOrderItems(Connection conn, long orderId, List<CartItem> cartItems) throws SQLException {
 		String orderItemQuery = "INSERT INTO OrderItems1 (OrderID, ProductID, Quantity, Price) VALUES (?, ?, ?, ?)";
@@ -751,7 +842,7 @@ public class DAO {
 			ps.setString(2, name);
 			ps.setString(3, description);
 			ps.setString(4, price);
-			ps.setString(5, "img/" + image);
+			ps.setString(5, image);
 			ps.setString(6, pid);
 			ps.executeUpdate();
 		} catch (Exception e) {
@@ -884,7 +975,10 @@ public class DAO {
 		// d.deleteProduct(session,"3002");
 
 		// System.out.println(d.getOrderDateById(13));
-		System.out.println(d.getAllOrders());
+		List<CartItem> cartItems = new ArrayList<CartItem>();
+		
+		Order o  = new Order(5048, cartItems,  "a",  "a",  "a",  "a", "a", new Timestamp(System.currentTimeMillis()), "a");
+		System.out.println(d.updateOrder(o,5048));
 
 	}
 }
