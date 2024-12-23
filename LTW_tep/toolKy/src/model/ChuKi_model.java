@@ -8,6 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.InvalidKeyException;
+import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.MessageDigest;
@@ -16,6 +17,7 @@ import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.Signature;
 import java.security.SignatureException;
+import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.Base64;
 
 import view.ChuKi_View;
@@ -33,6 +35,25 @@ public class ChuKi_model {
     public ChuKi_model() {
     	
     }
+//  tải khóa private
+  public void loadPrivateKey(String filePath) throws Exception {
+      byte[] keyBytes = Files.readAllBytes(Paths.get(filePath));
+      PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(keyBytes);
+      KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+      this.privateKey = keyFactory.generatePrivate(spec);
+  }
+
+//ký
+  public String signData(String data) throws Exception {
+      if (privateKey == null) {
+          throw new IllegalStateException("Private key not loaded.");
+      }
+      Signature signature = Signature.getInstance("SHA256withRSA");
+      signature.initSign(privateKey);
+      signature.update(data.getBytes());
+      byte[] signedBytes = signature.sign();
+      return Base64.getEncoder().encodeToString(signedBytes);
+  }
     public void generateKey(String algorithm) throws Exception {
     	if (this.keyPair == null) {
             if (this.secureRandom == null) {
