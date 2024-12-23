@@ -20,7 +20,8 @@
 					tiết đơn hàng</h1>
 				<div class="button-container">
 					<a href="orderListAdmin" class="button">Danh sách đơn hàng</a> <a
-						href="loadOrder?orderID=${order.orderID}" class="button" style="margin-right: 20px;">Edit</a>
+						href="loadOrder?orderID=${order.orderID}" class="button"
+						style="margin-right: 20px;">Edit</a>
 				</div>
 				<jsp:include page="OrderDetail.jsp" />
 			</c:when>
@@ -36,9 +37,9 @@
 				<jsp:include page="RecentlyDelete.jsp" />
 			</c:when>
 			<c:when test="${not empty orderEdit}">
-			 <h1
+				<h1
 					style="background-color: blueviolet; border-radius: 8px; color: white; padding: 10px; margin: 10px 0px 0px 0px;">
-					Chỉnh sửa đơn hàng</h1> 
+					Chỉnh sửa đơn hàng</h1>
 				<!-- 	<a href="ordertListAdmin" class="button" style="margin-left: 5px;">
 					Danh sách đơn hàng</a> -->
 				<jsp:include page="EditOrder.jsp" />
@@ -58,46 +59,78 @@
 							class="fas fa-search"></i></a>
 					</div>
 				</div>
+				<%-- Hiển thị lỗi nếu có --%>
+				<c:if test="${not empty error}">
+					<div class="error">${error}</div>
+				</c:if>
+
+				<%-- Hiển thị thông báo khi không có đơn hàng --%>
+				<c:if test="${not empty message}">
+					<div class="message">${message}</div>
+				</c:if>
 
 				<table>
 					<thead>
 						<tr>
-							<th>ID</th>
+							<th>Mã đơn hàng</th>
 							<th>Khách hàng</th>
-							<th>Số lượng</th>
-							<th>Giá trị đơn hàng</th>
+							<th>Số sản phẩm</th>
+							<th>Tổng giá trị</th>
 							<th>Ngày đặt hàng</th>
-							<th>Thông tin đơn hàng</th>
 							<th>Hành động</th>
+							<th>Trạng thái</th>
 						</tr>
 					</thead>
 					<tbody>
 						<c:forEach var="order" items="${orderListAdmin}">
 							<tr>
-								<td>${order.orderID}</td>
-								<td>${order.customerName}</td>
-								<td>${order.cartItems.size()}</td>
+								<td><c:out value="${order.orderID}" /></td>
+								<td><c:out value="${order.customerName}" /></td>
+								<td><c:out value="${order.cartItems.size()}" /></td>
 								<td><c:set var="totalOrderPrice" value="0" /> <c:forEach
 										var="item" items="${order.cartItems}">
 										<c:set var="totalOrderPrice"
 											value="${totalOrderPrice + item.totalPrice}" />
 									</c:forEach> ${totalOrderPrice} VNĐ</td>
-								<td>${order.orderDate}</td>
+								<td><c:out value="${order.orderDate}" /></td>
 								<td><a href="orderDetail?orderID=${order.orderID}">Xem
-										chi tiết</a></td>
-								<td><c:if test="${not empty sessionScope.accSession}">
+										</a>  
+									<c:if test="${not empty sessionScope.accSession}">
 										<!-- Nếu người dùng đã đăng nhập -->
-										<button class="button"
+										<button class="button" style="margin-left: 10px;"
 											onclick="deleteOrder(${order.orderID})">Xóa</button>
 									</c:if> <c:if test="${empty sessionScope.accSession}">
 										<!-- Nếu người dùng chưa đăng nhập -->
-										<button class="button" onclick="window.location.href='login'">Xóa</button>
-									</c:if>
+										<button class="button"  style="margin-left: 10px;" onclick="window.location.href='login'">Xóa</button>
+									</c:if>	
+										</td>
+								<td> 
+									<!-- Hiển thị trạng thái đơn hàng --> <c:choose>
+										<c:when test="${order.orderStatus == 'process'}">
+											<!-- Hiển thị thông báo và nút hủy đơn hàng -->
+											<span style="color: orange;">Đang xử lý</span>
+											<button class="button"  style="margin-left: 10px;"
+												onclick="cancelOrder(${order.orderID})">Hủy 
+												</button>
+										</c:when>
+										<c:when test="${order.orderStatus == 'Hoàn tất'}">
+											<span style="color: green;">Đã hoàn tất</span>
+										</c:when>
+										<c:when test="${order.orderStatus == 'Đã hủy'}">
+											<span style="color: red;">Đơn hàng đã hủy</span>
+										</c:when>
+										<c:otherwise>
+											<span style="color: gray;">-</span>
+										</c:otherwise>
+									</c:choose>
+								</td>
+
+
 							</tr>
 						</c:forEach>
-						<!-- Add more products as needed -->
 					</tbody>
 				</table>
+
 			</c:otherwise>
 		</c:choose>
 	</div>

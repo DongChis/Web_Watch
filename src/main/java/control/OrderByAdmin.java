@@ -31,15 +31,31 @@ public class OrderByAdmin extends HttpServlet {
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		response.setContentType("text/html;charset=UTF-8");
-		
-		List<Order> listOrder = DAO.getInstance().getAllOrders();
-		
-		request.setAttribute("orderListAdmin", listOrder);
-		
-		request.getRequestDispatcher("Admin.jsp").forward(request, response);
-	}
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+
+        try {
+            // Lấy danh sách đơn hàng từ DAO
+            List<Order> listOrder = DAO.getInstance().getAllOrders();
+            
+            // Truyền danh sách sang JSP
+            request.setAttribute("orderListAdmin", listOrder);
+            
+            // Nếu danh sách rỗng, truyền thêm thông báo
+            if (listOrder == null || listOrder.isEmpty()) {
+                request.setAttribute("message", "Hiện tại không có đơn hàng nào.");
+            }
+            
+        } catch (Exception e) {
+            // Ghi log lỗi để kiểm tra khi cần
+            e.printStackTrace();
+            request.setAttribute("error", "Đã xảy ra lỗi khi tải danh sách đơn hàng: " + e.getMessage());
+        }
+
+        // Chuyển tiếp tới Admin.jsp
+        request.getRequestDispatcher("Admin.jsp").forward(request, response);
+    }
+
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)

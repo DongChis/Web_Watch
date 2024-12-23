@@ -26,7 +26,7 @@
     <input class="input-edit-form" type="number" name="price" value="${product.price}" required/><br/>
 
     <label class="label-edit-form" for="imageURL">Ảnh sản phẩm:</label>
-    <input class="input-edit-form" type="file" name="imageURL" accept="image/*"/><br/>
+    <input class="input-edit-form" type="text" name="imageURL" accept="image/*"/><br/>
     <img src="${product.imageURL}" alt="Current Image" style="width: 100px; height: auto;"/><br/>
 
 
