@@ -33,6 +33,7 @@ public class LogoutControl extends HttpServlet {
 		session.removeAttribute("accSession");
 		session.removeAttribute("totalQuantity");
 		System.out.println(session.getAttribute("accSession")+ "hien tai");
+		System.out.println(session.getAttribute("totalQuantity")+ "hien tai");
 
 
 		response.sendRedirect("home");

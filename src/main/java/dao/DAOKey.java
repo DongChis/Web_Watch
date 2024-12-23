@@ -5,9 +5,11 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -204,5 +206,75 @@ public class DAOKey {
             e.printStackTrace();
         }
     }
+   
+    public boolean saveToken(int userId, String token) throws Exception {
+        String sql = "INSERT INTO tokens (user_id, token, expiration_time) VALUES (?, ?, ?)";
+        try (Connection conn =  new DBContext().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
+            // Tính thời gian hết hạn (24 giờ từ thời điểm hiện tại)
+            long expirationMillis = System.currentTimeMillis() + (24 * 60 * 60 * 1000);
+            Timestamp expirationTime = new Timestamp(expirationMillis);
+
+            stmt.setInt(1, userId);
+            stmt.setString(2, token);
+            stmt.setTimestamp(3, expirationTime);
+
+            int rowsInserted = stmt.executeUpdate();
+            return rowsInserted > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    public boolean isTokenValid(String token) throws Exception {
+        // Kiểm tra tính hợp lệ của token
+        String sql = "SELECT expiration_time FROM email_verification_tokens WHERE token = ?";
+        try (Connection conn = new DBContext().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, token);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    Timestamp expirationTime = rs.getTimestamp("expiration_time");
+                    return expirationTime != null && expirationTime.after(new Timestamp(System.currentTimeMillis()));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public int getUserIdByToken(String token) throws Exception {
+        // Lấy userId từ token
+        String sql = "SELECT user_id FROM email_verification_tokens WHERE token = ?";
+        try (Connection conn = new DBContext().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, token);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("user_id");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1; // Trả về -1 nếu không tìm thấy userId
+    }
+
+    public void verifyEmail(int userId) throws Exception {
+        // Cập nhật trạng thái xác minh email của người dùng
+        String sql = "UPDATE users SET email_verified = true WHERE id = ?";
+        try (Connection conn = new DBContext().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+ 
    
 }
