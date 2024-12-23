@@ -1,8 +1,6 @@
 package view;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.*;
 
 import controller.ChuKi_Controller;
@@ -29,9 +27,9 @@ public class ChuKi_View extends JFrame {
     private ChuKi_Controller controller;
 
     public ChuKi_View() {
-        setTitle("Chu Ki So - Digital Signature Application");
+        setTitle("Digital Signature Application");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(800, 600);
+        setSize(900, 700);
         setLocationRelativeTo(null);
         initUI();
 
@@ -41,61 +39,59 @@ public class ChuKi_View extends JFrame {
     }
 
     private void initUI() {
-        JPanel panel = new JPanel(new BorderLayout());
-        JPanel topPanel = new JPanel(new GridLayout(2, 1));
-        JPanel bottomPanel = new JPanel(new GridLayout(2, 1));
+        JPanel panel = new JPanel(new BorderLayout(20, 20)); // Add spacing between components
+        panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20)); // Add padding around the main panel
+
+        // Fonts and Colors
+        Font labelFont = new Font("Arial", Font.BOLD, 14);
+        Font textFont = new Font("Arial", Font.PLAIN, 14);
 
         // Text input and output area
-        textInput = new JTextArea(5, 40);
-        textOutput = new JTextArea(5, 40);
+        textInput = new JTextArea(10, 30);
+        textOutput = new JTextArea(10, 30);
         textOutput.setEditable(false);
+        textInput.setFont(textFont);
+        textOutput.setFont(textFont);
 
         JScrollPane scrollInput = new JScrollPane(textInput);
         JScrollPane scrollOutput = new JScrollPane(textOutput);
 
-        JPanel textPanel = new JPanel(new GridLayout(1, 2));
-        textPanel.add(scrollInput);
-        textPanel.add(scrollOutput);
+        JPanel textPanel = new JPanel(new GridLayout(1, 2, 20, 20)); // Space between input/output panels
+        textPanel.add(createTitledPanel("Input Text", scrollInput, labelFont));
+        textPanel.add(createTitledPanel("Output", scrollOutput, labelFont));
 
         // Hash and signature fields
         hashTextField = new JTextField();
         signatureTextField = new JTextField();
+        hashTextField.setFont(textFont);
+        signatureTextField.setFont(textFont);
 
         // Key areas
-        textPublicKey = new JTextArea(3, 30);
-        textPrivateKey = new JTextArea(3, 30);
+        textPublicKey = new JTextArea(5, 30);
+        textPrivateKey = new JTextArea(5, 30);
         JScrollPane scrollPublicKey = new JScrollPane(textPublicKey);
         JScrollPane scrollPrivateKey = new JScrollPane(textPrivateKey);
-
-        // Algorithm selection
-        comboAlgorithm = new JComboBox<>(new String[]{"SHA-256", "SHA-512"});
+        textPublicKey.setFont(textFont);
+        textPrivateKey.setFont(textFont);
 
         // Buttons
-        btnGenerateKey = new JButton("Generate Key");
-        btnSign = new JButton("Sign");
-        btnVerify = new JButton("Verify");
-        btnChooseFile = new JButton("Choose File");
-        btnSaveKey = new JButton("Save Keys");
-        btnLoadKey = new JButton("Load Keys");
-        btnReset = new JButton("Reset");
+        btnGenerateKey = createButton("Generate Key", labelFont);
+        btnSign = createButton("Sign", labelFont);
+        btnVerify = createButton("Verify", labelFont);
+        btnChooseFile = createButton("Choose File", labelFont);
+        btnSaveKey = createButton("Save Keys", labelFont);
+        btnLoadKey = createButton("Load Keys", labelFont);
+        btnReset = createButton("Reset", labelFont);
+        comboAlgorithm = new JComboBox<>(new String[]{"SHA-256", "SHA-512"});
+        comboAlgorithm.setFont(labelFont);
 
-        // Top Panel Layout
-        JPanel keyPanel = new JPanel(new GridLayout(2, 2));
-        keyPanel.add(new JLabel("Public Key:"));
-        keyPanel.add(scrollPublicKey);
-        keyPanel.add(new JLabel("Private Key:"));
-        keyPanel.add(scrollPrivateKey);
-        topPanel.add(keyPanel);
+        // Top Panel: Key and Hash/Signature
+        JPanel topPanel = new JPanel(new GridLayout(2, 2, 20, 20));
+        topPanel.add(createTitledPanel("Public Key", scrollPublicKey, labelFont));
+        topPanel.add(createTitledPanel("Private Key", scrollPrivateKey, labelFont));
 
-        JPanel hashSignPanel = new JPanel(new GridLayout(2, 2));
-        hashSignPanel.add(new JLabel("Hash:"));
-        hashSignPanel.add(hashTextField);
-        hashSignPanel.add(new JLabel("Signature:"));
-        hashSignPanel.add(signatureTextField);
-        topPanel.add(hashSignPanel);
-
-        // Bottom Panel Layout
-        JPanel buttonPanel = new JPanel(new GridLayout(2, 4));
+        // Bottom Panel: Buttons
+        JPanel buttonPanel = new JPanel(new GridLayout(2, 4, 20, 20)); // Organize buttons
         buttonPanel.add(btnGenerateKey);
         buttonPanel.add(btnSign);
         buttonPanel.add(btnVerify);
@@ -105,26 +101,44 @@ public class ChuKi_View extends JFrame {
         buttonPanel.add(btnReset);
         buttonPanel.add(comboAlgorithm);
 
-        bottomPanel.add(textPanel);
-        bottomPanel.add(buttonPanel);
-
+        // Main Layout
         panel.add(topPanel, BorderLayout.NORTH);
-        panel.add(bottomPanel, BorderLayout.CENTER);
+        panel.add(textPanel, BorderLayout.CENTER);
+        panel.add(buttonPanel, BorderLayout.SOUTH);
 
-        add(panel);
+        setContentPane(panel);
+    }
+
+    private JPanel createTitledPanel(String title, JComponent component, Font titleFont) {
+        JPanel panel = new JPanel(new BorderLayout());
+        JLabel label = new JLabel(title);
+        label.setFont(titleFont);
+        panel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.GRAY), title));
+        panel.add(label, BorderLayout.NORTH);
+        panel.add(component, BorderLayout.CENTER);
+        return panel;
+    }
+
+    private JButton createButton(String text, Font font) {
+        JButton button = new JButton(text);
+        button.setFont(font);
+        button.setBackground(new Color(70, 130, 180)); // Steel blue color
+        button.setForeground(Color.WHITE);
+        button.setFocusPainted(false);
+        return button;
     }
 
     private void addEventHandlers() {
-        btnGenerateKey.addActionListener(e -> controller.generateKey(e));
-        btnSign.addActionListener(e -> controller.sign(e));
-        btnVerify.addActionListener(e -> controller.verify(e));
-        btnChooseFile.addActionListener(e -> controller.chooseFile(e));
-        btnSaveKey.addActionListener(e -> controller.saveKey(e));
-        btnLoadKey.addActionListener(e -> controller.loadKey(e));
-        btnReset.addActionListener(e -> controller.reset(e));
+        btnGenerateKey.addActionListener(controller::generateKey);
+        btnSign.addActionListener(controller::sign);
+        btnVerify.addActionListener(controller::verify);
+        btnChooseFile.addActionListener(controller::chooseFile);
+        btnSaveKey.addActionListener(controller::saveKey);
+        btnLoadKey.addActionListener(controller::loadKey);
+        btnReset.addActionListener(controller::reset);
     }
 
-    // Getters for components
+    // Getters
     public JTextArea getTextInput() {
         return textInput;
     }
