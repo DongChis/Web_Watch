@@ -2,7 +2,10 @@ package entity;
 
 
 import java.sql.Timestamp;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
+
 
 import dao.DAO;
 
@@ -17,6 +20,8 @@ public class Order {
     private Timestamp  orderDate;
     
     private String  sign;
+    
+    private String orderStatus;
 	
 	
 	public Order(int orderID, List<CartItem> cartItems, String customerName, String customerEmail, String customerPhone,
@@ -44,6 +49,42 @@ public class Order {
 		this.orderDate = orderDate;
 		this.sign = sign;
 	}
+	
+	 public void updateStatus() {
+	        if ("Pending".equals(this.orderStatus)) { // Chỉ cập nhật nếu trạng thái hiện tại là "Pending"
+	            Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
+	            Duration duration = Duration.between(this.orderDate.toLocalDateTime(), currentTimestamp.toLocalDateTime());
+
+	            if (duration.toMinutes() >= 15) {
+	                this.orderStatus = "Completed";
+	            }
+	        }
+	    }
+	 
+	 
+	 public String getOrderStatus() {
+		    // Tính toán trạng thái đơn hàng dựa trên thời gian đặt hàng
+		    LocalDateTime orderTime = orderDate.toLocalDateTime();
+		    LocalDateTime now = LocalDateTime.now();
+		    Duration duration = Duration.between(orderTime, now);
+
+		    if (duration.toMinutes() > 1) {
+		        return "Hoàn tất"; // Hoàn tất
+		    } else {
+		        return "process"; // Đang xử lý
+		    }
+		}
+
+	 
+	
+	 public String getStatus() {
+	        return orderStatus;
+	    }
+
+	    public void setStatus(String status) {
+	        this.orderStatus = status;
+	    }
+
 	
 	public int getOrderID() {
 		return orderID;

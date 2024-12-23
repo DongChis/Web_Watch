@@ -39,12 +39,16 @@ public class loadInfoUser extends HttpServlet {
 			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Session expired. Please log in again.");
 			return;
 		}
-		String userId = session.getAttribute("userId").toString();
-		if (userId == null) {
-			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User ID not found in session.");
+
+		Integer userIdObj = (Integer) session.getAttribute("userId");
+		if (userIdObj == null) {
+			// userID attribute is missing from session
+			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User not logged in");
 			return;
 		}
-		User user = DAO.getInstance().getUserByID(userId);
+	 
+		
+		User user = DAO.getInstance().getUserByID(userIdObj);
 		
 		request.setAttribute("username", user.getUsername());
 		request.setAttribute("password", user.getPassword());
