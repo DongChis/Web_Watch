@@ -17,5 +17,8 @@
 	<classpathentry exported="true" kind="lib" path="LTW_tep/JAR/javax.servlet.jsp.jstl-api-1.2.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="LTW_tep/JAR/jbcrypt-0.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="LTW_tep/JAR/mssql-jdbc-12.4.1.jre11.jar"/>
+	<classpathentry exported="true" kind="lib" path="LTW_tep/JAR/javax.mail.jar"/>
+	<classpathentry kind="lib" path="LTW_tep/JAR/activation-1.1.1.jar"/>
+	<classpathentry kind="lib" path="LTW_tep/JAR/java-dotenv-5.2.2.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
