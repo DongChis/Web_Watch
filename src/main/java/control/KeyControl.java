@@ -242,24 +242,11 @@ public class KeyControl extends HttpServlet {
 				response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User ID not found in session.");
 				return;
 			}
-<<<<<<< HEAD
-=======
+
 			   // Kiểm tra xem người dùng đã xác minh email chưa
 	        
-	        boolean isEmailVerified = false; // Hàm này kiểm tra xem email đã xác minh chưa
+	      
 
-	        if (!isEmailVerified) {
-	            // Nếu email chưa được xác minh, gửi email xác minh
-	            User user =(User) DAO.getInstance().getUserByID(userId);
-	           
-	            String userEmail = user.getEmail();
-	            
-	            sendVerificationEmail(userEmail, userId);
-	            
-	            response.sendRedirect("verifyEmail.jsp"); // Chuyển hướng đến trang yêu cầu xác minh email
-	            return;
-	        }
->>>>>>> main
 			
 			boolean isEmailVerified = DAO.getInstance().isEmailVerified(userId); // Kiểm tra trạng thái xác minh email
 
