@@ -7,8 +7,11 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 
 import javax.swing.JFileChooser;
@@ -246,8 +249,16 @@ public class ChuKi_Control {
 		if (returnValue == JFileChooser.APPROVE_OPTION) {
 			File file = fileChooser.getSelectedFile();
 			try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+		        String keyString = reader.readLine();
 				view.getTextPublicKey().setText(reader.readLine());
 				view.getTextOutput().setText("Public Key loaded from: " + file.getAbsolutePath());
+				 byte[] keyBytes = Base64.getDecoder().decode(keyString);
+			        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+			        X509EncodedKeySpec keySpec = new X509EncodedKeySpec(keyBytes);
+			        PublicKey publicKey = keyFactory.generatePublic(keySpec);
+
+			        // Set public key vào model
+			        model.setPublicKey(publicKey);
 			} catch (IOException ex) {
 				view.getTextOutput().setText("Error loading public key: " + ex.getMessage());
 			}
@@ -255,18 +266,46 @@ public class ChuKi_Control {
 
 		// Load Private Key
 		fileChooser.setDialogTitle("Load Private Key");
-		returnValue = fileChooser.showOpenDialog(null);
+		int returnValue = fileChooser.showOpenDialog(null);
 		if (returnValue == JFileChooser.APPROVE_OPTION) {
 			File file = fileChooser.getSelectedFile();
 			try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+				String keyString = reader.readLine();
 				view.getTextPrivateKey().setText(reader.readLine());
 				view.getTextOutput().setText("Private Key loaded from: " + file.getAbsolutePath());
+				 // Chuyển đổi chuỗi private key sang đối tượng PrivateKey
+		        byte[] keyBytes = Base64.getDecoder().decode(keyString);
+		        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+		        PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(keyBytes);
+		        PrivateKey privateKey = keyFactory.generatePrivate(keySpec);
+
+		        // Set private key vào model
+		        model.setPrivateKey(privateKey);
+				
 			} catch (IOException ex) {
 				view.getTextOutput().setText("Error loading private key: " + ex.getMessage());
 			}
 		}
 	}
+	public void setPrivateKey() {
+	    String keyString = view.getTextPrivateKey().getText();
+	    if (keyString == null || keyString.trim().isEmpty()) {
+	        view.getTextOutput().setText("No private key provided.");
+	    } else {
+	        try {
+	            byte[] keyBytes = Base64.getDecoder().decode(keyString.trim());
+	            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+	            PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(keyBytes);
+	            PrivateKey privateKey = keyFactory.generatePrivate(keySpec);
 
+	            // Set private key vào model
+	            model.setPrivateKey(privateKey);
+	            view.getTextOutput().setText("Private Key set successfully.");
+	        } catch (Exception ex) {
+	            view.getTextOutput().setText("Invalid private key: " + ex.getMessage());
+	        }
+	    }
+	}
 	public void reset(ActionEvent e) {
 		view.getTextOutput().setText("");
 		view.getTextInput().setText("");
