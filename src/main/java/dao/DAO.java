@@ -34,46 +34,55 @@ public class DAO {
 		}
 		return instance;
 	}
-
+	
 	public List<Product> getProductsByPage(int page, int pageSize) {
-		List<Product> products = new ArrayList<>();
-		String query = "SELECT * FROM Products ORDER BY ProductID DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
-		try (Connection conn = new DBContext().getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
-			int offset = (page - 1) * pageSize;
-			stmt.setInt(1, offset);
-			stmt.setInt(2, pageSize);
-			try (ResultSet rs = stmt.executeQuery()) {
-				while (rs.next()) {
-					products.add(new Product(rs.getInt("ProductID"), rs.getString("Title"), rs.getString("Name"),
-							rs.getString("Description"), rs.getString("Price"), rs.getString("ImageURL"),
-							rs.getString("Gender")));
-				}
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} catch (Exception e1) {
+	    List<Product> products = new ArrayList<>();
+	    String query = "SELECT * FROM Products ORDER BY ProductID DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+	    try (Connection conn = new DBContext().getConnection();
+	         PreparedStatement stmt = conn.prepareStatement(query)) {
+	        int offset = (page - 1) * pageSize;
+	        stmt.setInt(1, offset);
+	        stmt.setInt(2, pageSize);
+	        try (ResultSet rs = stmt.executeQuery()) {
+	            while (rs.next()) {
+	                products.add(new Product(
+	                        rs.getInt("ProductID"),
+	                        rs.getString("Title"),
+	                        rs.getString("Name"),
+	                        rs.getString("Description"),
+	                        rs.getString("Price"),
+	                        rs.getString("ImageURL"),
+	                        rs.getString("Gender")));
+	            }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    } catch (Exception e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		return products;
+	    return products;
 	}
 
+	
+	
 	public int getTotalProducts() {
-		String query = "SELECT COUNT(*) FROM Products";
-		try (Connection conn = new DBContext().getConnection();
-				PreparedStatement stmt = conn.prepareStatement(query);
-				ResultSet rs = stmt.executeQuery()) {
-			if (rs.next()) {
-				return rs.getInt(1);
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} catch (Exception e1) {
+	    String query = "SELECT COUNT(*) FROM Products";
+	    try (Connection conn = new DBContext().getConnection();
+	         PreparedStatement stmt = conn.prepareStatement(query);
+	         ResultSet rs = stmt.executeQuery()) {
+	        if (rs.next()) {
+	            return rs.getInt(1);
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    } catch (Exception e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		return 0;
+	    return 0;
 	}
+
 
 	// Phương thức để lấy tất cả các sản phẩm
 	public List<Product> getAllProducts() {
@@ -105,22 +114,21 @@ public class DAO {
 		}
 		return products;
 	}
-
+	
 	public void updateOrderStatus(int orderID, String status) {
-		String sql = "UPDATE Orders SET status = ? WHERE orderID = ?";
-		try {
-			conn = new DBContext().getConnection();
+	    String sql = "UPDATE Orders SET status = ? WHERE orderID = ?";
+	    try {
+	    	conn = new DBContext().getConnection();
 			ps = conn.prepareStatement(sql);
-			ps.setString(1, status);
-			ps.setInt(2, orderID);
-			ps.executeUpdate();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	        ps.setString(1, status);
+	        ps.setInt(2, orderID);
+	        ps.executeUpdate();
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
 	}
 
 	public boolean updateOrder(Order updatedOrder, int orderID) throws Exception {
-
 	    String selectSignatureQuery = "SELECT Signature FROM Orders1 WHERE OrderID = ?";
 	    String updateOrderQuery = "UPDATE Orders1 SET CustomerName = ?, CustomerEmail = ?, CustomerPhone = ?, CustomerAddress = ?, PaymentMethod = ?, OrderDate = ?, Signature = ?, Edited = ? WHERE OrderID = ?";
 	    String updateOrderItemQuery = "UPDATE OrderItems1 SET Quantity = ?, Price = ? WHERE OrderID = ?";
@@ -163,6 +171,7 @@ public class DAO {
 	        orderStmt.setBoolean(8, isSignatureChanged);  // Cập nhật cột "Edited" thành true hoặc false
 	        orderStmt.setInt(9, orderID); // Cập nhật đơn hàng với orderID
 
+
 			int orderRowsUpdated = orderStmt.executeUpdate();
 
 
@@ -179,6 +188,7 @@ public class DAO {
 			int[] orderItemsRowsUpdated = orderItemStmt.executeBatch();
 
 
+
 	        // Xác nhận giao dịch nếu tất cả cập nhật thành công
 	        isUpdated = orderRowsUpdated > 0 && orderItemsRowsUpdated.length == updatedOrder.getCartItems().size();
 	        conn.commit();
@@ -192,7 +202,9 @@ public class DAO {
 	    }
 
 
+
 		return isUpdated;
+
 	}
 
 	
@@ -200,6 +212,7 @@ public class DAO {
         return !signBefore.equals(signAfter); // So sánh chữ ký trước và sau
     }
 	
+
 
 
 	public void deleteOrder(String orderID, String username) throws Exception {
@@ -215,68 +228,85 @@ public class DAO {
 			// Execute the DELETE query
 			int rowsAffected = stmt.executeUpdate();
 
-			if (rowsAffected > 0) {
-				System.out.println("Order with ID " + orderID + " has been deleted successfully.");
-			} else {
-				System.out.println("No order found with ID " + orderID);
-			}
-		} catch (SQLException e) {
-			System.err.println("SQL error occurred: " + e.getMessage());
-		}
-	}
 
+	
+	public void deleteOrder(String orderID, String username) throws Exception {
+	    String deleteQuery = "DELETE FROM Orders1 WHERE OrderID = ?";
+
+	    // Establish database connection
+	    try (Connection conn = new DBContext().getConnection();
+	         PreparedStatement stmt = conn.prepareStatement(deleteQuery)) {
+
+	        // Set the OrderID parameter
+	        stmt.setString(1, orderID);
+
+	        // Execute the DELETE query
+	        int rowsAffected = stmt.executeUpdate();
+
+	        if (rowsAffected > 0) {
+	            System.out.println("Order with ID " + orderID + " has been deleted successfully.");
+	        } else {
+	            System.out.println("No order found with ID " + orderID);
+	        }
+	    } catch (SQLException e) {
+	        System.err.println("SQL error occurred: " + e.getMessage());
+	    }
+	}
+	
 	public Order getOrderDetailByOrderID(int orderID) throws Exception {
-		String orderQuery = "SELECT * FROM Orders1 WHERE OrderID = ?";
-		String orderItemQuery = "SELECT * FROM OrderItems1 WHERE OrderID = ?";
-		Order order = null;
+        String orderQuery = "SELECT * FROM Orders1 WHERE OrderID = ?";
+        String orderItemQuery = "SELECT * FROM OrderItems1 WHERE OrderID = ?";
+        Order order = null;
 
-		try (Connection conn = new DBContext().getConnection();
-				PreparedStatement orderStmt = conn.prepareStatement(orderQuery);
-				PreparedStatement orderItemStmt = conn.prepareStatement(orderItemQuery)) {
+        try (Connection conn = new DBContext().getConnection();
+             PreparedStatement orderStmt = conn.prepareStatement(orderQuery);
+             PreparedStatement orderItemStmt = conn.prepareStatement(orderItemQuery)) {
+             
+            // Set order ID in the query
+            orderStmt.setInt(1, orderID);
+            ResultSet orderResultSet = orderStmt.executeQuery();
 
-			// Set order ID in the query
-			orderStmt.setInt(1, orderID);
-			ResultSet orderResultSet = orderStmt.executeQuery();
+            // Retrieve order details
+            if (orderResultSet.next()) {
+                String customerName = orderResultSet.getString("CustomerName");
+                String customerEmail = orderResultSet.getString("CustomerEmail");
+                String customerPhone = orderResultSet.getString("CustomerPhone");
+                String customerAddress = orderResultSet.getString("CustomerAddress");
+                String paymentMethod = orderResultSet.getString("PaymentMethod");
+                Timestamp orderDate = orderResultSet.getTimestamp("OrderDate");
 
-			// Retrieve order details
-			if (orderResultSet.next()) {
-				String customerName = orderResultSet.getString("CustomerName");
-				String customerEmail = orderResultSet.getString("CustomerEmail");
-				String customerPhone = orderResultSet.getString("CustomerPhone");
-				String customerAddress = orderResultSet.getString("CustomerAddress");
-				String paymentMethod = orderResultSet.getString("PaymentMethod");
-				Timestamp orderDate = orderResultSet.getTimestamp("OrderDate");
+                // Create an Order object
+                order = new Order(orderID, new ArrayList<>(), customerName, customerEmail,
+                                  customerPhone, customerAddress, paymentMethod, orderDate);
+                
+                // Retrieve order items
+                orderItemStmt.setInt(1, orderID);
+                ResultSet orderItemsResultSet = orderItemStmt.executeQuery();
 
-				// Create an Order object
-				order = new Order(orderID, new ArrayList<>(), customerName, customerEmail, customerPhone,
-						customerAddress, paymentMethod, orderDate);
+                while (orderItemsResultSet.next()) {
+                    String productId = orderItemsResultSet.getString("ProductID");
+                    int quantity = orderItemsResultSet.getInt("Quantity");
+                    double price = orderItemsResultSet.getDouble("Price");
 
-				// Retrieve order items
-				orderItemStmt.setInt(1, orderID);
-				ResultSet orderItemsResultSet = orderItemStmt.executeQuery();
+                    // Assuming you have a method to retrieve a Product by its ID
+                    Product product = getProductByID(productId); // Implement this method in your DAO
+                    CartItem cartItem = new CartItem(product, quantity);
+                    order.getCartItems().add(cartItem); // Add the CartItem to the order
+                }
+            }
 
-				while (orderItemsResultSet.next()) {
-					String productId = orderItemsResultSet.getString("ProductID");
-					int quantity = orderItemsResultSet.getInt("Quantity");
-					double price = orderItemsResultSet.getDouble("Price");
+        } catch (SQLException e) {
+            System.err.println("SQL error occurred: " + e.getMessage());
+        }
 
-					// Assuming you have a method to retrieve a Product by its ID
-					Product product = getProductByID(productId); // Implement this method in your DAO
-					CartItem cartItem = new CartItem(product, quantity);
-					order.getCartItems().add(cartItem); // Add the CartItem to the order
-				}
-			}
-
-		} catch (SQLException e) {
-			System.err.println("SQL error occurred: " + e.getMessage());
-		}
-
-		return order; // Return the order details (or null if not found)
-	}
-
+        return order; // Return the order details (or null if not found)
+    }
+	
 	public List<Order> getOrdersByPage(int page, int pageSize) {
+
 		List<Order> orders = new ArrayList<>();
 		Map<Integer, Order> orderMap = new HashMap<>();
+
 
 	    String orderQuery = """
 	        SELECT o.OrderID, o.CustomerName, o.CustomerEmail, 
@@ -290,12 +320,14 @@ public class DAO {
 	    """;
 
 
+
 		try (Connection conn = new DBContext().getConnection();
 				PreparedStatement stmt = conn.prepareStatement(orderQuery)) {
 
 			int offset = (page - 1) * pageSize; // Tính OFFSET
 			stmt.setInt(1, offset);
 			stmt.setInt(2, pageSize);
+
 
 
 	        try (ResultSet rs = stmt.executeQuery()) {
@@ -312,6 +344,7 @@ public class DAO {
 	                boolean edited = rs.getBoolean("Edited");
 
 
+
 					// Lấy thông tin sản phẩm
 					String productId = rs.getString("ProductID");
 					int quantity = rs.getInt("Quantity");
@@ -319,6 +352,7 @@ public class DAO {
 
 					// Tạo đối tượng CartItem
 					CartItem cartItem = new CartItem(getProductByID(productId), quantity);
+
 
 
 	                // Kiểm tra nếu đơn hàng đã tồn tại trong map
@@ -343,31 +377,34 @@ public class DAO {
 			e1.printStackTrace();
 		}
 
-		return orders;
+	    return orders;
 	}
-
+	
 	public int getTotalOrders() {
-		String query = "SELECT COUNT(*) FROM Orders1";
-		try (Connection conn = new DBContext().getConnection();
-				PreparedStatement stmt = conn.prepareStatement(query);
-				ResultSet rs = stmt.executeQuery()) {
-			if (rs.next()) {
-				return rs.getInt(1);
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} catch (Exception e1) {
+	    String query = "SELECT COUNT(*) FROM Orders1";
+	    try (Connection conn = new DBContext().getConnection();
+	         PreparedStatement stmt = conn.prepareStatement(query);
+	         ResultSet rs = stmt.executeQuery()) {
+	        if (rs.next()) {
+	            return rs.getInt(1);
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    } catch (Exception e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		return 0;
+	    return 0;
 	}
 	
 	
 
+	
 	public List<Order> getHisOrders(int userId) {
+
 		List<Order> orders = new ArrayList<>();
 		Map<Integer, Order> orderMap = new HashMap<>(); // Để theo dõi đơn hàng theo OrderID
+
 
 	    // Cập nhật câu truy vấn SQL để lọc theo userId
 	    String orderQuery = "SELECT o.OrderID, o.CustomerName, o.CustomerEmail, " +
@@ -379,11 +416,13 @@ public class DAO {
 	                        "WHERE o.UserID = ?";  // Thêm điều kiện lọc theo UserID
 
 
+
 		try (Connection conn = new DBContext().getConnection();
 				PreparedStatement stmt = conn.prepareStatement(orderQuery)) {
 
 			// Thiết lập tham số userId vào câu lệnh SQL
 			stmt.setInt(1, userId); // Truyền userId vào câu truy vấn
+
 
 
 	        try (ResultSet rs = stmt.executeQuery()) {
@@ -408,6 +447,7 @@ public class DAO {
 					CartItem cartItem = new CartItem(getProductByID(productId), quantity);
 
 
+
 	                // Kiểm tra xem đơn hàng đã tồn tại trong map chưa
 	                Order order = orderMap.get(orderID);
 	                if (order == null) {
@@ -426,14 +466,17 @@ public class DAO {
 	        }
 
 
-		} catch (SQLException e) {
-			System.err.println("SQL error occurred: " + e.getMessage());
-		} catch (Exception e) {
-			System.err.println("An error occurred: " + e.getMessage());
-		}
+	    } catch (SQLException e) {
+	        System.err.println("SQL error occurred: " + e.getMessage());
+	    } catch (Exception e) {
+	        System.err.println("An error occurred: " + e.getMessage());
+	    }
 
-		return orders;
+	    return orders;
 	}
+
+
+
 
 	public List<Product> getListProduct(int orderDetailID) {
 		String query = "SELECT p.ProductID, p.Name, p.Price, p.ImageURL " + "FROM Products p "
@@ -517,7 +560,7 @@ public class DAO {
 		}
 		return null;
 	}
-
+	
 	public User getUserByID(int id) {
 		String query = "SELECT * FROM Users WHERE UserID = ?";
 		try (Connection conn = new DBContext().getConnection(); PreparedStatement ps = conn.prepareStatement(query)) {
@@ -714,7 +757,8 @@ public class DAO {
 		System.err.println("An error occurred: " + e.getMessage());
 	}
 }
-	
+
+
 	private void insertOrderItems(Connection conn, long orderId, List<CartItem> cartItems) throws SQLException {
 		String orderItemQuery = "INSERT INTO OrderItems1 (OrderID, ProductID, Quantity, Price) VALUES (?, ?, ?, ?)";
 		try (PreparedStatement orderItemStmt = conn.prepareStatement(orderItemQuery)) {
@@ -1066,59 +1110,6 @@ public class DAO {
 		return null;
 	}
 
-	public boolean isEmailVerified(int userId) throws Exception {
-		boolean isVerified = false;
-		String sql = "SELECT emailVerified FROM users WHERE userId = ?";
-
-		try (Connection conn = new DBContext().getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-			stmt.setInt(1, userId); // Gắn userId vào câu truy vấn
-			ResultSet rs = stmt.executeQuery();
-
-			if (rs.next()) {
-				isVerified = rs.getBoolean("emailVerified"); // Lấy giá trị xác minh email từ kết quả truy vấn
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-
-		return isVerified; // Trả về trạng thái xác minh email
-	}
-
-	public boolean verifyEmail(int userId) throws Exception {
-		String sql = "UPDATE users SET emailVerified = 1 WHERE userId = ?";
-
-		try (Connection conn = new DBContext().getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-			stmt.setInt(1, userId);
-			int rowsUpdated = stmt.executeUpdate();
-
-			return rowsUpdated > 0; // Trả về true nếu cập nhật thành công
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return false;
-		}
-	}
-
-	public void updateEmailVerified(int userId) throws Exception {
-		String sql = "UPDATE users SET emailVerified = 0 WHERE UserID = ?";
-
-		try (Connection conn = new DBContext().getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-			stmt.setInt(1, userId); // Gắn giá trị cho id người dùng
-
-			int rowsUpdated = stmt.executeUpdate();
-			if (rowsUpdated > 0) {
-				System.out.println("Email verification set to false successfully.");
-			} else {
-				System.out.println("User not found or update failed.");
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-
-	}
-
 //a
 	public static void main(String[] args) throws Exception {
 		DAO d = new DAO();
@@ -1138,5 +1129,5 @@ public class DAO {
 		//System.out.println(d.getOrdersByPage(1,5));
 		
 	}
-
 }
+
