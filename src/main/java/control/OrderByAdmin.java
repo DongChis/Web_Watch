@@ -35,26 +35,29 @@ public class OrderByAdmin extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
 
         try {
-            // Lấy danh sách đơn hàng từ DAO
-            List<Order> listOrder = DAO.getInstance().getAllOrders();
-            
-            // Truyền danh sách sang JSP
+            int pageSize = 6; // Số đơn hàng mỗi trang
+            String pageParam = request.getParameter("page");
+            int page = (pageParam != null) ? Integer.parseInt(pageParam) : 1;
+
+            List<Order> listOrder = DAO.getInstance().getOrdersByPage(page, pageSize);
+            int totalOrders = DAO.getInstance().getTotalOrders();
+            int totalPages = (int) Math.ceil((double) totalOrders / pageSize);
+
             request.setAttribute("orderListAdmin", listOrder);
-            
-            // Nếu danh sách rỗng, truyền thêm thông báo
-            if (listOrder == null || listOrder.isEmpty()) {
+            request.setAttribute("totalPages", totalPages);
+            request.setAttribute("currentPage", page);
+
+            if (listOrder.isEmpty()) {
                 request.setAttribute("message", "Hiện tại không có đơn hàng nào.");
             }
-            
         } catch (Exception e) {
-            // Ghi log lỗi để kiểm tra khi cần
             e.printStackTrace();
-            request.setAttribute("error", "Đã xảy ra lỗi khi tải danh sách đơn hàng: " + e.getMessage());
+            request.setAttribute("error", "Đã xảy ra lỗi: " + e.getMessage());
         }
 
-        // Chuyển tiếp tới Admin.jsp
         request.getRequestDispatcher("Admin.jsp").forward(request, response);
     }
+
 
 
 	/**

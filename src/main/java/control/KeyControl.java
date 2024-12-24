@@ -249,7 +249,7 @@ public class KeyControl extends HttpServlet {
 
 	        if (!isEmailVerified) {
 	            // Nếu email chưa được xác minh, gửi email xác minh
-	            User user =(User) DAO.getInstance().getUserByID(userId+"");
+	            User user =(User) DAO.getInstance().getUserByID(userId);
 	           
 	            String userEmail = user.getEmail();
 	            

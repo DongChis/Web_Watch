@@ -94,24 +94,22 @@
 									</c:forEach> ${totalOrderPrice} VNĐ</td>
 								<td><c:out value="${order.orderDate}" /></td>
 								<td><a href="orderDetail?orderID=${order.orderID}">Xem
-										</a>  
-									<c:if test="${not empty sessionScope.accSession}">
+								</a> <c:if test="${not empty sessionScope.accSession}">
 										<!-- Nếu người dùng đã đăng nhập -->
 										<button class="button" style="margin-left: 10px;"
 											onclick="deleteOrder(${order.orderID})">Xóa</button>
 									</c:if> <c:if test="${empty sessionScope.accSession}">
 										<!-- Nếu người dùng chưa đăng nhập -->
-										<button class="button"  style="margin-left: 10px;" onclick="window.location.href='login'">Xóa</button>
-									</c:if>	
-										</td>
-								<td> 
+										<button class="button" style="margin-left: 10px;"
+											onclick="window.location.href='login'">Xóa</button>
+									</c:if></td>
+								<td>
 									<!-- Hiển thị trạng thái đơn hàng --> <c:choose>
 										<c:when test="${order.orderStatus == 'process'}">
 											<!-- Hiển thị thông báo và nút hủy đơn hàng -->
 											<span style="color: orange;">Đang xử lý</span>
-											<button class="button"  style="margin-left: 10px;"
-												onclick="cancelOrder(${order.orderID})">Hủy 
-												</button>
+											<button class="button" style="margin-left: 10px;"
+												onclick="cancelOrder(${order.orderID})">Hủy</button>
 										</c:when>
 										<c:when test="${order.orderStatus == 'Hoàn tất'}">
 											<span style="color: green;">Đã hoàn tất</span>
@@ -130,6 +128,14 @@
 						</c:forEach>
 					</tbody>
 				</table>
+				<c:if test="${totalPages > 1}">
+					<div class="pagination">
+						<c:forEach var="i" begin="1" end="${totalPages}">
+							<a href="orderListAdmin?page=${i}"
+								class="${i == currentPage ? 'active' : ''}">${i}</a>
+						</c:forEach>
+					</div>
+				</c:if>
 
 			</c:otherwise>
 		</c:choose>

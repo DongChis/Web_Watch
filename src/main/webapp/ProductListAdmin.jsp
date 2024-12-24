@@ -34,12 +34,12 @@
 			</c:when>
 
 			<c:when test="${not empty recentlyDelete}">
-							
+
 				<h1
 					style="background-color: blueviolet; border-radius: 8px; color: white; padding: 10px; margin: 10px 0px 0px 0px;">
 					Danh sách sản phẩm đã xóa gần đây</h1>
-					
-					<a href="productListAdmin" class="button" style="margin-left: 5px;">
+
+				<a href="productListAdmin" class="button" style="margin-left: 5px;">
 					Danh sách sản phẩm</a>
 				<jsp:include page="RecentlyDelete.jsp" />
 			</c:when>
@@ -91,14 +91,23 @@
 											onclick="deleteProduct(${product.productID})">Xóa</button>
 									</c:if> <c:if test="${empty sessionScope.accSession}">
 										<!-- Nếu người dùng chưa đăng nhập -->
-										<button class="button"
-											onclick="window.location.href='login'">Xóa</button>
+										<button class="button" onclick="window.location.href='login'">Xóa</button>
 									</c:if>
 							</tr>
 						</c:forEach>
 						<!-- Add more products as needed -->
 					</tbody>
 				</table>
+
+				<c:if test="${totalPages > 1}">
+					<div class="pagination">
+						<c:forEach var="i" begin="1" end="${totalPages}">
+							<a href="productListAdmin?page=${i}"
+								class="${i == currentPage ? 'active' : ''}">${i}</a>
+						</c:forEach>
+					</div>
+				</c:if>
+
 			</c:otherwise>
 		</c:choose>
 	</div>
