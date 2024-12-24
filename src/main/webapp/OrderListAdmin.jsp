@@ -108,22 +108,24 @@
 										<c:when test="${order.orderStatus == 'process'}">
 											<!-- Hiển thị thông báo và nút hủy đơn hàng -->
 											<span style="color: orange;">Đang xử lý</span>
+
+											<c:if test="${order.edited}">
+												<span style="color: blue; margin-left: 10px;">Đã
+													chỉnh sửa</span>
+											</c:if>
+
 											<button class="button" style="margin-left: 10px;"
-												onclick="cancelOrder(${order.orderID})">Hủy</button>
+											onclick="cancelOrder(${order.orderID})">Hủy</button>
 										</c:when>
+										
+									
+
 										<c:when test="${order.orderStatus == 'Hoàn tất'}">
 											<span style="color: green;">Đã hoàn tất</span>
 										</c:when>
-										<c:when test="${order.orderStatus == 'Đã hủy'}">
-											<span style="color: red;">Đơn hàng đã hủy</span>
-										</c:when>
-										<c:otherwise>
-											<span style="color: gray;">-</span>
-										</c:otherwise>
+
+									
 									</c:choose>
-								</td>
-
-
 							</tr>
 						</c:forEach>
 					</tbody>
@@ -155,6 +157,19 @@
 
 			}
 		}
+		
+		function cancelOrder(orderID) {
+			if (confirm("Bạn có chắc chắn muốn xóa đơn hàng này?")) {
+				// Gọi đến servlet để xóa sản phẩm
+
+				window.location.href = `cancelOrder?orderID=` + orderID;
+				alert("Đã xóa thành công!");
+
+			}
+		     
+		}
+
+
 
 		// Đảm bảo DOM đã được tải trước khi thêm sự kiện
 		document.addEventListener("DOMContentLoaded", function() {

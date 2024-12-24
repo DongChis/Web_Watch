@@ -93,7 +93,7 @@
 
 				<div class="form-group">
 					<label for="sign">Nhập chữ kí của bạn</label> <input
-						type="text" id="sign" name="sign" required>
+						type="text" id="sign" name="sign" value="${order.sign}">
 				</div>
 
 
