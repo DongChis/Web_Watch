@@ -964,6 +964,62 @@ public class DAO {
 		}
 		return null;
 	}
+	
+	 public boolean isEmailVerified(int userId) throws Exception {
+	        boolean isVerified = false;
+	        String sql = "SELECT emailVerified FROM users WHERE userId = ?";
+	        
+	        try (Connection conn = new DBContext().getConnection(); 
+	             PreparedStatement stmt = conn.prepareStatement(sql)) {
+	             
+	            stmt.setInt(1, userId); // Gắn userId vào câu truy vấn
+	            ResultSet rs = stmt.executeQuery();
+	            
+	            if (rs.next()) {
+	                isVerified = rs.getBoolean("emailVerified"); // Lấy giá trị xác minh email từ kết quả truy vấn
+	            }
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+	        
+	        return isVerified; // Trả về trạng thái xác minh email
+	    }
+	    
+	
+	 public boolean verifyEmail(int userId) throws Exception {
+	        String sql = "UPDATE users SET emailVerified = 1 WHERE userId = ?";
+	        
+	        try (Connection conn = new DBContext().getConnection();
+	             PreparedStatement stmt = conn.prepareStatement(sql)) {
+	             
+	            stmt.setInt(1, userId);
+	            int rowsUpdated = stmt.executeUpdate();
+	            
+	            return rowsUpdated > 0; // Trả về true nếu cập nhật thành công
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	            return false;
+	        }
+	    }
+	 public void updateEmailVerified(int userId) throws Exception {
+			String sql = "UPDATE users SET emailVerified = 0 WHERE UserID = ?";
+
+	        try (Connection conn =  new DBContext().getConnection();
+	             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+	            stmt.setInt(1, userId); // Gắn giá trị cho id người dùng
+
+	            int rowsUpdated = stmt.executeUpdate();
+	            if (rowsUpdated > 0) {
+	                System.out.println("Email verification set to false successfully.");
+	            } else {
+	                System.out.println("User not found or update failed.");
+	            }
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+			
+		}
 
 //a
 	public static void main(String[] args) throws Exception {
@@ -981,5 +1037,7 @@ public class DAO {
 		System.out.println(d.updateOrder(o,5048));
 
 	}
+
+	
 }
 

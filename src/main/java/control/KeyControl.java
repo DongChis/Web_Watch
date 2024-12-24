@@ -10,7 +10,6 @@ import java.util.Properties;
 import java.util.UUID;
 import java.net.URLEncoder;
 
-
 import javax.mail.Authenticator;
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -38,32 +37,32 @@ import entity.User;
 public class KeyControl extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
-	 protected void doPost(HttpServletRequest request, HttpServletResponse response)
-	            throws ServletException, IOException {
-		 
-		 String action = request.getParameter("action");
-		 System.out.println("Received action: " + action);
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 
-		 if (action == null) {
-		     response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Action is missing");
-		     return;
-		 }
+		String action = request.getParameter("action");
+		System.out.println("Received action: " + action);
 
-	        switch (action) {
-	            case "generateKey":
-	                generateKey(request, response);
-	                break;
-	            case "importKey":
-	                importKey(request, response);
-	                break;
-	            case "reportKey":
-	                reportKey(request, response);
-	                break;
-	            default:
-	                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid action.");
-	                break;
-	        }
-	    }
+		if (action == null) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Action is missing");
+			return;
+		}
+
+		switch (action) {
+		case "generateKey":
+			generateKey(request, response);
+			break;
+		case "importKey":
+			importKey(request, response);
+			break;
+		case "reportKey":
+			reportKey(request, response);
+			break;
+		default:
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid action.");
+			break;
+		}
+	}
 
 	public void generateKey(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -134,80 +133,78 @@ public class KeyControl extends HttpServlet {
 	}
 
 	private void importKey(HttpServletRequest request, HttpServletResponse response)
-	        throws ServletException, IOException {
-		 try {
-	            // Get the key information from the request
-	            String publicKey = request.getParameter("publicKey");	           
-	            
-	            Part filePart = request.getPart("publicKeyFile");  // For file uploads
-	            String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
-	            String uploadDir = getServletContext().getRealPath("/") + "uploads"; // Absolute directory path on the server
-	            File uploads = new File(uploadDir);
-	            if (!uploads.exists()) {
-	                uploads.mkdir();
-	            }
-	            File file = new File(uploads, fileName);
-	            
-	            String src = file.getAbsolutePath();
-	            System.out.println("path :  " + src);
-	           
+			throws ServletException, IOException {
+		try {
+			// Get the key information from the request
+			String publicKey = request.getParameter("publicKey");
 
-	            DAOKey daoKey = new DAOKey();
-	            Date createTime = new Date();
-	            Calendar calendar = Calendar.getInstance();
-	            calendar.setTime(createTime);
-	            calendar.add(Calendar.HOUR, 12);
-	            Date endTime = calendar.getTime();
+			Part filePart = request.getPart("publicKeyFile"); // For file uploads
+			String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
+			String uploadDir = getServletContext().getRealPath("/") + "uploads"; // Absolute directory path on the
+																					// server
+			File uploads = new File(uploadDir);
+			if (!uploads.exists()) {
+				uploads.mkdir();
+			}
+			File file = new File(uploads, fileName);
 
-	            if ((publicKey == null || publicKey.isEmpty()) && (filePart == null || filePart.getSize() == 0)) {
-	                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Public Key or Public Key File is required");
-	                return;
-	            }
+			String src = file.getAbsolutePath();
+			System.out.println("path :  " + src);
 
-	            // Retrieve userId from the session
-	            HttpSession session = request.getSession(false);
-	            if (session == null || session.getAttribute("userId") == null) {
-	                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User not logged in");
-	                return;
-	            }
+			DAOKey daoKey = new DAOKey();
+			Date createTime = new Date();
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(createTime);
+			calendar.add(Calendar.HOUR, 12);
+			Date endTime = calendar.getTime();
 
-	            Integer userIdObj = (Integer) session.getAttribute("userId");
-	            int userId = userIdObj != null ? userIdObj : -1;
-	            if (userId == -1) {
-	                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User not logged in");
-	                return;
-	            }
+			if ((publicKey == null || publicKey.isEmpty()) && (filePart == null || filePart.getSize() == 0)) {
+				response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Public Key or Public Key File is required");
+				return;
+			}
 
-	            // Save the public key to the database if it exists
-	            boolean isPublicKeySaved = false;
-	            if (publicKey != null && !publicKey.isEmpty()) {
-	                isPublicKeySaved = daoKey.savePublicKey(userId, publicKey, createTime, endTime);
-	            }
-	            if (!isPublicKeySaved) {
-	                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error saving Public Key");
-	                return;
-	            }
-	            System.out.println("path: "+src);
-	            
-	            if (filePart != null ) {
-	                boolean isPublicKeyFileSaved = daoKey.savePublicKeyFile(userId, src, createTime, endTime);
-	                if (!isPublicKeyFileSaved) {
-	                    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error saving Public Key File");
-	                    return;
-	                }
-	            }
+			// Retrieve userId from the session
+			HttpSession session = request.getSession(false);
+			if (session == null || session.getAttribute("userId") == null) {
+				response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User not logged in");
+				return;
+			}
 
-	            request.setAttribute("message", "Khóa đã được lưu thành công!");
-	            response.sendRedirect("keyControl");
+			Integer userIdObj = (Integer) session.getAttribute("userId");
+			int userId = userIdObj != null ? userIdObj : -1;
+			if (userId == -1) {
+				response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User not logged in");
+				return;
+			}
 
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error saving key information");
-	        }
-	    
-    
+			// Save the public key to the database if it exists
+			boolean isPublicKeySaved = false;
+			if (publicKey != null && !publicKey.isEmpty()) {
+				isPublicKeySaved = daoKey.savePublicKey(userId, publicKey, createTime, endTime);
+			}
+			if (!isPublicKeySaved) {
+				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error saving Public Key");
+				return;
+			}
+			System.out.println("path: " + src);
+
+			if (filePart != null) {
+				boolean isPublicKeyFileSaved = daoKey.savePublicKeyFile(userId, src, createTime, endTime);
+				if (!isPublicKeyFileSaved) {
+					response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error saving Public Key File");
+					return;
+				}
+			}
+
+			request.setAttribute("message", "Khóa đã được lưu thành công!");
+			response.sendRedirect("keyControl");
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error saving key information");
+		}
+
 	}
-
 
 	private void reportKey(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -231,6 +228,8 @@ public class KeyControl extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		try {
+			// Kiểm tra trạng thái xác minh email của người dùng
+			
 			// Retrieve the session and userId
 			HttpSession session = request.getSession(false); // Use false to not create a new session
 			if (session == null) {
@@ -243,23 +242,14 @@ public class KeyControl extends HttpServlet {
 				response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User ID not found in session.");
 				return;
 			}
-			   // Kiểm tra xem người dùng đã xác minh email chưa
-	        
-	        boolean isEmailVerified = false; // Hàm này kiểm tra xem email đã xác minh chưa
-
-	        if (!isEmailVerified) {
-	            // Nếu email chưa được xác minh, gửi email xác minh
-	            User user =(User) DAO.getInstance().getUserByID(userId+"");
-	           
-	            String userEmail = user.getEmail();
-	            
-	            sendVerificationEmail(userEmail, userId);
-	            
-	            response.sendRedirect("verifyEmail.jsp"); // Chuyển hướng đến trang yêu cầu xác minh email
-	            return;
-	        }
 			
+			boolean isEmailVerified = DAO.getInstance().isEmailVerified(userId); // Kiểm tra trạng thái xác minh email
 
+			if (!isEmailVerified) {
+				// Nếu email chưa được xác minh, chuyển hướng đến trang yêu cầu xác minh email
+				response.sendRedirect("home");
+				return;
+			}
 			// Retrieve key information from DAO
 			DAOKey daoKey = new DAOKey();
 			Map<String, String> keyInfo = daoKey.getKeyInfo(userId);
@@ -286,68 +276,5 @@ public class KeyControl extends HttpServlet {
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error retrieving key information.");
 		}
 	}
-	
-	private void sendVerificationEmail(String email, int userId) {
-	    try {
-	        if (email == null || email.isEmpty()) {
-	            System.out.println("Email không hợp lệ.");
-	            return;
-	        }
-
-	        String token = generateToken();
-	        if (token == null || token.isEmpty()) {
-	            System.out.println("Không thể tạo token.");
-	            return;
-	        }
-
-	        // Lưu token và thời gian hết hạn vào database
-	        DAOKey daoKey = new DAOKey();
-	        daoKey.saveToken(userId, token);
-
-	        String verificationLink = "http://localhost:8080/Web_Watch/verifyEmail?token=" + URLEncoder.encode(token, "UTF-8");
-
-	        String subject = "Xác minh email của bạn";
-	        String body = "Xin chào,\n\nVui lòng nhấp vào liên kết sau để xác minh email của bạn: \n"
-	                + verificationLink + "\n\nLiên kết này sẽ hết hạn sau 24 giờ.\n\nTrân trọng.";
-
-	        // Kiểm tra các thông tin môi trường
-	        String emailUser = System.getenv("EMAIL_USER");
-	        String emailPass = System.getenv("EMAIL_PASS");
-
-	        if (emailUser == null || emailPass == null) {
-	            System.out.println("Thông tin email không hợp lệ.");
-	            return;
-	        }
-
-	        Properties props = new Properties();
-	        props.put("mail.smtp.host", "smtp.gmail.com");
-	        props.put("mail.smtp.port", "587");
-	        props.put("mail.smtp.auth", "true");
-	        props.put("mail.smtp.starttls.enable", "true");
-
-	        Session session = Session.getInstance(props, new Authenticator() {
-	            @Override
-	            protected PasswordAuthentication getPasswordAuthentication() {
-	                return new PasswordAuthentication(emailUser, emailPass);
-	            }
-	        });
-
-	        Message message = new MimeMessage(session);
-	        message.setFrom(new InternetAddress(emailUser));
-	        message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email));
-	        message.setSubject(subject);
-	        message.setText(body);
-
-	        Transport.send(message);
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    }
-	}
-
-
-	private String generateToken() {
-	    return UUID.randomUUID().toString();
-	}
-
 
 }
