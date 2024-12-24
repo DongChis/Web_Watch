@@ -1,5 +1,4 @@
 package dao;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -52,7 +51,7 @@ public class DAO {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} catch (Exception e1) {
-			// TODO Auto-generated catch block
+			
 			e1.printStackTrace();
 		}
 		return products;
@@ -69,7 +68,7 @@ public class DAO {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} catch (Exception e1) {
-			// TODO Auto-generated catch block
+			
 			e1.printStackTrace();
 		}
 		return 0;
@@ -152,19 +151,43 @@ public class DAO {
 				orderItemStmt.addBatch();
 			}
 
-			int[] orderItemsRowsUpdated = orderItemStmt.executeBatch();
+
+			// Update each order item
+			for (CartItem item : updatedOrder.getCartItems()) {
+				orderItemStmt.setInt(1, item.getQuantity());
+				orderItemStmt.setDouble(2, item.getPrice());
+				orderItemStmt.setInt(3, orderID); // Ensure using OrderItemID
+
+
+
 
 			// Commit transaction if all updates were successful
 			isUpdated = orderRowsUpdated > 0 && orderItemsRowsUpdated.length == updatedOrder.getCartItems().size();
 			conn.commit();
 
-		} catch (SQLException e) {
-			System.err.println("SQL error occurred: " + e.getMessage());
-			e.printStackTrace();
-		}
+			} 
 
-		return isUpdated;
+
+	        // Xác nhận giao dịch nếu tất cả cập nhật thành công
+	        isUpdated = orderRowsUpdated > 0 && orderItemsRowsUpdated.length == updatedOrder.getCartItems().size();
+	        conn.commit();
+
+	    } catch (SQLException e) {
+	        System.err.println("SQL error occurred: " + e.getMessage());
+	        e.printStackTrace();
+	        if (conn != null) {
+	            conn.rollback(); // Rollback nếu có lỗi
+	        }
+	    }
+
+	    return isUpdated;
 	}
+
+	
+	public boolean checkEdited(String signBefore, String signAfter) {
+        return !signBefore.equals(signAfter); // So sánh chữ ký trước và sau
+    }
+	
 
 	public void deleteOrder(String orderID, String username) throws Exception {
 		String deleteQuery = "DELETE FROM Orders1 WHERE OrderID = ?";
@@ -253,53 +276,66 @@ public class DAO {
 				    OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
 				""";
 
-		try (Connection conn = new DBContext().getConnection();
-				PreparedStatement stmt = conn.prepareStatement(orderQuery)) {
+
+
+
+	    try (Connection conn = new DBContext().getConnection();
+	         PreparedStatement stmt = conn.prepareStatement(orderQuery)) {
+
 
 			int offset = (page - 1) * pageSize; // Tính OFFSET
 			stmt.setInt(1, offset);
 			stmt.setInt(2, pageSize);
 
-			try (ResultSet rs = stmt.executeQuery()) {
-				while (rs.next()) {
-					// Lấy thông tin đơn hàng
-					int orderID = rs.getInt("OrderID");
-					String customerName = rs.getString("CustomerName");
-					String customerEmail = rs.getString("CustomerEmail");
-					String customerPhone = rs.getString("CustomerPhone");
-					String customerAddress = rs.getString("CustomerAddress");
-					String paymentMethod = rs.getString("PaymentMethod");
-					Timestamp orderDate = rs.getTimestamp("OrderDate");
-					String signature = rs.getString("Signature");
-					boolean edited = rs.getBoolean("Edited");
-					boolean cancel = rs.getBoolean("Cancel");
 
-					// Lấy thông tin sản phẩm
-					String productId = rs.getString("ProductID");
-					int quantity = rs.getInt("Quantity");
-					double price = rs.getDouble("Price");
+
+
+
+	        try (ResultSet rs = stmt.executeQuery()) {
+	            while (rs.next()) {
+	                // Lấy thông tin đơn hàng
+	                int orderID = rs.getInt("OrderID");
+	                String customerName = rs.getString("CustomerName");
+	                String customerEmail = rs.getString("CustomerEmail");
+	                String customerPhone = rs.getString("CustomerPhone");
+	                String customerAddress = rs.getString("CustomerAddress");
+	                String paymentMethod = rs.getString("PaymentMethod");
+	                Timestamp orderDate = rs.getTimestamp("OrderDate");
+	                String signature = rs.getString("Signature");
+	                boolean edited = rs.getBoolean("Edited");
+
+
+	                // Lấy thông tin sản phẩm
+	                String productId = rs.getString("ProductID");
+	                int quantity = rs.getInt("Quantity");
+	                double price = rs.getDouble("Price");
+
 
 					// Tạo đối tượng CartItem
 					CartItem cartItem = new CartItem(getProductByID(productId), quantity);
 
-					// Kiểm tra nếu đơn hàng đã tồn tại trong map
-					Order order = orderMap.get(orderID);
-					if (order == null) {
-						List<CartItem> items = new ArrayList<>();
-						items.add(cartItem);
-						order = new Order(orderID, items, customerName, customerEmail, customerPhone, customerAddress,
-								paymentMethod, orderDate, signature,edited,cancel);
-						orders.add(order);
-						orderMap.put(orderID, order);
-					} else {
-						order.getCartItems().add(cartItem);
-					}
-				}
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} catch (Exception e1) {
-			// TODO Auto-generated catch block
+
+
+
+
+	                // Kiểm tra nếu đơn hàng đã tồn tại trong map
+	                Order order = orderMap.get(orderID);
+	                if (order == null) {
+	                    List<CartItem> items = new ArrayList<>();
+	                    items.add(cartItem);
+	                    order = new Order(orderID, items, customerName, customerEmail, customerPhone, customerAddress,
+	                            paymentMethod, orderDate, signature, edited);
+	                    orders.add(order);
+	                    orderMap.put(orderID, order);
+	                } else {
+	                    order.getCartItems().add(cartItem);
+	                }
+	            }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    } catch (Exception e1) {
+
 			e1.printStackTrace();
 		}
 
@@ -317,7 +353,7 @@ public class DAO {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} catch (Exception e1) {
-			// TODO Auto-generated catch block
+			
 			e1.printStackTrace();
 		}
 		return 0;
@@ -334,49 +370,65 @@ public class DAO {
 				+ "JOIN OrderItems1 oi ON o.OrderID = oi.OrderID " + "WHERE o.UserID = ?"; // Thêm điều kiện lọc theo
 																							// UserID
 
-		try (Connection conn = new DBContext().getConnection();
-				PreparedStatement stmt = conn.prepareStatement(orderQuery)) {
+
+
+
+	    try (Connection conn = new DBContext().getConnection();
+	         PreparedStatement stmt = conn.prepareStatement(orderQuery)) {
+
 
 			// Thiết lập tham số userId vào câu lệnh SQL
 			stmt.setInt(1, userId); // Truyền userId vào câu truy vấn
 
-			try (ResultSet rs = stmt.executeQuery()) {
-				while (rs.next()) {
-					int orderID = rs.getInt("OrderID");
-					String customerName = rs.getString("CustomerName");
-					String customerEmail = rs.getString("CustomerEmail");
-					String customerPhone = rs.getString("CustomerPhone");
-					String customerAddress = rs.getString("CustomerAddress");
-					String paymentMethod = rs.getString("PaymentMethod");
-					Timestamp orderDate = rs.getTimestamp("OrderDate"); // Lấy trực tiếp từ kết quả
-					String signature = rs.getString("Signature");
-					boolean edited = rs.getBoolean("Edited");
-					boolean cancel = rs.getBoolean("Cancel");
 
-					// Lấy thông tin sản phẩm
-					String productId = rs.getString("ProductID"); // Giả sử ProductID là một chuỗi
-					int quantity = rs.getInt("Quantity");
-					double price = rs.getDouble("Price");
+
+
+
+	        try (ResultSet rs = stmt.executeQuery()) {
+	            while (rs.next()) {
+	                int orderID = rs.getInt("OrderID");
+	                String customerName = rs.getString("CustomerName");
+	                String customerEmail = rs.getString("CustomerEmail");
+	                String customerPhone = rs.getString("CustomerPhone");
+	                String customerAddress = rs.getString("CustomerAddress");
+	                String paymentMethod = rs.getString("PaymentMethod");
+	                Timestamp orderDate = rs.getTimestamp("OrderDate"); // Lấy trực tiếp từ kết quả
+	                String signature = rs.getString("Signature");
+	                boolean edited = rs.getBoolean("Edited");
+
+
+
+
+	                // Lấy thông tin sản phẩm
+	                String productId = rs.getString("ProductID"); // Giả sử ProductID là một chuỗi
+	                int quantity = rs.getInt("Quantity");
+	                double price = rs.getDouble("Price");
+
 
 					// Tạo CartItem cho sản phẩm này
 					CartItem cartItem = new CartItem(getProductByID(productId), quantity);
 
-					// Kiểm tra xem đơn hàng đã tồn tại trong map chưa
-					Order order = orderMap.get(orderID);
-					if (order == null) {
-						// Nếu đơn hàng chưa tồn tại, tạo đơn hàng mới
-						List<CartItem> items = new ArrayList<>();
-						items.add(cartItem);
-						order = new Order(orderID, items, customerName, customerEmail, customerPhone, customerAddress,
-								paymentMethod, orderDate, signature,edited,cancel);
-						orders.add(order);
-						orderMap.put(orderID, order); // Thêm đơn hàng mới vào map
-					} else {
-						// Nếu đơn hàng đã tồn tại, chỉ cần thêm CartItem vào đơn hàng
-						order.getCartItems().add(cartItem);
-					}
-				}
-			}
+
+
+
+
+	                // Kiểm tra xem đơn hàng đã tồn tại trong map chưa
+	                Order order = orderMap.get(orderID);
+	                if (order == null) {
+	                    // Nếu đơn hàng chưa tồn tại, tạo đơn hàng mới
+	                    List<CartItem> items = new ArrayList<>();
+	                    items.add(cartItem);
+	                    order = new Order(orderID, items, customerName, customerEmail, customerPhone, customerAddress,
+	                            paymentMethod, orderDate, signature,edited);
+	                    orders.add(order);
+	                    orderMap.put(orderID, order); // Thêm đơn hàng mới vào map
+	                } else {
+	                    // Nếu đơn hàng đã tồn tại, chỉ cần thêm CartItem vào đơn hàng
+	                    order.getCartItems().add(cartItem);
+	                }
+	            }
+	        }
+
 
 		} catch (SQLException e) {
 			System.err.println("SQL error occurred: " + e.getMessage());
@@ -1083,6 +1135,14 @@ public class DAO {
 		// System.out.println(d.getOrderDateById(13));
 		List<CartItem> cartItems = new ArrayList<CartItem>();
 
+
+
+		Order o  = new Order(7052, cartItems,  "a",  "a",  "a",  "a", "a", new Timestamp(System.currentTimeMillis()), "a",true);
+		
+		System.out.println(d.updateOrder(o,7052));
+		
+		//System.out.println(d.getOrdersByPage(1,5));
+		
 		//Order o = new Order(5048, cartItems, "a", "a", "a", "a", "a", new Timestamp(System.currentTimeMillis()), "a");
 		System.out.println(d.updateOrder(o, 5048));
 

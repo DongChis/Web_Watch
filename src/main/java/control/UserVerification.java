@@ -20,7 +20,11 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
 
+
 import org.apache.catalina.util.Introspection;
+
+
+
 
 import dao.DAO;
 import dao.DAOKey;
@@ -47,22 +51,35 @@ public class UserVerification extends HttpServlet {
 			return;
 		}
 
+
+
 		Integer userId = (Integer)session.getAttribute("userId");
 		if (userId == null) {
+
+		Integer userIdString = (Integer)session.getAttribute("userId");
+		if (userIdString == null) {
+
+
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "User ID is missing.");
 			return;
 		}
 
 		try {
+
+
 			DAOKey daoKey = DAOKey.getInstance();
 			Map<String, String> keyInfo = daoKey.getKeyInfo(userId);
 
 			if (keyInfo != null && !keyInfo.isEmpty()) {
 				request.setAttribute("publicKey", keyInfo.get("publicKey"));
+
+
 				
 			} else {
 				request.setAttribute("resultMessage", "Vui tạo chữ ký");
 				response.sendRedirect("userVerification");
+
+
 				return;
 			}
 		} catch (NumberFormatException e) {
@@ -85,6 +102,9 @@ public class UserVerification extends HttpServlet {
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error while processing public key.");
 			return;
 		}
+
+
+
 		
 		// thong tin nguoi dung
 		User user = DAO.getInstance().getUserByID(userId);
@@ -96,6 +116,8 @@ public class UserVerification extends HttpServlet {
 	               "}"; 
 	               
 	               System.out.println(src);
+
+
 		// Kiểm tra lựa chọn chữ ký
 		String signatureOption = request.getParameter("signatureOption");
 		System.out.println("Lựa chọn phương thức ký: " + signatureOption);
@@ -106,10 +128,14 @@ public class UserVerification extends HttpServlet {
 			if (signatureText.equals("")) {
 				request.setAttribute("resultMessage", "vui long nhap chu ky");
 			}
+
+
 		
 			if (signatureText != null && !signatureText.isEmpty()) {
 				
 				isVerified = verifySignatureWithPublicKey(publicKey, src, signatureText);
+
+
 				System.out.println(signatureText);
 				 System.out.println("Verifile chu ky(text):"+ isVerified);
 			}
@@ -155,6 +181,7 @@ public class UserVerification extends HttpServlet {
 		} else {
 			// Handle failure (if needed)
 			request.getRequestDispatcher("userVerification.jsp").forward(request, response);
+		}
 		}
 
 	}
