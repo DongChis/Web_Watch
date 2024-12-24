@@ -93,13 +93,12 @@ public class UpdateOrderByUser extends HttpServlet {
 		// Assume you have a method to get the cart items from the session
 		List<CartItem> cartItems = (List<CartItem>) request.getSession().getAttribute("cart");
 
-		
-
 		User user = DAO.getInstance().getUserByID(userId);
 
 		try {
 			Order order = new Order(orderID, cartItems, customerName, customerEmail, customerPhone, 
-					customerAddress, paymentMethod,new Timestamp(System.currentTimeMillis()), sign);
+					customerAddress, paymentMethod,new Timestamp(System.currentTimeMillis()), sign,true);
+			
 			boolean isUpdated = DAO.getInstance().updateOrder(order, orderID);
 
 			if (!isUpdated) {

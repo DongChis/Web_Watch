@@ -41,6 +41,8 @@ public class OrderByAdmin extends HttpServlet {
 
             List<Order> listOrder = DAO.getInstance().getOrdersByPage(page, pageSize);
             int totalOrders = DAO.getInstance().getTotalOrders();
+            Order o = new Order();
+            
             int totalPages = (int) Math.ceil((double) totalOrders / pageSize);
 
             request.setAttribute("orderListAdmin", listOrder);
