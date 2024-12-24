@@ -30,16 +30,30 @@ public class ProductListAdmin extends HttpServlet {
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		response.setContentType("text/html;charset=UTF-8");
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
 
-		List<Product> listProduct = DAO.getInstance().getAllProducts();
+        try {
+            int pageSize = 6; // Số sản phẩm mỗi trang
+            String pageParam = request.getParameter("page");
+            int page = (pageParam != null) ? Integer.parseInt(pageParam) : 1;
 
-		request.setAttribute("productListAdmin", listProduct);
-		
-		
-		request.getRequestDispatcher("Admin.jsp").forward(request, response);
-	}
+            List<Product> listProduct = DAO.getInstance().getProductsByPage(page, pageSize);
+            int totalProducts = DAO.getInstance().getTotalProducts(); // Tổng số sản phẩm
+            int totalPages = (int) Math.ceil((double) totalProducts / pageSize);
+
+            request.setAttribute("productListAdmin", listProduct);
+            request.setAttribute("totalPages", totalPages);
+            request.setAttribute("currentPage", page);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("error", "Đã xảy ra lỗi: " + e.getMessage());
+        }
+
+        request.getRequestDispatcher("Admin.jsp").forward(request, response);
+    }
+
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)

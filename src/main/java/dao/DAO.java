@@ -34,6 +34,55 @@ public class DAO {
 		}
 		return instance;
 	}
+	
+	public List<Product> getProductsByPage(int page, int pageSize) {
+	    List<Product> products = new ArrayList<>();
+	    String query = "SELECT * FROM Products ORDER BY ProductID DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+	    try (Connection conn = new DBContext().getConnection();
+	         PreparedStatement stmt = conn.prepareStatement(query)) {
+	        int offset = (page - 1) * pageSize;
+	        stmt.setInt(1, offset);
+	        stmt.setInt(2, pageSize);
+	        try (ResultSet rs = stmt.executeQuery()) {
+	            while (rs.next()) {
+	                products.add(new Product(
+	                        rs.getInt("ProductID"),
+	                        rs.getString("Title"),
+	                        rs.getString("Name"),
+	                        rs.getString("Description"),
+	                        rs.getString("Price"),
+	                        rs.getString("ImageURL"),
+	                        rs.getString("Gender")));
+	            }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    } catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	    return products;
+	}
+
+	
+	
+	public int getTotalProducts() {
+	    String query = "SELECT COUNT(*) FROM Products";
+	    try (Connection conn = new DBContext().getConnection();
+	         PreparedStatement stmt = conn.prepareStatement(query);
+	         ResultSet rs = stmt.executeQuery()) {
+	        if (rs.next()) {
+	            return rs.getInt(1);
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    } catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	    return 0;
+	}
+
 
 	// Phương thức để lấy tất cả các sản phẩm
 	public List<Product> getAllProducts() {
@@ -199,12 +248,9 @@ public class DAO {
         return order; // Return the order details (or null if not found)
     }
 	
-
-	// get all order
-
-	public List<Order> getAllOrders() {
+	public List<Order> getOrdersByPage(int page, int pageSize) {
 	    List<Order> orders = new ArrayList<>();
-	    Map<Integer, Order> orderMap = new HashMap<>(); // Lưu trữ các đơn hàng theo OrderID để tránh trùng lặp
+	    Map<Integer, Order> orderMap = new HashMap<>();
 
 	    String orderQuery = """
 	        SELECT o.OrderID, o.CustomerName, o.CustomerEmail, 
@@ -213,57 +259,76 @@ public class DAO {
 	               oi.ProductID, oi.Quantity, oi.Price
 	        FROM Orders1 o 
 	        JOIN OrderItems1 oi ON o.OrderID = oi.OrderID
+	        ORDER BY o.OrderDate DESC, o.OrderID DESC
+	        OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
 	    """;
 
 	    try (Connection conn = new DBContext().getConnection();
-	         PreparedStatement stmt = conn.prepareStatement(orderQuery);
-	         ResultSet rs = stmt.executeQuery()) {
+	         PreparedStatement stmt = conn.prepareStatement(orderQuery)) {
 
-	        while (rs.next()) {
-	            // Lấy thông tin đơn hàng
-	            int orderID = rs.getInt("OrderID");
-	            String customerName = rs.getString("CustomerName");
-	            String customerEmail = rs.getString("CustomerEmail");
-	            String customerPhone = rs.getString("CustomerPhone");
-	            String customerAddress = rs.getString("CustomerAddress");
-	            String paymentMethod = rs.getString("PaymentMethod");
-	            Timestamp orderDate = rs.getTimestamp("OrderDate");
-	            String signature = rs.getString("Signature");
+	        int offset = (page - 1) * pageSize; // Tính OFFSET
+	        stmt.setInt(1, offset);
+	        stmt.setInt(2, pageSize);
 
-	            // Lấy thông tin sản phẩm
-	            String productId = rs.getString("ProductID");
-	            int quantity = rs.getInt("Quantity");
-	            double price = rs.getDouble("Price");
+	        try (ResultSet rs = stmt.executeQuery()) {
+	            while (rs.next()) {
+	                // Lấy thông tin đơn hàng
+	                int orderID = rs.getInt("OrderID");
+	                String customerName = rs.getString("CustomerName");
+	                String customerEmail = rs.getString("CustomerEmail");
+	                String customerPhone = rs.getString("CustomerPhone");
+	                String customerAddress = rs.getString("CustomerAddress");
+	                String paymentMethod = rs.getString("PaymentMethod");
+	                Timestamp orderDate = rs.getTimestamp("OrderDate");
+	                String signature = rs.getString("Signature");
 
-	            // Tạo đối tượng CartItem cho sản phẩm
-	            CartItem cartItem = new CartItem(getProductByID(productId), quantity);
+	                // Lấy thông tin sản phẩm
+	                String productId = rs.getString("ProductID");
+	                int quantity = rs.getInt("Quantity");
+	                double price = rs.getDouble("Price");
 
-	            // Kiểm tra nếu đơn hàng đã tồn tại trong map
-	            Order order = orderMap.get(orderID);
-	            if (order == null) {
-	                // Tạo đơn hàng mới nếu chưa tồn tại
-	                List<CartItem> items = new ArrayList<>();
-	                items.add(cartItem);
-	                order = new Order(orderID, items, customerName, customerEmail, customerPhone, customerAddress,
-	                        paymentMethod, orderDate, signature);
-	                orders.add(order);
-	                orderMap.put(orderID, order); // Lưu đơn hàng vào map
-	            } else {
-	                // Nếu đã tồn tại, thêm CartItem vào danh sách sản phẩm
-	                order.getCartItems().add(cartItem);
+	                // Tạo đối tượng CartItem
+	                CartItem cartItem = new CartItem(getProductByID(productId), quantity);
+
+	                // Kiểm tra nếu đơn hàng đã tồn tại trong map
+	                Order order = orderMap.get(orderID);
+	                if (order == null) {
+	                    List<CartItem> items = new ArrayList<>();
+	                    items.add(cartItem);
+	                    order = new Order(orderID, items, customerName, customerEmail, customerPhone, customerAddress,
+	                            paymentMethod, orderDate, signature);
+	                    orders.add(order);
+	                    orderMap.put(orderID, order);
+	                } else {
+	                    order.getCartItems().add(cartItem);
+	                }
 	            }
 	        }
-
 	    } catch (SQLException e) {
-	        // Log chi tiết hơn nếu có lỗi
-	        System.err.println("SQL error occurred while fetching orders: " + e.getMessage());
 	        e.printStackTrace();
-	    } catch (Exception e) {
-	        System.err.println("An unexpected error occurred: " + e.getMessage());
-	        e.printStackTrace();
-	    }
+	    } catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 
 	    return orders;
+	}
+	
+	public int getTotalOrders() {
+	    String query = "SELECT COUNT(*) FROM Orders1";
+	    try (Connection conn = new DBContext().getConnection();
+	         PreparedStatement stmt = conn.prepareStatement(query);
+	         ResultSet rs = stmt.executeQuery()) {
+	        if (rs.next()) {
+	            return rs.getInt(1);
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    } catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	    return 0;
 	}
 
 	
