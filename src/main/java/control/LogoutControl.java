@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import dao.DAO;
+
 /**
  * Servlet implementation class LogoutControl
  */
@@ -29,9 +31,17 @@ public class LogoutControl extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html;charset=UTF-8");
 		HttpSession session = request.getSession();
+		Integer userId = (Integer) session.getAttribute("userId");
+		try {
+			
+			DAO.getInstance().updateEmailVerified(userId);
+		} catch (Exception e) {
 		
+			e.printStackTrace();
+		}
 		session.removeAttribute("accSession");
 		session.removeAttribute("totalQuantity");
+		
 		System.out.println(session.getAttribute("accSession")+ "hien tai");
 		System.out.println(session.getAttribute("totalQuantity")+ "hien tai");
 
