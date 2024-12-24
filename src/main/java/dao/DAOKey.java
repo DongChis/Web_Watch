@@ -208,7 +208,7 @@ public class DAOKey {
     }
    
     public boolean saveToken(int userId, String token) throws Exception {
-        String sql = "INSERT INTO tokens (user_id, token, expiration_time) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO Tokens (user_id, token, expiration_time) VALUES (?, ?, ?)";
         try (Connection conn =  new DBContext().getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             
@@ -230,7 +230,7 @@ public class DAOKey {
     
     public boolean isTokenValid(String token) throws Exception {
         // Kiểm tra tính hợp lệ của token
-        String sql = "SELECT expiration_time FROM email_verification_tokens WHERE token = ?";
+        String sql = "SELECT expiration_time FROM Tokens WHERE token = ?";
         try (Connection conn = new DBContext().getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, token);
@@ -248,7 +248,7 @@ public class DAOKey {
 
     public int getUserIdByToken(String token) throws Exception {
         // Lấy userId từ token
-        String sql = "SELECT user_id FROM email_verification_tokens WHERE token = ?";
+        String sql = "SELECT user_id FROM Tokens WHERE token = ?";
         try (Connection conn = new DBContext().getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, token);
@@ -263,17 +263,7 @@ public class DAOKey {
         return -1; // Trả về -1 nếu không tìm thấy userId
     }
 
-    public void verifyEmail(int userId) throws Exception {
-        // Cập nhật trạng thái xác minh email của người dùng
-        String sql = "UPDATE users SET email_verified = true WHERE id = ?";
-        try (Connection conn = new DBContext().getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, userId);
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
+
 
  
    

@@ -20,6 +20,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
 
+import org.apache.catalina.util.Introspection;
+
 import dao.DAO;
 import dao.DAOKey;
 import entity.User;
@@ -45,21 +47,22 @@ public class UserVerification extends HttpServlet {
 			return;
 		}
 
-		Integer userIdString = (Integer)session.getAttribute("userId");
-		if (userIdString == null) {
+		Integer userId = (Integer)session.getAttribute("userId");
+		if (userId == null) {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "User ID is missing.");
 			return;
 		}
 
 		try {
-			int userId = userIdString;
 			DAOKey daoKey = DAOKey.getInstance();
 			Map<String, String> keyInfo = daoKey.getKeyInfo(userId);
 
 			if (keyInfo != null && !keyInfo.isEmpty()) {
 				request.setAttribute("publicKey", keyInfo.get("publicKey"));
+				
 			} else {
-				request.setAttribute("error", "No public key information found.");
+				request.setAttribute("resultMessage", "Vui tạo chữ ký");
+				response.sendRedirect("userVerification");
 				return;
 			}
 		} catch (NumberFormatException e) {
@@ -82,10 +85,17 @@ public class UserVerification extends HttpServlet {
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error while processing public key.");
 			return;
 		}
+		
 		// thong tin nguoi dung
-		User user = DAO.getInstance().getUserByID(userIdString);
-		String src = user.getUsername() + " " + user.getPassword() + " " + user.getEmail();
-		System.out.println(src);
+		User user = DAO.getInstance().getUserByID(userId);
+		
+		String src = "{\n" +
+	               "  \"username\": \"" + user.getUsername() + "\",\n" +
+	               "  \"password\": \"" + user.getPassword() + "\",\n" +
+	               "  \"email\": \"" + user.getEmail() + "\"\n" +
+	               "}"; 
+	               
+	               System.out.println(src);
 		// Kiểm tra lựa chọn chữ ký
 		String signatureOption = request.getParameter("signatureOption");
 		System.out.println("Lựa chọn phương thức ký: " + signatureOption);
@@ -96,9 +106,10 @@ public class UserVerification extends HttpServlet {
 			if (signatureText.equals("")) {
 				request.setAttribute("resultMessage", "vui long nhap chu ky");
 			}
+		
 			if (signatureText != null && !signatureText.isEmpty()) {
 				
-				isVerified = verifySignatureWithPublicKey(publicKey, "DONG CHI", signatureText);
+				isVerified = verifySignatureWithPublicKey(publicKey, src, signatureText);
 				System.out.println(signatureText);
 				 System.out.println("Verifile chu ky(text):"+ isVerified);
 			}

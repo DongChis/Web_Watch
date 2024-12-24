@@ -75,7 +75,7 @@
 				alert("Vui lòng Tải tool để tạo Chữ ký bằng private key");
 				window.location.href = "loadInfoUser";
 			} else {
-				window.location.href = "Function.jsp";
+				window.location.href = "sendVerificationEmail";
 			}
 			// Đóng dialog
 			document.getElementById("dialog").style.display = "none";

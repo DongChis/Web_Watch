@@ -35,50 +35,24 @@ public class ChuKi_model {
     public ChuKi_model() {
     	
     }
-//  tải khóa private
-  public void loadPrivateKey(String filePath) throws Exception {
-      byte[] keyBytes = Files.readAllBytes(Paths.get(filePath));
-      PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(keyBytes);
-      KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-      this.privateKey = keyFactory.generatePrivate(spec);
-  }
-
-//ký
-  public String signData(String data) throws Exception {
-      if (privateKey == null) {
-          throw new IllegalStateException("Private key not loaded.");
-      }
-      Signature signature = Signature.getInstance("SHA256withRSA");
-      signature.initSign(privateKey);
-      signature.update(data.getBytes());
-      byte[] signedBytes = signature.sign();
-      return Base64.getEncoder().encodeToString(signedBytes);
-  }
-    public void generateKey(String algorithm) throws Exception {
-    	if (this.keyPair == null) {
-            if (this.secureRandom == null) {
-                this.secureRandom = new SecureRandom();
-            }
-            KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance(algorithm);
-            keyPairGenerator.initialize(2048, secureRandom); // 2048-bit key size
-            this.keyPair = keyPairGenerator.generateKeyPair();
-
-            // Initialize Signature object
-            initSignature("SHA256", "RSA");
-        }
-    }
-
-   
+ 
 //ký văn bản
     public String signMessage(String mess) throws Exception {
-    	initSignature("SHA256", "RSA");
- 		byte[]data = mess.getBytes();
- 		privateKey = keyPair.getPrivate();
- 		signature.initSign(privateKey);
- 		signature.update(data);
- 		byte[] sign = signature.sign();
- 		return Base64.getEncoder().encodeToString(sign);
+    	if (privateKey == null) {
+            throw new IllegalStateException("Private key is not set. Please set the private key before signing.");
+        }
+        if (mess == null || mess.trim().isEmpty()) {
+            throw new IllegalArgumentException("Message to sign cannot be null or empty.");
+        }
+        Signature signature = Signature.getInstance("SHA256withRSA");
+ 	    signature.initSign(privateKey); 	 		
+        byte[] data = mess.getBytes();
+        signature.initSign(privateKey);
+        signature.update(data);
+        byte[] sign = signature.sign();
+        return Base64.getEncoder().encodeToString(sign);
  	}
+    
     
     // Initialize Signature object with specified hash algorithm and provider
     public void initSignature(String hashAlgorithm, String algorithm) throws Exception {
@@ -140,9 +114,14 @@ public class ChuKi_model {
     public String signFile(String src) throws Exception {
     	initSignature("SHA256", "RSA");
  		byte[] data = src.getBytes();
- 		privateKey = keyPair.getPrivate();
- 		signature.initSign(privateKey);
- 		
+ 	// Kiểm tra nếu privateKey chưa được gán
+ 	    if (privateKey == null) {
+ 	        throw new IllegalStateException("Private key is not loaded.");
+ 	    }
+ 	   // Khởi tạo Signature
+ 	    Signature signature = Signature.getInstance("SHA256withRSA");
+ 	    signature.initSign(privateKey);
+ 	 		
  		BufferedInputStream bis = new BufferedInputStream(new FileInputStream(src));
  		byte[] buff = new byte[1024];
  		int read;
@@ -153,23 +132,7 @@ public class ChuKi_model {
  		byte[]sign = signature.sign();
  		return Base64.getEncoder().encodeToString(sign);
  	}
-//xác minh file
-    public boolean verifyFile(String src, String sign) throws IOException, InvalidKeyException, SignatureException {
- 		
-    	publicKey = keyPair.getPublic();
-    	signature.initVerify(publicKey);
-	
- 		byte[] data = src.getBytes();
- 		byte[] signValue = Base64.getDecoder().decode(sign);
- 		
- 		BufferedInputStream bis = new BufferedInputStream(new FileInputStream(src));
- 		byte[] buff = new byte[1024];
- 		int read;
- 		while((read = bis.read(buff)) != -1) {
- 			signature.update(buff,0,read);
- 		}
- 		return signature.verify(signValue);
- 	}
+
 
     // Phương thức trả về PublicKey
     public PublicKey getPublicKey() {
@@ -180,5 +143,10 @@ public class ChuKi_model {
     public PrivateKey getPrivateKey() {
         return keyPair.getPrivate();
     }
-
+    public void setPublicKey(PublicKey publicKey) {
+		this.publicKey = publicKey;
+	}
+	public void setPrivateKey(PrivateKey privateKey) {
+		this.privateKey = privateKey;
+	}
 }
