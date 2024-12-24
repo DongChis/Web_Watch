@@ -271,6 +271,8 @@ public class DAO {
 					String paymentMethod = rs.getString("PaymentMethod");
 					Timestamp orderDate = rs.getTimestamp("OrderDate");
 					String signature = rs.getString("Signature");
+					boolean edited = rs.getBoolean("Edited");
+					boolean cancel = rs.getBoolean("Cancel");
 
 					// Lấy thông tin sản phẩm
 					String productId = rs.getString("ProductID");
@@ -286,7 +288,7 @@ public class DAO {
 						List<CartItem> items = new ArrayList<>();
 						items.add(cartItem);
 						order = new Order(orderID, items, customerName, customerEmail, customerPhone, customerAddress,
-								paymentMethod, orderDate, signature);
+								paymentMethod, orderDate, signature,edited,cancel);
 						orders.add(order);
 						orderMap.put(orderID, order);
 					} else {
@@ -327,7 +329,7 @@ public class DAO {
 
 		// Cập nhật câu truy vấn SQL để lọc theo userId
 		String orderQuery = "SELECT o.OrderID, o.CustomerName, o.CustomerEmail, "
-				+ "o.CustomerPhone, o.CustomerAddress, o.PaymentMethod, " + "o.OrderDate, o.Signature, "
+				+ "o.CustomerPhone, o.CustomerAddress, o.PaymentMethod, " + "o.OrderDate, o.Signature,o.Edited,o.Cancel, "
 				+ "oi.ProductID, oi.Quantity, oi.Price " + "FROM Orders1 o "
 				+ "JOIN OrderItems1 oi ON o.OrderID = oi.OrderID " + "WHERE o.UserID = ?"; // Thêm điều kiện lọc theo
 																							// UserID
@@ -348,6 +350,8 @@ public class DAO {
 					String paymentMethod = rs.getString("PaymentMethod");
 					Timestamp orderDate = rs.getTimestamp("OrderDate"); // Lấy trực tiếp từ kết quả
 					String signature = rs.getString("Signature");
+					boolean edited = rs.getBoolean("Edited");
+					boolean cancel = rs.getBoolean("Cancel");
 
 					// Lấy thông tin sản phẩm
 					String productId = rs.getString("ProductID"); // Giả sử ProductID là một chuỗi
@@ -364,7 +368,7 @@ public class DAO {
 						List<CartItem> items = new ArrayList<>();
 						items.add(cartItem);
 						order = new Order(orderID, items, customerName, customerEmail, customerPhone, customerAddress,
-								paymentMethod, orderDate, signature);
+								paymentMethod, orderDate, signature,edited,cancel);
 						orders.add(order);
 						orderMap.put(orderID, order); // Thêm đơn hàng mới vào map
 					} else {
@@ -1079,7 +1083,7 @@ public class DAO {
 		// System.out.println(d.getOrderDateById(13));
 		List<CartItem> cartItems = new ArrayList<CartItem>();
 
-		Order o = new Order(5048, cartItems, "a", "a", "a", "a", "a", new Timestamp(System.currentTimeMillis()), "a");
+		//Order o = new Order(5048, cartItems, "a", "a", "a", "a", "a", new Timestamp(System.currentTimeMillis()), "a");
 		System.out.println(d.updateOrder(o, 5048));
 
 	}

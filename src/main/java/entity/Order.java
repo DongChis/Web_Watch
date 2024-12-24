@@ -31,13 +31,13 @@ public class Order {
     
     private boolean edited ;
     
-    private String cancel = "Đơn hàng đã bị hủy";
+    private boolean cancel;
    
 
-	public String getCancel() {
+	public boolean isCancel() {
 		return cancel;
 	}
-	public void setCancel(String cancel) {
+	public void setCancel(boolean cancel) {
 		this.cancel = cancel;
 	}
 	public boolean isEdited() {
@@ -64,7 +64,7 @@ public class Order {
 	}
 
 	public Order(int orderID, List<CartItem> cartItems, String customerName, String customerEmail, String customerPhone,
-			String customerAddress, String paymentMethod, Timestamp  orderDate,String sign, boolean edited) {
+			String customerAddress, String paymentMethod, Timestamp  orderDate,String sign, boolean edited, boolean cancel) {
 		this.orderID = orderID;
 		this.cartItems = cartItems;
 		this.customerName = customerName;
@@ -75,6 +75,7 @@ public class Order {
 		this.orderDate = orderDate;
 		this.sign = sign;
 		this.edited = edited;
+		this.cancel = cancel;
 		
 	}
 	
