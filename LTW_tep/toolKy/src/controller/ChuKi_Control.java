@@ -266,7 +266,7 @@ public class ChuKi_Control {
 
 		// Load Private Key
 		fileChooser.setDialogTitle("Load Private Key");
-		 returnValue = fileChooser.showOpenDialog(null);
+		int returnValue = fileChooser.showOpenDialog(null);
 		if (returnValue == JFileChooser.APPROVE_OPTION) {
 			File file = fileChooser.getSelectedFile();
 			try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
@@ -281,12 +281,31 @@ public class ChuKi_Control {
 
 		        // Set private key vào model
 		        model.setPrivateKey(privateKey);
+				
 			} catch (IOException ex) {
 				view.getTextOutput().setText("Error loading private key: " + ex.getMessage());
 			}
 		}
 	}
+	public void setPrivateKey() {
+	    String keyString = view.getTextPrivateKey().getText();
+	    if (keyString == null || keyString.trim().isEmpty()) {
+	        view.getTextOutput().setText("No private key provided.");
+	    } else {
+	        try {
+	            byte[] keyBytes = Base64.getDecoder().decode(keyString.trim());
+	            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+	            PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(keyBytes);
+	            PrivateKey privateKey = keyFactory.generatePrivate(keySpec);
 
+	            // Set private key vào model
+	            model.setPrivateKey(privateKey);
+	            view.getTextOutput().setText("Private Key set successfully.");
+	        } catch (Exception ex) {
+	            view.getTextOutput().setText("Invalid private key: " + ex.getMessage());
+	        }
+	    }
+	}
 	public void reset(ActionEvent e) {
 		view.getTextOutput().setText("");
 		view.getTextInput().setText("");
