@@ -97,7 +97,7 @@ public class UpdateOrderByUser extends HttpServlet {
 
 		try {
 			Order order = new Order(orderID, cartItems, customerName, customerEmail, customerPhone, 
-					customerAddress, paymentMethod,new Timestamp(System.currentTimeMillis()), sign,true,false);
+					customerAddress, paymentMethod,new Timestamp(System.currentTimeMillis()), sign,true);
 			
 			boolean isUpdated = DAO.getInstance().updateOrder(order, orderID);
 

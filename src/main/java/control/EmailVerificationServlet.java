@@ -61,6 +61,7 @@ public class EmailVerificationServlet extends HttpServlet {
 			User user = (User) DAO.getInstance().getUserByID(userId);
 
 			String userEmail = user.getEmail();
+			System.out.println("email: " + userEmail);
 			try {
 				DAO.getInstance().verifyEmail(userId);
 			} catch (Exception e) {
@@ -101,6 +102,8 @@ public class EmailVerificationServlet extends HttpServlet {
 			// Kiểm tra các thông tin môi trường
 			String emailUser = System.getenv("EMAIL_USER");
 			String emailPass = System.getenv("EMAIL_PASS");
+			
+			System.out.println(emailUser + "|" + emailPass);
 
 			if (emailUser == null || emailPass == null) {
 				System.out.println("Thông tin email không hợp lệ.");

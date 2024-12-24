@@ -64,7 +64,7 @@ public class Order {
 	}
 
 	public Order(int orderID, List<CartItem> cartItems, String customerName, String customerEmail, String customerPhone,
-			String customerAddress, String paymentMethod, Timestamp  orderDate,String sign, boolean edited, boolean cancel) {
+			String customerAddress, String paymentMethod, Timestamp  orderDate,String sign, boolean edited) {
 		this.orderID = orderID;
 		this.cartItems = cartItems;
 		this.customerName = customerName;
@@ -75,7 +75,7 @@ public class Order {
 		this.orderDate = orderDate;
 		this.sign = sign;
 		this.edited = edited;
-		this.cancel = cancel;
+	
 		
 	}
 	

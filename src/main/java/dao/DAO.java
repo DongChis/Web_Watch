@@ -119,69 +119,64 @@ public class DAO {
 	}
 
 	public boolean updateOrder(Order updatedOrder, int orderID) throws Exception {
-		String updateOrderQuery = "UPDATE Orders1 SET CustomerName = ?, CustomerEmail = ?, CustomerPhone = ?, CustomerAddress = ?, PaymentMethod = ?, OrderDate = ? , Signature = ? WHERE OrderID = ?";
-		String updateOrderItemQuery = "UPDATE OrderItems1 SET Quantity = ?, Price = ? WHERE OrderID = ?";
+	    String updateOrderQuery = "UPDATE Orders1 SET CustomerName = ?, CustomerEmail = ?, CustomerPhone = ?, CustomerAddress = ?, PaymentMethod = ?, OrderDate = ?, Signature = ? WHERE OrderID = ?";
+	    String updateOrderItemQuery = "UPDATE OrderItems1 SET Quantity = ?, Price = ? WHERE OrderID = ?";
 
-		boolean isUpdated = false;
+	    boolean isUpdated = false;
 
-		try (Connection conn = new DBContext().getConnection();
-				PreparedStatement orderStmt = conn.prepareStatement(updateOrderQuery);
-				PreparedStatement orderItemStmt = conn.prepareStatement(updateOrderItemQuery)) {
+	    // Khai báo Connection bên ngoài try để có thể rollback trong catch
+	    Connection conn = null;
 
-			conn.setAutoCommit(false); // Start transaction
+	    try {
+	        conn = new DBContext().getConnection();
+	        conn.setAutoCommit(false); // Bắt đầu transaction
 
-			// Update order details
-			orderStmt.setString(1, updatedOrder.getCustomerName());
-			orderStmt.setString(2, updatedOrder.getCustomerEmail());
-			orderStmt.setString(3, updatedOrder.getCustomerPhone());
-			orderStmt.setString(4, updatedOrder.getCustomerAddress());
-			orderStmt.setString(5, updatedOrder.getPaymentMethod());
-			orderStmt.setTimestamp(6, new Timestamp(System.currentTimeMillis()));
-			orderStmt.setString(7, updatedOrder.getSign());
-			orderStmt.setInt(8, orderID);
+	        // Chuẩn bị câu lệnh cập nhật đơn hàng
+	        try (PreparedStatement orderStmt = conn.prepareStatement(updateOrderQuery);
+	             PreparedStatement orderItemStmt = conn.prepareStatement(updateOrderItemQuery)) {
 
-			int orderRowsUpdated = orderStmt.executeUpdate();
+	            // Cập nhật thông tin chính của đơn hàng
+	            orderStmt.setString(1, updatedOrder.getCustomerName());
+	            orderStmt.setString(2, updatedOrder.getCustomerEmail());
+	            orderStmt.setString(3, updatedOrder.getCustomerPhone());
+	            orderStmt.setString(4, updatedOrder.getCustomerAddress());
+	            orderStmt.setString(5, updatedOrder.getPaymentMethod());
+	            orderStmt.setTimestamp(6, new Timestamp(System.currentTimeMillis()));
+	            orderStmt.setString(7, updatedOrder.getSign());
+	            orderStmt.setInt(8, orderID);
 
-			// Update each order item
-			for (CartItem item : updatedOrder.getCartItems()) {
-				orderItemStmt.setInt(1, item.getQuantity());
-				orderItemStmt.setDouble(2, item.getPrice());
-				orderItemStmt.setInt(3, orderID); // Ensure using OrderItemID
+	            int orderRowsUpdated = orderStmt.executeUpdate();
 
-				orderItemStmt.addBatch();
-			}
+	            // Cập nhật các mục trong đơn hàng
+	            for (CartItem item : updatedOrder.getCartItems()) {
+	                orderItemStmt.setInt(1, item.getQuantity());
+	                orderItemStmt.setDouble(2, item.getPrice());
+	                orderItemStmt.setInt(3, orderID);
 
+	                orderItemStmt.addBatch(); // Thêm vào batch
+	            }
 
-			// Update each order item
-			for (CartItem item : updatedOrder.getCartItems()) {
-				orderItemStmt.setInt(1, item.getQuantity());
-				orderItemStmt.setDouble(2, item.getPrice());
-				orderItemStmt.setInt(3, orderID); // Ensure using OrderItemID
+	            int[] orderItemsRowsUpdated = orderItemStmt.executeBatch(); // Thực thi batch
 
-
-
-
-			// Commit transaction if all updates were successful
-			isUpdated = orderRowsUpdated > 0 && orderItemsRowsUpdated.length == updatedOrder.getCartItems().size();
-			conn.commit();
-
-			} 
-
-
-	        // Xác nhận giao dịch nếu tất cả cập nhật thành công
-	        isUpdated = orderRowsUpdated > 0 && orderItemsRowsUpdated.length == updatedOrder.getCartItems().size();
-	        conn.commit();
-
+	            // Xác nhận giao dịch nếu tất cả cập nhật thành công
+	            isUpdated = orderRowsUpdated > 0 && orderItemsRowsUpdated.length == updatedOrder.getCartItems().size();
+	            conn.commit();
+	        }
 	    } catch (SQLException e) {
 	        System.err.println("SQL error occurred: " + e.getMessage());
 	        e.printStackTrace();
 	        if (conn != null) {
-	            conn.rollback(); // Rollback nếu có lỗi
+	            conn.rollback(); // Rollback nếu xảy ra lỗi
+	        }
+	    } finally {
+	        if (conn != null) {
+	            conn.close(); // Đóng kết nối
 	        }
 	    }
 
 	    return isUpdated;
 	}
+
 
 	
 	public boolean checkEdited(String signBefore, String signAfter) {
@@ -268,7 +263,7 @@ public class DAO {
 		String orderQuery = """
 				    SELECT o.OrderID, o.CustomerName, o.CustomerEmail,
 				           o.CustomerPhone, o.CustomerAddress, o.PaymentMethod,
-				           o.OrderDate, o.Signature,
+				           o.OrderDate, o.Signature, o.Edited,
 				           oi.ProductID, oi.Quantity, oi.Price
 				    FROM Orders1 o
 				    JOIN OrderItems1 oi ON o.OrderID = oi.OrderID
@@ -365,7 +360,7 @@ public class DAO {
 
 		// Cập nhật câu truy vấn SQL để lọc theo userId
 		String orderQuery = "SELECT o.OrderID, o.CustomerName, o.CustomerEmail, "
-				+ "o.CustomerPhone, o.CustomerAddress, o.PaymentMethod, " + "o.OrderDate, o.Signature,o.Edited,o.Cancel, "
+				+ "o.CustomerPhone, o.CustomerAddress, o.PaymentMethod, " + "o.OrderDate, o.Signature,o.Edited, "
 				+ "oi.ProductID, oi.Quantity, oi.Price " + "FROM Orders1 o "
 				+ "JOIN OrderItems1 oi ON o.OrderID = oi.OrderID " + "WHERE o.UserID = ?"; // Thêm điều kiện lọc theo
 																							// UserID
@@ -395,9 +390,6 @@ public class DAO {
 	                Timestamp orderDate = rs.getTimestamp("OrderDate"); // Lấy trực tiếp từ kết quả
 	                String signature = rs.getString("Signature");
 	                boolean edited = rs.getBoolean("Edited");
-
-
-
 
 	                // Lấy thông tin sản phẩm
 	                String productId = rs.getString("ProductID"); // Giả sử ProductID là một chuỗi
