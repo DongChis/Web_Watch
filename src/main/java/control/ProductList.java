@@ -23,12 +23,26 @@ public class ProductList extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		response.setContentType("text/html;charset=UTF-8");
-		List<Product> listProduct = DAO.getInstance().getAllProducts();
-		
-		request.setAttribute("listAllProduct", listProduct);
-		
-		request.getRequestDispatcher("ProductList.jsp").forward(request, response);
 
+		try {
+			int pageSize = 12; // Số sản phẩm mỗi trang
+			String pageParam = request.getParameter("page");
+			int page = (pageParam != null) ? Integer.parseInt(pageParam) : 1;
+
+			List<Product> listProduct = DAO.getInstance().getProductsByPage(page, pageSize);
+			int totalProducts = DAO.getInstance().getTotalProducts();
+			int totalPages = (int) Math.ceil((double) totalProducts / pageSize);
+
+			request.setAttribute("listAllProduct", listProduct);
+			request.setAttribute("totalPages", totalPages);
+			request.setAttribute("currentPage", page);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			request.setAttribute("error", "Đã xảy ra lỗi: " + e.getMessage());
+		}
+
+		request.getRequestDispatcher("ProductList.jsp").forward(request, response);
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
