@@ -29,7 +29,7 @@
 		<div class="card">
 			<h2>Thông tin khóa đang sử dụng</h2>
 			<div class="key-info">
-				<form action="keyControl" method="post">
+				<form action="keyControl" method="post" enctype="multipart/form-data">
 					<p>
 						<strong>Tài khoản sở hữu:</strong> <span>${sessionScope.accSession.username}</span>
 					</p>
@@ -173,7 +173,7 @@
 		<!-- Card: Report Key -->
 		<div class="card">
 			<h2>Báo Mất Khóa</h2>
-			<form id="keyReportForm" action="keyControl" method="POST">
+			<form id="keyReportForm" action="keyControl" method="POST" enctype="multipart/form-data">
 				<input type="hidden" name="action" value="reportKey" />
 				<div class="form-group">
 					<label for="reportPrivateKey">Nhập khóa Private cần báo
