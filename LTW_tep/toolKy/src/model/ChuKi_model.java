@@ -147,9 +147,14 @@ public class ChuKi_model {
     public String signFile(String src) throws Exception {
     	initSignature("SHA256", "RSA");
  		byte[] data = src.getBytes();
- 		privateKey = keyPair.getPrivate();
- 		signature.initSign(privateKey);
- 		
+ 	// Kiểm tra nếu privateKey chưa được gán
+ 	    if (privateKey == null) {
+ 	        throw new IllegalStateException("Private key is not loaded.");
+ 	    }
+ 	   // Khởi tạo Signature
+ 	    Signature signature = Signature.getInstance("SHA256withRSA");
+ 	    signature.initSign(privateKey);
+ 	 		
  		BufferedInputStream bis = new BufferedInputStream(new FileInputStream(src));
  		byte[] buff = new byte[1024];
  		int read;
