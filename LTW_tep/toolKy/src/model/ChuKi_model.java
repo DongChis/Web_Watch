@@ -71,14 +71,21 @@ public class ChuKi_model {
    
 //ký văn bản
     public String signMessage(String mess) throws Exception {
-    	initSignature("SHA256", "RSA");
- 		byte[]data = mess.getBytes();
- 		privateKey = keyPair.getPrivate();
- 		signature.initSign(privateKey);
- 		signature.update(data);
- 		byte[] sign = signature.sign();
- 		return Base64.getEncoder().encodeToString(sign);
+    	if (privateKey == null) {
+            throw new IllegalStateException("Private key is not set. Please set the private key before signing.");
+        }
+        if (mess == null || mess.trim().isEmpty()) {
+            throw new IllegalArgumentException("Message to sign cannot be null or empty.");
+        }
+        Signature signature = Signature.getInstance("SHA256withRSA");
+ 	    signature.initSign(privateKey); 	 		
+        byte[] data = mess.getBytes();
+        signature.initSign(privateKey);
+        signature.update(data);
+        byte[] sign = signature.sign();
+        return Base64.getEncoder().encodeToString(sign);
  	}
+    
     
     // Initialize Signature object with specified hash algorithm and provider
     public void initSignature(String hashAlgorithm, String algorithm) throws Exception {
