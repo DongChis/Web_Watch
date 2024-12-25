@@ -23,6 +23,7 @@ import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 
 import context.DBContext;
+import entity.AuditLog;
 import entity.CartItem;
 import entity.DeletedProduct;
 import entity.Order;
@@ -167,6 +168,26 @@ public class DAO {
 		return orderStatus; // Trả về giá trị OrderStatus (hoặc null nếu không tìm thấy)
 	}
 	
+	public Map<Integer, Boolean> getOrderEditStatus() {
+	    Map<Integer, Boolean> editStatusMap = new HashMap<>();
+	    String query = "SELECT DISTINCT OrderID FROM OrderAuditLog";
+
+	    try (Connection conn = new DBContext().getConnection();
+	         PreparedStatement ps = conn.prepareStatement(query);
+	         ResultSet rs = ps.executeQuery()) {
+
+	        while (rs.next()) {
+	            int orderId = rs.getInt("OrderID");
+	            editStatusMap.put(orderId, true); // Đánh dấu đơn hàng này đã bị chỉnh sửa
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+
+	    return editStatusMap;
+	}
+
+	
 	public String getOrderSignatureByOrderID(int orderID) {
         String getOrderHashQuery = "SELECT Signature FROM Orders1 WHERE OrderID = ?";
         String signature = null;
@@ -188,6 +209,32 @@ public class DAO {
 
         return signature;
     }
+	
+	public List<AuditLog> getAuditLogsForOrder(int orderId) {
+	    List<AuditLog> logs = new ArrayList<>();
+	    String query = "SELECT * FROM OrderAuditLog WHERE OrderID = ? ORDER BY ChangeTime DESC";
+
+	    try (Connection conn = new DBContext().getConnection();
+	         PreparedStatement ps = conn.prepareStatement(query)) {
+	        ps.setInt(1, orderId);
+	        ResultSet rs = ps.executeQuery();
+
+	        while (rs.next()) {
+	            AuditLog log = new AuditLog();
+	            log.setOrderID(rs.getInt("OrderID"));
+	            log.setChangedColumn(rs.getString("ChangedColumn"));
+	            log.setOldValue(rs.getString("OldValue"));
+	            log.setNewValue(rs.getString("NewValue"));
+	            log.setChangedBy(rs.getString("ChangedBy"));
+	            log.setChangeTime(rs.getTimestamp("ChangeTime"));
+	            logs.add(log);
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return logs;
+	}
+
 
 	public boolean updateOrder(Order updatedOrder, int orderID, int userID) throws Exception {
 	    String updateOrderQuery = "UPDATE Orders1 SET CustomerName = ?, CustomerEmail = ?, CustomerPhone = ?, CustomerAddress = ?, PaymentMethod = ?, OrderDate = ?, Signature = ? WHERE OrderID = ?";
@@ -289,8 +336,63 @@ public class DAO {
 
 	    return isUpdated;
 	}
+	public List<AuditLog> getAuditLogsForUserOrders(int userId) {
+	    List<AuditLog> logs = new ArrayList<>();
+	    String query = "SELECT al.* FROM OrderAuditLog al " +
+	                   "JOIN Orders1 o ON al.OrderID = o.OrderID " +
+	                   "WHERE o.UserID = ? " +
+	                   "ORDER BY al.ChangeTime DESC";
 
-	
+	    try (Connection conn = new DBContext().getConnection();
+	         PreparedStatement ps = conn.prepareStatement(query)) {
+	        ps.setInt(1, userId);
+	        ResultSet rs = ps.executeQuery();
+
+	        while (rs.next()) {
+	            AuditLog log = new AuditLog();
+	            log.setAuditID(rs.getInt("AuditID"));
+	            log.setOrderID(rs.getInt("OrderID"));
+	            log.setChangedColumn(rs.getString("ChangedColumn"));
+	            log.setOldValue(rs.getString("OldValue"));
+	            log.setNewValue(rs.getString("NewValue"));
+	            log.setChangedBy(rs.getString("ChangedBy"));
+	            log.setChangeTime(rs.getTimestamp("ChangeTime"));
+	            logs.add(log);
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return logs;
+	}
+
+
+	public List<AuditLog> getAuditLogs(int orderId) {
+	    List<AuditLog> logs = new ArrayList<>();
+	    String query = "SELECT * FROM OrderAuditLog WHERE OrderID = ? ORDER BY ChangeTime DESC";
+
+	    try (Connection conn = new DBContext().getConnection();
+	         PreparedStatement ps = conn.prepareStatement(query)) {
+	        ps.setInt(1, orderId);
+	        ResultSet rs = ps.executeQuery();
+
+	        while (rs.next()) {
+	            AuditLog log = new AuditLog();
+	            log.setAuditID(rs.getInt("AuditID"));
+	            log.setOrderID(rs.getInt("OrderID"));
+	            log.setChangedColumn(rs.getString("ChangedColumn"));
+	            log.setOldValue(rs.getString("OldValue"));
+	            log.setNewValue(rs.getString("NewValue"));
+	            log.setChangedBy(rs.getString("ChangedBy"));
+	            log.setChangeTime(rs.getTimestamp("ChangeTime"));
+	            logs.add(log);
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return logs;
+	}
+
+
 
 	public String decodeSignature(String signature, String publicKeyString) throws Exception {
 	    if (signature == null || publicKeyString == null) {
