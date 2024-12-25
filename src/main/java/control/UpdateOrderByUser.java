@@ -99,7 +99,7 @@ public class UpdateOrderByUser extends HttpServlet {
 			Order order = new Order(orderID, cartItems, customerName, customerEmail, customerPhone, 
 					customerAddress, paymentMethod,new Timestamp(System.currentTimeMillis()), sign,true);
 			
-			boolean isUpdated = DAO.getInstance().updateOrder(order, orderID,userIdObj);
+			boolean isUpdated = DAO.getInstance().updateOrder(order, orderID);
 
 			if (!isUpdated) {
 				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Order update failed.");

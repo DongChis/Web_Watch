@@ -16,33 +16,34 @@
 		<c:choose>
 			<c:when test="${not empty orderDetail}">
 				<h1
-					style="background-color: blueviolet; border-radius: 8px; color: white; padding: 10px; margin: 10px 0px 0px 0px;">
-					Chi tiết đơn hàng</h1>
+					style="background-color: blueviolet; border-radius: 8px; color: white; padding: 10px; margin: 10px 0px 0px 0px;">Chi
+					tiết đơn hàng</h1>
 				<div class="button-container">
-					<a href="orderListAdmin" class="button">Danh sách đơn hàng</a> 
-					<%-- <a
+					<a href="orderListAdmin" class="button">Danh sách đơn hàng</a> <a
 						href="loadOrder?orderID=${order.orderID}" class="button"
-						style="margin-right: 20px;">Edit</a> --%>
+						style="margin-right: 20px;">Edit</a>
 				</div>
 				<jsp:include page="OrderDetail.jsp" />
 			</c:when>
 
 			<c:when test="${not empty recentlyDelete}">
+
 				<h1
 					style="background-color: blueviolet; border-radius: 8px; color: white; padding: 10px; margin: 10px 0px 0px 0px;">
 					Danh sách sản phẩm đã xóa gần đây</h1>
-				<a href="productListAdmin" class="button" style="margin-left: 5px;">Danh
-					sách sản phẩm</a>
+
+				<a href="productListAdmin" class="button" style="margin-left: 5px;">
+					Danh sách sản phẩm</a>
 				<jsp:include page="RecentlyDelete.jsp" />
 			</c:when>
-
 			<c:when test="${not empty orderEdit}">
 				<h1
 					style="background-color: blueviolet; border-radius: 8px; color: white; padding: 10px; margin: 10px 0px 0px 0px;">
 					Chỉnh sửa đơn hàng</h1>
+				<!-- 	<a href="ordertListAdmin" class="button" style="margin-left: 5px;">
+					Danh sách đơn hàng</a> -->
 				<jsp:include page="EditOrder.jsp" />
 			</c:when>
-
 			<c:otherwise>
 				<h1
 					style="background-color: blueviolet; border-radius: 8px; color: white; padding: 10px; margin: 10px 0px 0px 0px;">
@@ -58,11 +59,12 @@
 							class="fas fa-search"></i></a>
 					</div>
 				</div>
-
+				<%-- Hiển thị lỗi nếu có --%>
 				<c:if test="${not empty error}">
 					<div class="error">${error}</div>
 				</c:if>
 
+				<%-- Hiển thị thông báo khi không có đơn hàng --%>
 				<c:if test="${not empty message}">
 					<div class="message">${message}</div>
 				</c:if>
@@ -91,48 +93,43 @@
 											value="${totalOrderPrice + item.totalPrice}" />
 									</c:forEach> ${totalOrderPrice} VNĐ</td>
 								<td><c:out value="${order.orderDate}" /></td>
-								<td><a href="orderDetail?orderID=${order.orderID}">Xem</a>
-									<c:if test="${not empty sessionScope.accSession}">
+								<td><a href="orderDetail?orderID=${order.orderID}">Xem
+								</a> <c:if test="${not empty sessionScope.accSession}">
+										<!-- Nếu người dùng đã đăng nhập -->
 										<button class="button" style="margin-left: 10px;"
 											onclick="deleteOrder(${order.orderID})">Xóa</button>
 									</c:if> <c:if test="${empty sessionScope.accSession}">
+										<!-- Nếu người dùng chưa đăng nhập -->
 										<button class="button" style="margin-left: 10px;"
 											onclick="window.location.href='login'">Xóa</button>
 									</c:if></td>
 								<td>
-								<c:choose>
-    
-    <c:when test="${order.orderStatus == 'process'}">
-        <span style="color: orange;">Đang xử lý</span>
+									<!-- Hiển thị trạng thái đơn hàng --> <c:choose>
+										<c:when test="${order.orderStatus == 'process'}">
+											<!-- Hiển thị thông báo và nút hủy đơn hàng -->
+											<span style="color: orange;">Đang xử lý</span>
 
-       
-        <c:if test="${order.edited}">
-            <span style="color: blue; margin-left: 10px;">Đã chỉnh sửa</span>
-        </c:if>
+											<c:if test="${order.edited}">
+												<span style="color: blue; margin-left: 10px;">Đã
+													chỉnh sửa</span>
+											</c:if>
 
-       
-        <button class="button" style="margin-left: 10px;" onclick="cancelOrder(${order.orderID})">Hủy</button>
-    </c:when>
+											<button class="button" style="margin-left: 10px;"
+											onclick="cancelOrder(${order.orderID})">Hủy</button>
+										</c:when>
+										
+									
 
-   
-    <c:when test="${order.orderStatus == 'Hoàn tất'}">
-        <span style="color: green;">Đã hoàn tất</span>
-    </c:when>
-     <c:when test="${order.orderStatus == 'cancel'}">
-        <span style="color: red;">Đơn hàng bị hủy</span>
-    </c:when>
+										<c:when test="${order.orderStatus == 'Hoàn tất'}">
+											<span style="color: green;">Đã hoàn tất</span>
+										</c:when>
 
-    
-    <c:otherwise>
-        <span style="color: red;">${order.orderStatus != null ? order.orderStatus : 'cancel'}</span>
-    </c:otherwise>
-</c:choose></td>
-
+									
+									</c:choose>
 							</tr>
 						</c:forEach>
 					</tbody>
 				</table>
-
 				<c:if test="${totalPages > 1}">
 					<div class="pagination">
 						<c:forEach var="i" begin="1" end="${totalPages}">
@@ -141,9 +138,9 @@
 						</c:forEach>
 					</div>
 				</c:if>
+
 			</c:otherwise>
 		</c:choose>
-
 	</div>
 	<script>
 		function deleteOrder(orderID) {
