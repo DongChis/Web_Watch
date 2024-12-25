@@ -909,7 +909,7 @@ public class DAO {
 	public void insertOrder(List<CartItem> cartItems, String customerName, String customerEmail, String customerPhone,
 			String customerAddress, String paymentMethod, String sign, int userID) {
 
-		String orderQuery = "INSERT INTO Orders1 (CustomerName, CustomerEmail, CustomerPhone, CustomerAddress, PaymentMethod, OrderDate, Signature, UserID, OrderHash) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		String orderQuery = "INSERT INTO Orders1 (CustomerName, CustomerEmail, CustomerPhone, CustomerAddress, PaymentMethod, OrderDate, Signature, UserID,Edited, OrderHash) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?)";
 		String orderItemQuery = "INSERT INTO OrderItems1 (OrderID, ProductID, Quantity, Price) VALUES (?, ?, ?, ?)";
 
 		try (Connection conn = new DBContext().getConnection()) {
@@ -935,7 +935,8 @@ public class DAO {
 				orderStmt.setTimestamp(6, new Timestamp(System.currentTimeMillis())); // Ngày hiện tại
 				orderStmt.setString(7, sign);
 				orderStmt.setInt(8, userID);
-				orderStmt.setString(9, orderHash); // Thêm mã hash vào cột OrderHash
+				orderStmt.setBoolean(9, false);
+				orderStmt.setString(10, orderHash); // Thêm mã hash vào cột OrderHash
 
 				int affectedRows = orderStmt.executeUpdate();
 

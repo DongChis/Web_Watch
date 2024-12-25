@@ -123,6 +123,11 @@ public class CheckOutControl extends HttpServlet {
 		        request.getRequestDispatcher("CheckOut.jsp").forward(request, response);
 		        return;
 		    }else {
+		    	
+		    	  // Xử lý đặt hàng nếu chữ ký hợp lệ
+			    List<CartItem> cartItems = (List<CartItem>) session.getAttribute("cart");
+			    DAO.getInstance().insertOrder(cartItems, customerName, customerEmail, customerPhone, customerAddress, paymentMethod, sign, userId);
+		    	
 		    	session.removeAttribute("cart");
 		    	
 		    	response.sendRedirect("OrderConfirm.jsp");
@@ -132,9 +137,7 @@ public class CheckOutControl extends HttpServlet {
 		    request.setAttribute("resultMessageDH", message);
 		    request.setAttribute("messageColorDH", messageColor);
 		    
-		    // Xử lý đặt hàng nếu chữ ký hợp lệ
-		    List<CartItem> cartItems = (List<CartItem>) session.getAttribute("cart");
-		    DAO.getInstance().insertOrder(cartItems, customerName, customerEmail, customerPhone, customerAddress, paymentMethod, sign, userId);
+		  
 
 		    // Chuyển hướng đến trang xác nhận
 		    

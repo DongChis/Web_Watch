@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
 
+import dao.DAO;
 import dao.DAOKey;
 import entity.Alg_KEY;
 
@@ -215,8 +216,19 @@ public class KeyControl extends HttpServlet {
     private void reportKey(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            int userId = Integer.parseInt(request.getSession().getAttribute("userId").toString());
+        	HttpSession session = request.getSession(false);
+			Integer userId = (Integer) session.getAttribute("userId");
+			if (userId == null) {
+				response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User ID not found in session.");
+				return;
+			}
 
+			   // Kiểm tra xem người dùng đã xác minh email chưa
+	        
+	      
+
+			
+			boolean isEmailVerified = DAO.getInstance().isEmailVerified(userId); // Kiểm tra trạng thái xác minh email
 
 			if (!isEmailVerified) {
 				// Nếu email chưa được xác minh, chuyển hướng đến trang yêu cầu xác minh email
@@ -226,14 +238,29 @@ public class KeyControl extends HttpServlet {
 			// Retrieve key information from DAO
 			DAOKey daoKey = new DAOKey();
 			Map<String, String> keyInfo = daoKey.getKeyInfo(userId);
+
 			// If key information is not available, set default messages
 			String publicKey = keyInfo.get("publicKey");
 			String createTime = keyInfo.get("createTime");
 			String endTime = keyInfo.get("endTime");
 
-        }
-            }
-    
+			// Check if key info exists, otherwise provide a default message
+			publicKey = publicKey != null ? publicKey : "Chưa có khóa công khai";
+			createTime = createTime != null ? createTime : "Chưa có thông tin";
+			endTime = endTime != null ? endTime : "Chưa có thông tin";
+
+			// Set the information in the request attributes for use in the JSP page
+			request.setAttribute("publicKey", publicKey);
+			request.setAttribute("createTime", createTime);
+			request.setAttribute("endTime", endTime);
+
+			// Forward to the Function.jsp page for display
+			request.getRequestDispatcher("Function.jsp").forward(request, response);
+		} catch (Exception e) {
+			e.printStackTrace();
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error retrieving key information.");
+		}
+	}
     // Handle GET requests (show key info)
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
