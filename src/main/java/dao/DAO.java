@@ -1,5 +1,7 @@
 package dao;
+
 import java.nio.charset.StandardCharsets;
+import java.security.InvalidKeyException;
 import java.security.KeyFactory;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -16,7 +18,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
 
 import context.DBContext;
 import entity.CartItem;
@@ -60,7 +64,7 @@ public class DAO {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} catch (Exception e1) {
-			
+
 			e1.printStackTrace();
 		}
 		return products;
@@ -77,7 +81,7 @@ public class DAO {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} catch (Exception e1) {
-			
+
 			e1.printStackTrace();
 		}
 		return 0;
@@ -126,229 +130,300 @@ public class DAO {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public boolean cancelOrder(int orderID) {
-	    String sql = "UPDATE Orders1 SET OrderStatus = 'cancel' WHERE orderID = ?";
+		String sql = "UPDATE Orders1 SET OrderStatus = 'cancel' WHERE orderID = ?";
 
-	    try (Connection conn = new DBContext().getConnection();
-	         PreparedStatement stmt = conn.prepareStatement(sql)) {
+		try (Connection conn = new DBContext().getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-	        stmt.setInt(1, orderID);
-	        int rowsUpdated = stmt.executeUpdate();
+			stmt.setInt(1, orderID);
+			int rowsUpdated = stmt.executeUpdate();
 
-	        return rowsUpdated > 0; // Trả về true nếu cập nhật thành công
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        return false;
-	    }
+			return rowsUpdated > 0; // Trả về true nếu cập nhật thành công
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	public String getOrderStatusByOrderID(int orderID) {
+		String sql = "SELECT OrderStatus FROM Orders1 WHERE OrderID = ?";
+		String orderStatus = null;
+
+		try (Connection conn = new DBContext().getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+			stmt.setInt(1, orderID); // Thiết lập giá trị cho tham số orderID
+			ResultSet rs = stmt.executeQuery();
+
+			// Kiểm tra kết quả truy vấn
+			if (rs.next()) {
+				orderStatus = rs.getString("OrderStatus"); // Lấy giá trị của OrderStatus
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return orderStatus; // Trả về giá trị OrderStatus (hoặc null nếu không tìm thấy)
 	}
 	
-	public String getOrderStatusByOrderID(int orderID) {
-	    String sql = "SELECT OrderStatus FROM Orders1 WHERE OrderID = ?";
-	    String orderStatus = null;
+	public String getOrderSignatureByOrderID(int orderID) {
+        String getOrderHashQuery = "SELECT Signature FROM Orders1 WHERE OrderID = ?";
+        String signature = null;
 
-	    try (Connection conn = new DBContext().getConnection();
-	         PreparedStatement stmt = conn.prepareStatement(sql)) {
+        // Establishing a connection and executing the query
+        try (Connection conn = new DBContext().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(getOrderHashQuery)) {
 
-	        stmt.setInt(1, orderID); // Thiết lập giá trị cho tham số orderID
-	        ResultSet rs = stmt.executeQuery();
+            stmt.setInt(1, orderID);  // Set the OrderID parameter
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    signature = rs.getString("Signature");  // Get the signature from the result set
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Return null or handle error as needed
+        }
 
-	        // Kiểm tra kết quả truy vấn
-	        if (rs.next()) {
-	            orderStatus = rs.getString("OrderStatus"); // Lấy giá trị của OrderStatus
-	        }
-
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    }
-
-	    return orderStatus; // Trả về giá trị OrderStatus (hoặc null nếu không tìm thấy)
-	}
-
-
+        return signature;
+    }
 
 	public boolean updateOrder(Order updatedOrder, int orderID, int userID) throws Exception {
 	    String updateOrderQuery = "UPDATE Orders1 SET CustomerName = ?, CustomerEmail = ?, CustomerPhone = ?, CustomerAddress = ?, PaymentMethod = ?, OrderDate = ?, Signature = ? WHERE OrderID = ?";
-
 	    String updateOrderItemQuery = "UPDATE OrderItems1 SET Quantity = ?, Price = ? WHERE OrderID = ?";
 	    String getOrderHashQuery = "SELECT Signature FROM Orders1 WHERE OrderID = ?";
 	    String getPublicKeyQuery = "SELECT PublicKey FROM KeyManagement WHERE UserID = ?"; // Query để lấy public key
+	    String setEditedFlagQuery = "UPDATE Orders1 SET Edited = ? WHERE OrderID = ?"; // Query to set Edited flag
 
 	    boolean isUpdated = false;
-
 	    Connection conn = null;
 
 	    try {
 	        conn = new DBContext().getConnection();
-	        conn.setAutoCommit(false); // Bắt đầu transaction
+	        conn.setAutoCommit(false); // Start transaction
 
-	        // Lấy chữ ký hiện tại từ database
-	        String currentHash = null;
-	        try (PreparedStatement getOrderHashStmt = conn.prepareStatement(getOrderHashQuery)) {
-	            getOrderHashStmt.setInt(1, orderID);
-	            ResultSet rs = getOrderHashStmt.executeQuery();
-	            if (rs.next()) {
-	                currentHash = rs.getString("Signature");
-	            } else {
-	                throw new Exception("Order not found for ID: " + orderID);
-	            }
-	        }
+	        // Get current signature (hash) from the database
+	        String hash = getOrderHashByOrderID(orderID);
 
+	        // Get the signature from the order
+	        String sign = getOrderSignatureByOrderID(orderID);
 
-	        // Lấy public key từ bảng KeyManagement dựa trên UserID
-	        String publicKeyString = null;
-	        try (PreparedStatement getPublicKeyStmt = conn.prepareStatement(getPublicKeyQuery)) {
-	            getPublicKeyStmt.setInt(1, userID);
-	            ResultSet rs = getPublicKeyStmt.executeQuery();
-	            if (rs.next()) {
-	                publicKeyString = rs.getString("PublicKey"); // Lấy public key dưới dạng String
-	            } else {
-	                throw new Exception("Public key not found for UserID: " + userID);
-	            }
-	        }
+	        // Get the public key from KeyManagement based on UserID
+	        String publicKeyString = getPublicKeyByUserID(userID);
 
-	        // Giải mã chữ ký sử dụng public key
-	        String decodedSignature = decodeSignature(currentHash, publicKeyString);
+	        // Decode the signature using the public key
+	        String decodedSignature = decodeSignature(sign, publicKeyString);
 
-	        // Kiểm tra chữ ký hợp lệ (nếu cần)
-	        if (!isSignatureValid(decodedSignature, updatedOrder)) {
-	            throw new Exception("Invalid signature. The order data has been tampered with.");
-	        }
+	        // Check if the signature is valid (if needed)
+	        // if (!isSignatureValid(decodedSignature, updatedOrder)) {
+	        //     throw new Exception("Invalid signature. The order data has been tampered with.");
+	        // }
 
-
-	        // Chuẩn bị câu lệnh cập nhật đơn hàng
+	        // Update order information and order items
 	        try (PreparedStatement orderStmt = conn.prepareStatement(updateOrderQuery);
 	             PreparedStatement orderItemStmt = conn.prepareStatement(updateOrderItemQuery)) {
 
-
-	            // Cập nhật thông tin chính của đơn hàng
+	            // Update main order information
 	            orderStmt.setString(1, updatedOrder.getCustomerName());
 	            orderStmt.setString(2, updatedOrder.getCustomerEmail());
 	            orderStmt.setString(3, updatedOrder.getCustomerPhone());
 	            orderStmt.setString(4, updatedOrder.getCustomerAddress());
 	            orderStmt.setString(5, updatedOrder.getPaymentMethod());
 	            orderStmt.setTimestamp(6, new Timestamp(System.currentTimeMillis()));
-	            String newHash = generateHash(updatedOrder); // Tạo hash mới từ thông tin đơn hàng
-	            orderStmt.setString(7, newHash);
+	            orderStmt.setString(7, updatedOrder.getSign());
 	            orderStmt.setInt(8, orderID);
 
 	            int orderRowsUpdated = orderStmt.executeUpdate();
 
-	            // Cập nhật các mục trong đơn hàng
+	            // Update order items
 	            for (CartItem item : updatedOrder.getCartItems()) {
 	                orderItemStmt.setInt(1, item.getQuantity());
 	                orderItemStmt.setDouble(2, item.getPrice());
 	                orderItemStmt.setInt(3, orderID);
-
-	                orderItemStmt.addBatch(); // Thêm vào batch
+	                orderItemStmt.addBatch(); // Add to batch
 	            }
 
-	            int[] orderItemsRowsUpdated = orderItemStmt.executeBatch(); // Thực thi batch
+	            int[] orderItemsRowsUpdated = orderItemStmt.executeBatch(); // Execute batch
 
-	            // Kiểm tra nếu đơn hàng bị chỉnh sửa
-	            boolean isEdited = !currentHash.equals(newHash);
+	            // Check if the order has been modified
+	            boolean isEdited = !hash.equals(decodedSignature);
 	            if (isEdited) {
 	                System.out.println("Order has been edited directly in the database!");
 	            }
 
-	            // Xác nhận giao dịch nếu tất cả cập nhật thành công
-	            isUpdated = orderRowsUpdated > 0 && orderItemsRowsUpdated.length == updatedOrder.getCartItems().size();
+	            // If the update was successful, set the Edited column to true
+	            if (isUpdated = orderRowsUpdated > 0 && orderItemsRowsUpdated.length == updatedOrder.getCartItems().size()) {
+	                try (PreparedStatement updateEditedStmt = conn.prepareStatement(setEditedFlagQuery)) {
+	                    updateEditedStmt.setBoolean(1, true); // Set Edited to true
+	                    updateEditedStmt.setInt(2, orderID);
+	                    updateEditedStmt.executeUpdate();
+	                }
+	            }
+
+	            // Commit transaction if everything is successful
 	            conn.commit();
 	        }
+
 	    } catch (SQLException e) {
 	        System.err.println("SQL error occurred: " + e.getMessage());
 	        e.printStackTrace();
 	        if (conn != null) {
-	            conn.rollback(); // Rollback nếu xảy ra lỗi
+	            conn.rollback(); // Rollback on error
 	        }
+	        throw new Exception("Database operation failed", e);
+
 	    } catch (Exception e) {
 	        System.err.println("Error occurred: " + e.getMessage());
 	        e.printStackTrace();
 	        if (conn != null) {
-	            conn.rollback(); // Rollback nếu xảy ra lỗi
+	            conn.rollback(); // Rollback on error
 	        }
+	        throw new Exception("An error occurred while updating the order.", e);
+
 	    } finally {
 	        if (conn != null) {
-	            conn.close(); // Đóng kết nối
+	            conn.close(); // Close connection
 	        }
 	    }
 
-
-		return isUpdated;
-
+	    return isUpdated;
 	}
 
-	private String decodeSignature(String signature, String publicKeyString) throws Exception {
-	    // Chuyển đổi public key từ String thành đối tượng Key
-	    PublicKey publicKey = getPublicKeyFromString(publicKeyString);
+	
 
-	    // Giải mã chữ ký
-	    Cipher cipher = Cipher.getInstance("RSA");
-	    cipher.init(Cipher.DECRYPT_MODE, publicKey);
-	    byte[] decodedBytes = cipher.doFinal(Base64.getDecoder().decode(signature));
-	    return new String(decodedBytes, StandardCharsets.UTF_8);
+	public String decodeSignature(String signature, String publicKeyString) throws Exception {
+	    if (signature == null || publicKeyString == null) {
+	        throw new IllegalArgumentException("Signature or public key cannot be null");
+	    }
+
+	    try {
+	        // Convert public key from string to PublicKey object
+	        PublicKey publicKey = getPublicKeyFromString(publicKeyString);
+
+	        // Initialize cipher for decryption with RSA
+	        Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+	        cipher.init(Cipher.DECRYPT_MODE, publicKey);
+
+	        // Decode the base64 encoded signature
+	        byte[] decodedBytes = Base64.getDecoder().decode(signature);
+
+	        // Decrypt the signature
+	        byte[] decryptedBytes = cipher.doFinal(decodedBytes);
+
+	        // Create hash of the decrypted data (SHA-256)
+	        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+	        byte[] hashBytes = digest.digest(decryptedBytes);
+
+	        return bytesToHex(hashBytes);
+	    } catch (BadPaddingException e) {
+	        throw new BadPaddingException("Decryption failed: likely due to invalid padding or mismatched key.");
+	    } catch (InvalidKeyException e) {
+	        throw new InvalidKeyException("Invalid public key for decryption.");
+	    } catch (IllegalBlockSizeException e) {
+	        throw new IllegalBlockSizeException("Decryption failed: block size mismatch.");
+	    } catch (NoSuchAlgorithmException e) {
+	        throw new NoSuchAlgorithmException("SHA-256 or RSA algorithm not found.");
+	    } catch (Exception e) {
+	        throw new Exception("Failed to decode the signature: " + e.getMessage(), e);
+	    }
 	}
 
 	private PublicKey getPublicKeyFromString(String publicKeyString) throws Exception {
-	    byte[] encoded = Base64.getDecoder().decode(publicKeyString);
-	    X509EncodedKeySpec keySpec = new X509EncodedKeySpec(encoded);
+	    // Assuming you have a method to get the public key from a string
+	    // Example:
+	    byte[] keyBytes = Base64.getDecoder().decode(publicKeyString);
+	    X509EncodedKeySpec keySpec = new X509EncodedKeySpec(keyBytes);
 	    KeyFactory keyFactory = KeyFactory.getInstance("RSA");
 	    return keyFactory.generatePublic(keySpec);
 	}
 
-	private boolean isSignatureValid(String decodedSignature, Order updatedOrder) throws NoSuchAlgorithmException {
-	    // Kiểm tra chữ ký hợp lệ, ví dụ so sánh với hash mới của đơn hàng
-	    String newHash = generateHash(updatedOrder);
-	    return decodedSignature.equals(newHash); // Nếu chữ ký giải mã trùng với hash mới của đơn hàng
-	}
-
-
-	/**
-	 * Tạo chữ ký hash cho đơn hàng.
-	 */
-	private String generateHash(Order order) throws NoSuchAlgorithmException {
-	    // Chuẩn bị dữ liệu
-	    StringBuilder dataBuilder = new StringBuilder();
-	    dataBuilder.append(order.getCustomerName())
-	            .append(order.getCustomerEmail())
-	            .append(order.getCustomerPhone())
-	            .append(order.getCustomerAddress())
-	            .append(order.getPaymentMethod())
-	            .append(order.getOrderDate());
-
-	    // Thêm thông tin CartItems
-	    for (CartItem item : order.getCartItems()) {
-	        dataBuilder.append(item.getQuantity())
-	                   .append(item.getPrice());
-	    }
-
-	    // Tạo MessageDigest với SHA-256
-	    MessageDigest digest = MessageDigest.getInstance("SHA-256");
-	    byte[] hashBytes = digest.digest(dataBuilder.toString().getBytes(StandardCharsets.UTF_8));
-
-	    // Chuyển đổi hash thành chuỗi hex
+	private String bytesToHex(byte[] bytes) {
 	    StringBuilder hexString = new StringBuilder();
-	    for (byte b : hashBytes) {
+	    for (byte b : bytes) {
 	        String hex = Integer.toHexString(0xff & b);
 	        if (hex.length() == 1) {
 	            hexString.append('0');
 	        }
 	        hexString.append(hex);
 	    }
-
 	    return hexString.toString();
 	}
-	
-	public boolean isEdited(Order order) {
-	    try {
-	        String currentHash = generateHash(order); // Hàm generateHash đã được định nghĩa
-	        return !currentHash.equals(order.getSign()); // So sánh với hash ban đầu
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        return false;
-	    }
+
+
+	private boolean isSignatureValid(String decodedSignature, Order updatedOrder) throws NoSuchAlgorithmException {
+		// Kiểm tra chữ ký hợp lệ, ví dụ so sánh với hash mới của đơn hàng
+		String newHash = generateHash(updatedOrder);
+		return decodedSignature.equals(newHash); // Nếu chữ ký giải mã trùng với hash mới của đơn hàng
 	}
 
+	/**
+	 * Tạo chữ ký hash cho đơn hàng.
+	 */
+	private String generateHash(Order order) throws NoSuchAlgorithmException {
+		// Chuẩn bị dữ liệu
+		StringBuilder dataBuilder = new StringBuilder();
+		dataBuilder.append(order.getCustomerName()).append(order.getCustomerEmail()).append(order.getCustomerPhone())
+				.append(order.getCustomerAddress()).append(order.getPaymentMethod()).append(order.getOrderDate());
+
+		// Thêm thông tin CartItems
+		for (CartItem item : order.getCartItems()) {
+			dataBuilder.append(item.getQuantity()).append(item.getPrice());
+		}
+
+		// Tạo MessageDigest với SHA-256
+		MessageDigest digest = MessageDigest.getInstance("SHA-256");
+		byte[] hashBytes = digest.digest(dataBuilder.toString().getBytes(StandardCharsets.UTF_8));
+
+		// Chuyển đổi hash thành chuỗi hex
+		StringBuilder hexString = new StringBuilder();
+		for (byte b : hashBytes) {
+			String hex = Integer.toHexString(0xff & b);
+			if (hex.length() == 1) {
+				hexString.append('0');
+			}
+			hexString.append(hex);
+		}
+
+		return hexString.toString();
+	}
+	
+	public String getOrderHashByOrderID(int orderID) {
+	    String query = "SELECT OrderHash FROM Orders1 WHERE OrderID = ?";
+	    
+	    try (Connection conn = new DBContext().getConnection();
+	         PreparedStatement stmt = conn.prepareStatement(query)) {
+	        
+	        stmt.setInt(1, orderID); // Đặt OrderID vào câu truy vấn
+	        try (ResultSet rs = stmt.executeQuery()) {
+	            if (rs.next()) {
+	                return rs.getString("OrderHash"); // Trả về giá trị OrderHash
+	            } else {
+	                throw new SQLException("No OrderHash found for OrderID: " + orderID);
+	            }
+	        }
+	    } catch (SQLException e) {
+	        System.err.println("SQL error occurred: " + e.getMessage());
+	    } catch (Exception e) {
+	        System.err.println("An error occurred: " + e.getMessage());
+	    }
+	    return null; // Trả về null nếu xảy ra lỗi
+	}
+
+
+	public boolean isEdited(Order order, String publicKey,int orderID) {
+		try {
+			String currentHash = getOrderHashByOrderID(orderID);
+			System.out.println("hash1: " + currentHash);// Hàm generateHash đã được định nghĩa
+
+			System.out.println("hash2: " + decodeSignature(order.getSign(), publicKey));
+			
+			return !currentHash.equals(decodeSignature(order.getSign(), publicKey)); // So sánh với hash ban đầu
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
 
 	public void deleteOrder(String orderID, String username) throws Exception {
 		String deleteQuery = "DELETE FROM Orders1 WHERE OrderID = ?";
@@ -421,7 +496,10 @@ public class DAO {
 
 		return order; // Return the order details (or null if not found)
 	}
-	public List<Order> getOrdersByPage(int page, int pageSize) {
+
+
+	public List<Order> getOrdersByPage(int page, int pageSize,int userID) {
+
 
 		List<Order> orders = new ArrayList<>();
 		Map<Integer, Order> orderMap = new HashMap<>();
@@ -437,10 +515,6 @@ public class DAO {
 				    OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
 				""";
 
-
-
-
-
 		try (Connection conn = new DBContext().getConnection();
 				PreparedStatement stmt = conn.prepareStatement(orderQuery)) {
 
@@ -448,62 +522,77 @@ public class DAO {
 			stmt.setInt(1, offset);
 			stmt.setInt(2, pageSize);
 
-
-	        try (ResultSet rs = stmt.executeQuery()) {
-	            while (rs.next()) {
-	                // Lấy thông tin đơn hàng
-	                int orderID = rs.getInt("OrderID");
-	                String customerName = rs.getString("CustomerName");
-	                String customerEmail = rs.getString("CustomerEmail");
-	                String customerPhone = rs.getString("CustomerPhone");
-	                String customerAddress = rs.getString("CustomerAddress");
-	                String paymentMethod = rs.getString("PaymentMethod");
-	                Timestamp orderDate = rs.getTimestamp("OrderDate");
-	                String signature = rs.getString("Signature");
-	                boolean edited = rs.getBoolean("Edited");
-
-	                
-	                // Lấy thông tin sản phẩm
-	                String productId = rs.getString("ProductID");
-	                int quantity = rs.getInt("Quantity");
-	                double price = rs.getDouble("Price");
-
+			try (ResultSet rs = stmt.executeQuery()) {
+				while (rs.next()) {
+					// Lấy thông tin đơn hàng
+					int orderID = rs.getInt("OrderID");
+					String customerName = rs.getString("CustomerName");
+					String customerEmail = rs.getString("CustomerEmail");
+					String customerPhone = rs.getString("CustomerPhone");
+					String customerAddress = rs.getString("CustomerAddress");
+					String paymentMethod = rs.getString("PaymentMethod");
+					Timestamp orderDate = rs.getTimestamp("OrderDate");
+					String signature = rs.getString("Signature");
+					boolean edited = rs.getBoolean("Edited");
+					String key = getPublicKeyByUserID(userID);
+					System.out.println("public key : " + key);
+					// Lấy thông tin sản phẩm
+					String productId = rs.getString("ProductID");
+					int quantity = rs.getInt("Quantity");
+					double price = rs.getDouble("Price");
 
 					// Tạo đối tượng CartItem
 					CartItem cartItem = new CartItem(getProductByID(productId), quantity);
 
+					// Kiểm tra nếu đơn hàng đã tồn tại trong map
+					Order order = orderMap.get(orderID);
 
+					if (order == null) {
+						List<CartItem> items = new ArrayList<>();
+						items.add(cartItem);
+						order = new Order(orderID, items, customerName, customerEmail, customerPhone, customerAddress,
+								paymentMethod, orderDate, signature, edited);
 
-
-
-	                // Kiểm tra nếu đơn hàng đã tồn tại trong map
-	                Order order = orderMap.get(orderID);
-	                
-	                
-	                if (order == null) {
-	                    List<CartItem> items = new ArrayList<>();
-	                    items.add(cartItem);
-	                    order = new Order(orderID, items, customerName, customerEmail, customerPhone, customerAddress,
-	                            paymentMethod, orderDate, signature, edited);
-	                    
-	                    order.setEdited(isEdited(order));
-	                    orders.add(order);
-	                    orderMap.put(orderID, order);
-	                } else {
-	                    order.getCartItems().add(cartItem);
-	                }
-	            }
-	        }
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	    } catch (Exception e1) {
-
+						 
+						orders.add(order);
+						orderMap.put(orderID, order);
+					} else {
+						order.getCartItems().add(cartItem);
+					}
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (Exception e1) {
 
 			e1.printStackTrace();
 		}
 
 		return orders;
 	}
+	
+	public String getPublicKeyByUserID(int userID) {
+	    String query = "SELECT PublicKey FROM KeyManagement WHERE UserID = ?";
+	    
+	    try (Connection conn = new DBContext().getConnection();
+	         PreparedStatement stmt = conn.prepareStatement(query)) {
+	        
+	        stmt.setInt(1, userID); // Đặt UserID vào câu truy vấn
+	        try (ResultSet rs = stmt.executeQuery()) {
+	            if (rs.next()) {
+	                return rs.getString("PublicKey"); // Trả về giá trị PublicKey
+	            } else {
+	                throw new SQLException("No PublicKey found for UserID: " + userID);
+	            }
+	        }
+	    } catch (SQLException e) {
+	        System.err.println("SQL error occurred: " + e.getMessage());
+	    } catch (Exception e) {
+	        System.err.println("An error occurred: " + e.getMessage());
+	    }
+	    return null; // Trả về null nếu xảy ra lỗi
+	}
+
 
 	public int getTotalOrders() {
 		String query = "SELECT COUNT(*) FROM Orders1";
@@ -516,7 +605,7 @@ public class DAO {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} catch (Exception e1) {
-			
+
 			e1.printStackTrace();
 		}
 		return 0;
@@ -534,36 +623,23 @@ public class DAO {
 				+ "JOIN OrderItems1 oi ON o.OrderID = oi.OrderID " + "WHERE o.UserID = ?"; // Thêm điều kiện lọc theo
 																							// UserID
 
-
-
-
-
-
-
-
-
-
-
 		try (Connection conn = new DBContext().getConnection();
 				PreparedStatement stmt = conn.prepareStatement(orderQuery)) {
 
 			// Thiết lập tham số userId vào câu lệnh SQL
 			stmt.setInt(1, userId); // Truyền userId vào câu truy vấn
 
-
-
-
-	        try (ResultSet rs = stmt.executeQuery()) {
-	            while (rs.next()) {
-	                int orderID = rs.getInt("OrderID");
-	                String customerName = rs.getString("CustomerName");
-	                String customerEmail = rs.getString("CustomerEmail");
-	                String customerPhone = rs.getString("CustomerPhone");
-	                String customerAddress = rs.getString("CustomerAddress");
-	                String paymentMethod = rs.getString("PaymentMethod");
-	                Timestamp orderDate = rs.getTimestamp("OrderDate"); // Lấy trực tiếp từ kết quả
-	                String signature = rs.getString("Signature");
-	                boolean edited = rs.getBoolean("Edited");
+			try (ResultSet rs = stmt.executeQuery()) {
+				while (rs.next()) {
+					int orderID = rs.getInt("OrderID");
+					String customerName = rs.getString("CustomerName");
+					String customerEmail = rs.getString("CustomerEmail");
+					String customerPhone = rs.getString("CustomerPhone");
+					String customerAddress = rs.getString("CustomerAddress");
+					String paymentMethod = rs.getString("PaymentMethod");
+					Timestamp orderDate = rs.getTimestamp("OrderDate"); // Lấy trực tiếp từ kết quả
+					String signature = rs.getString("Signature");
+					boolean edited = rs.getBoolean("Edited");
 
 					// Lấy thông tin sản phẩm
 					String productId = rs.getString("ProductID"); // Giả sử ProductID là một chuỗi
@@ -573,24 +649,22 @@ public class DAO {
 					// Tạo CartItem cho sản phẩm này
 					CartItem cartItem = new CartItem(getProductByID(productId), quantity);
 
-
-	                // Kiểm tra xem đơn hàng đã tồn tại trong map chưa
-	                Order order = orderMap.get(orderID);
-	                if (order == null) {
-	                    // Nếu đơn hàng chưa tồn tại, tạo đơn hàng mới
-	                    List<CartItem> items = new ArrayList<>();
-	                    items.add(cartItem);
-	                    order = new Order(orderID, items, customerName, customerEmail, customerPhone, customerAddress,
-	                            paymentMethod, orderDate, signature,edited);
-	                    orders.add(order);
-	                    orderMap.put(orderID, order); // Thêm đơn hàng mới vào map
-	                } else {
-	                    // Nếu đơn hàng đã tồn tại, chỉ cần thêm CartItem vào đơn hàng
-	                    order.getCartItems().add(cartItem);
-	                }
-	            }
-	        }
-
+					// Kiểm tra xem đơn hàng đã tồn tại trong map chưa
+					Order order = orderMap.get(orderID);
+					if (order == null) {
+						// Nếu đơn hàng chưa tồn tại, tạo đơn hàng mới
+						List<CartItem> items = new ArrayList<>();
+						items.add(cartItem);
+						order = new Order(orderID, items, customerName, customerEmail, customerPhone, customerAddress,
+								paymentMethod, orderDate, signature, edited);
+						orders.add(order);
+						orderMap.put(orderID, order); // Thêm đơn hàng mới vào map
+					} else {
+						// Nếu đơn hàng đã tồn tại, chỉ cần thêm CartItem vào đơn hàng
+						order.getCartItems().add(cartItem);
+					}
+				}
+			}
 
 		} catch (SQLException e) {
 			System.err.println("SQL error occurred: " + e.getMessage());
@@ -834,53 +908,80 @@ public class DAO {
 
 	public void insertOrder(List<CartItem> cartItems, String customerName, String customerEmail, String customerPhone,
 			String customerAddress, String paymentMethod, String sign, int userID) {
-		
-	// Câu lệnh SQL cho bảng Orders1 (bao gồm UserID)
-	String orderQuery = "INSERT INTO Orders1 (CustomerName, CustomerEmail, CustomerPhone, CustomerAddress, PaymentMethod, OrderDate, Signature, UserID) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-	String orderItemQuery = "INSERT INTO OrderItems1 (OrderID, ProductID, Quantity, Price) VALUES (?, ?, ?, ?)";
 
-	try (Connection conn = new DBContext().getConnection()) {
-		conn.setAutoCommit(false); // Start transaction
+		String orderQuery = "INSERT INTO Orders1 (CustomerName, CustomerEmail, CustomerPhone, CustomerAddress, PaymentMethod, OrderDate, Signature, UserID, OrderHash) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		String orderItemQuery = "INSERT INTO OrderItems1 (OrderID, ProductID, Quantity, Price) VALUES (?, ?, ?, ?)";
 
-		// Chèn thông tin khách hàng vào bảng Orders1 và lấy OrderID được tạo
-		try (PreparedStatement orderStmt = conn.prepareStatement(orderQuery, PreparedStatement.RETURN_GENERATED_KEYS)) {
-			orderStmt.setString(1, customerName);
-			orderStmt.setString(2, customerEmail);
-			orderStmt.setString(3, customerPhone);
-			orderStmt.setString(4, customerAddress);
-			orderStmt.setString(5, paymentMethod);
-			orderStmt.setTimestamp(6, new Timestamp(System.currentTimeMillis())); // Set current date
-			orderStmt.setString(7, sign);
-			orderStmt.setInt(8, userID); // Thêm UserID vào câu lệnh SQL
+		try (Connection conn = new DBContext().getConnection()) {
+			conn.setAutoCommit(false); // Bắt đầu transaction
 
-			int affectedRows = orderStmt.executeUpdate();
 
-			if (affectedRows == 0) {
-				throw new SQLException("Inserting order failed, no rows affected.");
+			String publicKey = getPublicKeyFromUserID(conn, userID);
+			if (publicKey == null) {
+				throw new Exception("Public key not found for userID: " + userID);
 			}
 
-			// Lấy OrderID được tạo
-			try (ResultSet generatedKeys = orderStmt.getGeneratedKeys()) {
-				if (generatedKeys.next()) {
-					long orderId = generatedKeys.getLong(1); // Lấy OrderID
 
-					// Chèn từng item vào bảng OrderItems1
-					insertOrderItems(conn, orderId, cartItems);
-					conn.commit(); // Commit transaction
-					System.out.println("Order and order items successfully inserted.");
-				} else {
-					throw new SQLException("Inserting order failed, no ID obtained.");
+			String orderHash = decodeSignature(sign, publicKey);
+
+
+			try (PreparedStatement orderStmt = conn.prepareStatement(orderQuery,
+					PreparedStatement.RETURN_GENERATED_KEYS)) {
+				orderStmt.setString(1, customerName);
+				orderStmt.setString(2, customerEmail);
+				orderStmt.setString(3, customerPhone);
+				orderStmt.setString(4, customerAddress);
+				orderStmt.setString(5, paymentMethod);
+				orderStmt.setTimestamp(6, new Timestamp(System.currentTimeMillis())); // Ngày hiện tại
+				orderStmt.setString(7, sign);
+				orderStmt.setInt(8, userID);
+				orderStmt.setString(9, orderHash); // Thêm mã hash vào cột OrderHash
+
+				int affectedRows = orderStmt.executeUpdate();
+
+				if (affectedRows == 0) {
+					throw new SQLException("Inserting order failed, no rows affected.");
+				}
+
+// Lấy OrderID được tạo
+				try (ResultSet generatedKeys = orderStmt.getGeneratedKeys()) {
+					if (generatedKeys.next()) {
+						long orderId = generatedKeys.getLong(1); // Lấy OrderID
+
+						// Chèn từng item vào bảng OrderItems1
+						insertOrderItems(conn, orderId, cartItems);
+						conn.commit(); // Commit transaction
+						System.out.println("Order and order items successfully inserted.");
+					} else {
+						throw new SQLException("Inserting order failed, no ID obtained.");
+					}
 				}
 			}
+		} catch (SQLException e) {
+			System.err.println("SQL error occurred: " + e.getMessage());
+			
+		} catch (Exception e) {
+			System.err.println("An error occurred: " + e.getMessage());
 		}
-	} catch (SQLException e) {
-		System.err.println("SQL error occurred: " + e.getMessage());
-		//rollbackConnection(); // Call rollback method on error
-	} catch (Exception e) {
-		System.err.println("An error occurred: " + e.getMessage());
 	}
-}
+
+	private String getPublicKeyFromUserID(Connection conn, int userID) throws SQLException {
+	    String query = "SELECT PublicKey FROM KeyManagement WHERE UserID = ?";
+	    try (PreparedStatement stmt = conn.prepareStatement(query)) {
+	        stmt.setInt(1, userID);
+	        try (ResultSet rs = stmt.executeQuery()) {
+	            if (rs.next()) {
+	                return rs.getString("PublicKey"); // Trả về khóa công khai
+	            }
+	        }
+	    }
+	    return null; // Trả về null nếu không tìm thấy
+	}
+
+
 	
+
+
 	private void insertOrderItems(Connection conn, long orderId, List<CartItem> cartItems) throws SQLException {
 		String orderItemQuery = "INSERT INTO OrderItems1 (OrderID, ProductID, Quantity, Price) VALUES (?, ?, ?, ?)";
 		try (PreparedStatement orderItemStmt = conn.prepareStatement(orderItemQuery)) {
@@ -1296,21 +1397,26 @@ public class DAO {
 
 		// System.out.println(d.getOrderDateById(13));
 		List<CartItem> cartItems = new ArrayList<CartItem>();
+		String signAf = "cKKu6Rut++GF+w++OyEDCjxdNmRTnR/4uQtHT4JjOJxuoQGI4cf9V/xbR1vtuOcenj12a5KS7c680qs7hwnIN4mMiH6gj56oZr0tqgOx9zwdP3afdlld2T1PNBhfq9g3RsrDsm+Svcv+WFHmM1K+MXmz///IweGoZXZi1I8V8XIiVUFCnCX39e4wFFVrd7r1LZF8+OSsN0wLy/2hwjJC/y54ikiOInxKO3zq7mwN3rexPopC5dWyd7oNAr83ANibWR5mnGkBmcI5XnK9LsTSWUuPB8v2+jMUOCjtl20WrsdGDt/Hft6mjLeMbyOCJ9TSrVrGw5ZzI12/LWtW33XfOA==";
+		String pubKey = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArkBDXCH3SloQoetjqxKO9Ey7N6WcSjlXP+Ugyx0byH2/1JlOHli/xgRfnrxeQ+asFG3WCRK2jImeN3Qg4n+MHvH1PQpapWaahf6B0FvNYnyQRKZF/5lZRVip8DKQ+GKZVQZIpZcbY9xWLlaBxJ6UD+Ldehecy4JA4llOoWxfk9jTpQXHA0HY4ty3nWeBfIx+/PBtIBdhlH3TIeaKqZ4dQ3T++LhMcWXteW49Gy0wCMk8XuXcFHH1LvFD5tpoIRKikjXb39HV0k89YfCgUg3Hh4fInXutKXXsEw9Gnitfw0suiRbEuXwvn4ndqaAbGT9v4IBostaWV3XuqYk/bSWEawIDAQAB";
+		String signO = "nN/4SpYuDElUATudHNGtEf/+yCZLwupl+TZJosKx6cPxsigeBC5Ss9btwiEHvnkTDpVbcGFHPWbStUOPBJZVBoChp3bEmOAGs4zahkvL3p5CSEakdqmC6SsVqHPxv1/yHFkaGiKBoQ4bf5Q99lWku+h4cc9lsUxwJhrNuhohdd+LXIHVUIEOW1AKPmMskcBRI/7oDnc6I7nlRWgcYncjb67qbBuLdjMrXwRX9l6KdUpsuE+8pIN7sJiVhJtgq1gG3xhSo0PjhOiutyU3J2qDoeYnyFatm5Lv+oG1fv5C1rmIOlfmEIrV3eshKUlTJyhxoUiptlSodD6z1XFfw7UxYQ==";
+		Order o = new Order(9064, cartItems, "dunggghhh", "a@gmail.com", "123", "123", "credit-card", new Timestamp(System.currentTimeMillis()), signO,
+				true);
 
+		//System.out.println(d.getOrderStatusByOrderID(7054));
 
+		// System.out.println(d.getOrdersByPage(1,5));
 
-		Order o  = new Order(8054, cartItems,  "a",  "a",  "a",  "a", "a", new Timestamp(System.currentTimeMillis()), "a",true);
+		// Order o = new Order(5048, cartItems, "a", "a", "a", "a", "a", new
+		// Timestamp(System.currentTimeMillis()), "a");
+	//	System.out.println(d.updateOrder(o, 9064, 2008));
+		 System.out.println(d.isEdited(o,pubKey,9064));
 
+	//	System.out.println("de: " + d.decodeSignature(signAf, pubKey));
 		
-		System.out.println(d.getOrderStatusByOrderID(7054));
+	//	System.out.println(d.decodeSignature(signAf, pubKey));
 		
-		//System.out.println(d.getOrdersByPage(1,5));
-		
-		//Order o = new Order(5048, cartItems, "a", "a", "a", "a", "a", new Timestamp(System.currentTimeMillis()), "a");
-		System.out.println(d.updateOrder(o, 8054,2008));
 
 	}
-	
-	 
 
 }

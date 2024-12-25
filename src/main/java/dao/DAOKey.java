@@ -35,6 +35,9 @@ public class DAOKey {
     public boolean savePublicKeyFile(int userId, String publicKeyFilePath, Date createTime, Date endTime) {
         // Đọc nội dung từ tệp thành chuỗi String
         String publicKeyFileContent = null;
+        Connection conn = null;
+        PreparedStatement deletePs = null;
+        PreparedStatement insertPs = null;
 
         try {
             // Kiểm tra nếu đường dẫn tệp là hợp lệ
@@ -52,31 +55,78 @@ public class DAOKey {
                 }
                 publicKeyFileContent = sb.toString();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false; // Nếu gặp lỗi khi đọc tệp, trả về false
-        }
 
-        // Kiểm tra nếu không thể đọc được nội dung từ tệp
-        if (publicKeyFileContent == null || publicKeyFileContent.isEmpty()) {
-            return false; // Nếu nội dung tệp rỗng hoặc null, trả về false
-        }
+            // Kiểm tra nếu không thể đọc được nội dung từ tệp
+            if (publicKeyFileContent == null || publicKeyFileContent.isEmpty()) {
+                return false; // Nếu nội dung tệp rỗng hoặc null, trả về false
+            }
 
-        // Lưu vào cơ sở dữ liệu
-        String sql = "INSERT INTO keys (user_id, public_key, create_time, end_time) VALUES (?, ?, ?, ?, ?)";
-        try (Connection conn = new DBContext().getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, userId);
-            stmt.setString(2, publicKeyFileContent); // Lưu nội dung tệp dưới dạng chuỗi
-            
-            stmt.setTimestamp(3, new java.sql.Timestamp(createTime.getTime()));
-            stmt.setTimestamp(4, new java.sql.Timestamp(endTime.getTime()));
-            return stmt.executeUpdate() > 0; // Trả về true nếu lưu thành công
+            // Mở kết nối và bắt đầu transaction
+            conn = new DBContext().getConnection();
+            conn.setAutoCommit(false); // Enable transaction management
+
+            // Step 1: Xóa các khóa cũ của người dùng
+            String deleteSql = "DELETE FROM KeyManagement WHERE UserID = ?";
+            deletePs = conn.prepareStatement(deleteSql);
+            deletePs.setInt(1, userId);
+            deletePs.executeUpdate(); // Thực thi câu lệnh xóa
+
+            // Step 2: Thêm khóa mới
+            String insertSql = "INSERT INTO KeyManagement (UserID, PublicKey, CreateTime, EndTime, IsActive) VALUES (?, ?, ?, ?, 1)";
+            insertPs = conn.prepareStatement(insertSql);
+            insertPs.setInt(1, userId);
+
+            if (publicKeyFileContent != null && !publicKeyFileContent.isEmpty()) {
+                insertPs.setString(2, publicKeyFileContent);
+            } else {
+                throw new SQLException("Public Key is null or empty");
+            }
+
+            // Sử dụng Timestamp cho các trường Date
+            if (createTime != null) {
+                insertPs.setTimestamp(3, new java.sql.Timestamp(createTime.getTime()));
+            } else {
+                throw new SQLException("Create Time is null");
+            }
+
+            if (endTime != null) {
+                insertPs.setTimestamp(4, new java.sql.Timestamp(endTime.getTime()));
+            } else {
+                throw new SQLException("End Time is null");
+            }
+
+            int rowsAffected = insertPs.executeUpdate();
+            if (rowsAffected > 0) {
+                // Commit transaction nếu insert thành công
+                conn.commit();
+                return true;
+            } else {
+                // Nếu không có dòng nào bị ảnh hưởng, rollback transaction
+                conn.rollback();
+                return false;
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
-            return false; // Nếu gặp lỗi trong quá trình lưu vào cơ sở dữ liệu
+            if (conn != null) {
+                try {
+                    conn.rollback(); // Rollback trong trường hợp có lỗi
+                } catch (SQLException rollbackEx) {
+                    rollbackEx.printStackTrace();
+                }
+            }
+            return false;
+        } finally {
+            try {
+                if (deletePs != null) deletePs.close();
+                if (insertPs != null) insertPs.close();
+                if (conn != null) conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
+
 
 
     public boolean savePublicKey(int userId, String publicKey, Date createTime, Date endTime) {
