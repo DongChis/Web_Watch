@@ -31,13 +31,13 @@ public class Order {
     
     private boolean edited ;
     
-    private String cancel = "Đơn hàng đã bị hủy";
+    private boolean cancel;
    
 
-	public String getCancel() {
+	public boolean isCancel() {
 		return cancel;
 	}
-	public void setCancel(String cancel) {
+	public void setCancel(boolean cancel) {
 		this.cancel = cancel;
 	}
 	public boolean isEdited() {
@@ -75,6 +75,7 @@ public class Order {
 		this.orderDate = orderDate;
 		this.sign = sign;
 		this.edited = edited;
+	
 		
 	}
 	

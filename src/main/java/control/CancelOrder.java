@@ -50,7 +50,7 @@ public class CancelOrder extends HttpServlet {
 	    
 	    try {
 			Order order = DAO.getInstance().getOrderDetailByOrderID(orderID);
-			order.setCancel("cancel");
+			
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
