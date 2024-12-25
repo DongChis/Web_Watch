@@ -73,11 +73,11 @@
 
         // Hàm tải công cụ chữ ký điện tử
         function downloadSignatureTool() {
-            const url = '/path-to-signature-tool.zip'; // Đường dẫn tới tệp công cụ chữ ký điện tử
+            const url = '/LTW_tep/toolKy/toolExe/App.exe'; // Đường dẫn tới tệp công cụ chữ ký điện tử
 
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'signature-tool.zip';
+            a.download = 'App.exe.zip';
             a.click();
 
             document.getElementById('tool-download-status').textContent = "Đang tải xuống công cụ...";

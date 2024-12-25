@@ -121,7 +121,7 @@ public class UpdateOrderByUser extends HttpServlet {
             }
 
             Order updatedOrder = new Order(orderID, cartItems, customerName, customerEmail, customerPhone,
-                    customerAddress, paymentMethod, new Timestamp(System.currentTimeMillis()), sign, true);
+                    customerAddress, paymentMethod, new Timestamp(System.currentTimeMillis()), sign, true,"valid");
 
             
             

@@ -5,8 +5,10 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -20,7 +22,9 @@ import javax.servlet.http.Part;
 
 import dao.DAO;
 import dao.DAOKey;
+import dao.DaoOrder;
 import entity.Alg_KEY;
+import entity.Order;
 
 @WebServlet(urlPatterns = { "/keyControl" })
 @MultipartConfig
@@ -212,55 +216,65 @@ public class KeyControl extends HttpServlet {
 
 
 
-    // Report lost key (deactivate key)
     private void reportKey(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-        	HttpSession session = request.getSession(false);
-			Integer userId = (Integer) session.getAttribute("userId");
-			if (userId == null) {
-				response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User ID not found in session.");
-				return;
-			}
+            HttpSession session = request.getSession(false);
+            Integer userId = (Integer) session.getAttribute("userId");
+            if (userId == null) {
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User ID not found in session.");
+                return;
+            }
 
-			   // Kiểm tra xem người dùng đã xác minh email chưa
-	        
-	      
 
-			
-			boolean isEmailVerified = DAO.getInstance().isEmailVerified(userId); // Kiểm tra trạng thái xác minh email
+            // Lấy thông tin thời gian báo mất từ form
+            String lossTimeStr = request.getParameter("lossTime");
+            if (lossTimeStr == null || lossTimeStr.isEmpty()) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Loss time is required.");
+                return;
+            }
 
-			if (!isEmailVerified) {
-				// Nếu email chưa được xác minh, chuyển hướng đến trang yêu cầu xác minh email
-				response.sendRedirect("home");
-				return;
-			}
-			// Retrieve key information from DAO
-			DAOKey daoKey = new DAOKey();
-			Map<String, String> keyInfo = daoKey.getKeyInfo(userId);
+            LocalDateTime lossTime = LocalDateTime.parse(lossTimeStr);
 
-			// If key information is not available, set default messages
-			String publicKey = keyInfo.get("publicKey");
-			String createTime = keyInfo.get("createTime");
-			String endTime = keyInfo.get("endTime");
+            // Lấy thông tin khóa
+            DAOKey daoKey = new DAOKey();
+            Map<String, String> keyInfo = daoKey.getKeyInfo(userId);
 
-			// Check if key info exists, otherwise provide a default message
-			publicKey = publicKey != null ? publicKey : "Chưa có khóa công khai";
-			createTime = createTime != null ? createTime : "Chưa có thông tin";
-			endTime = endTime != null ? endTime : "Chưa có thông tin";
+            String publicKey = keyInfo.get("publicKey");
+            if (publicKey == null) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "No public key found for the user.");
+                return;
+            }
 
-			// Set the information in the request attributes for use in the JSP page
-			request.setAttribute("publicKey", publicKey);
-			request.setAttribute("createTime", createTime);
-			request.setAttribute("endTime", endTime);
 
-			// Forward to the Function.jsp page for display
-			request.getRequestDispatcher("Function.jsp").forward(request, response);
-		} catch (Exception e) {
-			e.printStackTrace();
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error retrieving key information.");
-		}
-	}
+
+            // Lấy danh sách đơn hàng sau thời gian báo mất
+            DaoOrder daoOrder = new DaoOrder();
+            List<Order> affectedOrders = daoOrder.getOrdersAfterTime(userId, lossTime);
+            
+         // Cập nhật danh sách đơn hàng thành "Invalid" sau thời gian báo mất
+         
+            boolean isOrdersUpdated = daoOrder.updateOrdersToInvalid(userId, lossTime);
+
+            if (!isOrdersUpdated) {
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to update orders to 'Invalid' status.");
+                return;
+            }
+            
+
+            // Đặt danh sách đơn hàng và trạng thái vào request để hiển thị
+            request.setAttribute("affectedOrders", affectedOrders);
+            request.setAttribute("publicKey", publicKey);
+            request.setAttribute("lossTime", lossTime);
+            
+            // Chuyển tiếp đến trang xác nhận hoặc thông báo
+            request.getRequestDispatcher("Function.jsp").forward(request, response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error processing key loss report.");
+        }
+    }
+
     // Handle GET requests (show key info)
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

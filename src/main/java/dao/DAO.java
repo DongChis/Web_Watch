@@ -609,7 +609,7 @@ public class DAO {
 		String orderQuery = """
 				    SELECT o.OrderID, o.CustomerName, o.CustomerEmail,
 				           o.CustomerPhone, o.CustomerAddress, o.PaymentMethod,
-				           o.OrderDate, o.Signature, o.Edited,
+				           o.OrderDate, o.Signature, o.Edited, o.StatusReport,
 				           oi.ProductID, oi.Quantity, oi.Price
 				    FROM Orders1 o
 				    JOIN OrderItems1 oi ON o.OrderID = oi.OrderID
@@ -636,6 +636,7 @@ public class DAO {
 					Timestamp orderDate = rs.getTimestamp("OrderDate");
 					String signature = rs.getString("Signature");
 					boolean edited = rs.getBoolean("Edited");
+					String statusReport = rs.getString("StatusReport");
 					String key = getPublicKeyByUserID(userID);
 					System.out.println("public key : " + key);
 					// Lấy thông tin sản phẩm
@@ -653,7 +654,7 @@ public class DAO {
 						List<CartItem> items = new ArrayList<>();
 						items.add(cartItem);
 						order = new Order(orderID, items, customerName, customerEmail, customerPhone, customerAddress,
-								paymentMethod, orderDate, signature, edited);
+								paymentMethod, orderDate, signature, edited,statusReport);
 
 						 
 						orders.add(order);
@@ -720,7 +721,7 @@ public class DAO {
 
 		// Cập nhật câu truy vấn SQL để lọc theo userId
 		String orderQuery = "SELECT o.OrderID, o.CustomerName, o.CustomerEmail, "
-				+ "o.CustomerPhone, o.CustomerAddress, o.PaymentMethod, " + "o.OrderDate, o.Signature,o.Edited, "
+				+ "o.CustomerPhone, o.CustomerAddress, o.PaymentMethod, " + "o.OrderDate, o.Signature,o.Edited,o.StatusReport,"
 				+ "oi.ProductID, oi.Quantity, oi.Price " + "FROM Orders1 o "
 				+ "JOIN OrderItems1 oi ON o.OrderID = oi.OrderID " + "WHERE o.UserID = ?"; // Thêm điều kiện lọc theo
 																							// UserID
@@ -742,6 +743,7 @@ public class DAO {
 					Timestamp orderDate = rs.getTimestamp("OrderDate"); // Lấy trực tiếp từ kết quả
 					String signature = rs.getString("Signature");
 					boolean edited = rs.getBoolean("Edited");
+					String statusReport = rs.getString("StatusReport");
 
 					// Lấy thông tin sản phẩm
 					String productId = rs.getString("ProductID"); // Giả sử ProductID là một chuỗi
@@ -758,7 +760,7 @@ public class DAO {
 						List<CartItem> items = new ArrayList<>();
 						items.add(cartItem);
 						order = new Order(orderID, items, customerName, customerEmail, customerPhone, customerAddress,
-								paymentMethod, orderDate, signature, edited);
+								paymentMethod, orderDate, signature, edited,statusReport);
 						orders.add(order);
 						orderMap.put(orderID, order); // Thêm đơn hàng mới vào map
 					} else {
@@ -1504,7 +1506,7 @@ public class DAO {
 		String pubKey = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArkBDXCH3SloQoetjqxKO9Ey7N6WcSjlXP+Ugyx0byH2/1JlOHli/xgRfnrxeQ+asFG3WCRK2jImeN3Qg4n+MHvH1PQpapWaahf6B0FvNYnyQRKZF/5lZRVip8DKQ+GKZVQZIpZcbY9xWLlaBxJ6UD+Ldehecy4JA4llOoWxfk9jTpQXHA0HY4ty3nWeBfIx+/PBtIBdhlH3TIeaKqZ4dQ3T++LhMcWXteW49Gy0wCMk8XuXcFHH1LvFD5tpoIRKikjXb39HV0k89YfCgUg3Hh4fInXutKXXsEw9Gnitfw0suiRbEuXwvn4ndqaAbGT9v4IBostaWV3XuqYk/bSWEawIDAQAB";
 		String signO = "nN/4SpYuDElUATudHNGtEf/+yCZLwupl+TZJosKx6cPxsigeBC5Ss9btwiEHvnkTDpVbcGFHPWbStUOPBJZVBoChp3bEmOAGs4zahkvL3p5CSEakdqmC6SsVqHPxv1/yHFkaGiKBoQ4bf5Q99lWku+h4cc9lsUxwJhrNuhohdd+LXIHVUIEOW1AKPmMskcBRI/7oDnc6I7nlRWgcYncjb67qbBuLdjMrXwRX9l6KdUpsuE+8pIN7sJiVhJtgq1gG3xhSo0PjhOiutyU3J2qDoeYnyFatm5Lv+oG1fv5C1rmIOlfmEIrV3eshKUlTJyhxoUiptlSodD6z1XFfw7UxYQ==";
 		Order o = new Order(9064, cartItems, "dunggghhh", "a@gmail.com", "123", "123", "credit-card", new Timestamp(System.currentTimeMillis()), signO,
-				true);
+				true,"valid");
 
 		//System.out.println(d.getOrderStatusByOrderID(7054));
 

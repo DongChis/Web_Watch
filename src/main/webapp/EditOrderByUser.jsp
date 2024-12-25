@@ -32,13 +32,13 @@
                     <h2 class="product-name">${item.product.name}</h2>
                     <p class="product-description">${item.product.description}</p>
                     <div class="quantity">
-                        <span>Số lượng: ${item.quantity}</span>
+                        <span>${item.quantity}</span>
                     </div>
                 </div>
 
                 <!-- Giá sản phẩm -->
                 <div class="product-price">
-                    <span>Tổng giá: ${item.product.price * item.quantity} VND</span>
+                    <span>${item.product.price * item.quantity} VND</span>
                     <button type="button" class="remove-item"
                         onclick="removeFromCart(${item.product.productID})">
                         <i class="fas fa-trash fa-lg"></i>
@@ -88,8 +88,6 @@
         </c:choose>
     </c:otherwise>
 </c:choose>
-
-
 
 
 
