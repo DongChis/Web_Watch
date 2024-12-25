@@ -169,6 +169,7 @@ public class DAO {
 
 	public boolean updateOrder(Order updatedOrder, int orderID, int userID) throws Exception {
 	    String updateOrderQuery = "UPDATE Orders1 SET CustomerName = ?, CustomerEmail = ?, CustomerPhone = ?, CustomerAddress = ?, PaymentMethod = ?, OrderDate = ?, Signature = ? WHERE OrderID = ?";
+
 	    String updateOrderItemQuery = "UPDATE OrderItems1 SET Quantity = ?, Price = ? WHERE OrderID = ?";
 	    String getOrderHashQuery = "SELECT Signature FROM Orders1 WHERE OrderID = ?";
 	    String getPublicKeyQuery = "SELECT PublicKey FROM KeyManagement WHERE UserID = ?"; // Query để lấy public key
@@ -193,6 +194,7 @@ public class DAO {
 	            }
 	        }
 
+
 	        // Lấy public key từ bảng KeyManagement dựa trên UserID
 	        String publicKeyString = null;
 	        try (PreparedStatement getPublicKeyStmt = conn.prepareStatement(getPublicKeyQuery)) {
@@ -216,6 +218,7 @@ public class DAO {
 	        // Chuẩn bị câu lệnh cập nhật đơn hàng
 	        try (PreparedStatement orderStmt = conn.prepareStatement(updateOrderQuery);
 	             PreparedStatement orderItemStmt = conn.prepareStatement(updateOrderItemQuery)) {
+
 
 	            // Cập nhật thông tin chính của đơn hàng
 	            orderStmt.setString(1, updatedOrder.getCustomerName());
@@ -269,12 +272,15 @@ public class DAO {
 	        }
 	    }
 
-	    return isUpdated;
+
+		return isUpdated;
+
 	}
 
 	private String decodeSignature(String signature, String publicKeyString) throws Exception {
 	    // Chuyển đổi public key từ String thành đối tượng Key
 	    PublicKey publicKey = getPublicKeyFromString(publicKeyString);
+
 
 	    // Giải mã chữ ký
 	    Cipher cipher = Cipher.getInstance("RSA");
@@ -289,6 +295,7 @@ public class DAO {
 	    KeyFactory keyFactory = KeyFactory.getInstance("RSA");
 	    return keyFactory.generatePublic(keySpec);
 	}
+
 
 	private boolean isSignatureValid(String decodedSignature, Order updatedOrder) throws NoSuchAlgorithmException {
 	    // Kiểm tra chữ ký hợp lệ, ví dụ so sánh với hash mới của đơn hàng
@@ -362,7 +369,7 @@ public class DAO {
 			} else {
 				System.out.println("No order found with ID " + orderID);
 			}
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			System.err.println("SQL error occurred: " + e.getMessage());
 		}
 	}
@@ -417,6 +424,7 @@ public class DAO {
 	}
 
 	public List<Order> getOrdersByPage(int page, int pageSize) {
+
 		List<Order> orders = new ArrayList<>();
 		Map<Integer, Order> orderMap = new HashMap<>();
 
@@ -432,13 +440,17 @@ public class DAO {
 				""";
 
 
-	    try (Connection conn = new DBContext().getConnection();
-	         PreparedStatement stmt = conn.prepareStatement(orderQuery)) {
 
+
+
+		try (Connection conn = new DBContext().getConnection();
+				PreparedStatement stmt = conn.prepareStatement(orderQuery)) {
 
 			int offset = (page - 1) * pageSize; // Tính OFFSET
 			stmt.setInt(1, offset);
 			stmt.setInt(2, pageSize);
+
+
 
 
 	        try (ResultSet rs = stmt.executeQuery()) {
@@ -453,6 +465,7 @@ public class DAO {
 	                Timestamp orderDate = rs.getTimestamp("OrderDate");
 	                String signature = rs.getString("Signature");
 	                boolean edited = rs.getBoolean("Edited");
+
 
 	                
 	                // Lấy thông tin sản phẩm
@@ -490,6 +503,7 @@ public class DAO {
 	        e.printStackTrace();
 	    } catch (Exception e1) {
 
+
 			e1.printStackTrace();
 		}
 
@@ -514,6 +528,7 @@ public class DAO {
 	}
 
 	public List<Order> getHisOrders(int userId) {
+
 		List<Order> orders = new ArrayList<>();
 		Map<Integer, Order> orderMap = new HashMap<>(); // Để theo dõi đơn hàng theo OrderID
 
@@ -527,13 +542,18 @@ public class DAO {
 
 
 
-	    try (Connection conn = new DBContext().getConnection();
-	         PreparedStatement stmt = conn.prepareStatement(orderQuery)) {
 
+
+
+
+
+
+
+		try (Connection conn = new DBContext().getConnection();
+				PreparedStatement stmt = conn.prepareStatement(orderQuery)) {
 
 			// Thiết lập tham số userId vào câu lệnh SQL
 			stmt.setInt(1, userId); // Truyền userId vào câu truy vấn
-
 
 
 
@@ -550,17 +570,13 @@ public class DAO {
 	                String signature = rs.getString("Signature");
 	                boolean edited = rs.getBoolean("Edited");
 
-	                // Lấy thông tin sản phẩm
-	                String productId = rs.getString("ProductID"); // Giả sử ProductID là một chuỗi
-	                int quantity = rs.getInt("Quantity");
-	                double price = rs.getDouble("Price");
-
+					// Lấy thông tin sản phẩm
+					String productId = rs.getString("ProductID"); // Giả sử ProductID là một chuỗi
+					int quantity = rs.getInt("Quantity");
+					double price = rs.getDouble("Price");
 
 					// Tạo CartItem cho sản phẩm này
 					CartItem cartItem = new CartItem(getProductByID(productId), quantity);
-
-
-
 
 
 	                // Kiểm tra xem đơn hàng đã tồn tại trong map chưa
@@ -1288,7 +1304,10 @@ public class DAO {
 
 
 
+
 		Order o  = new Order(8054, cartItems,  "a",  "a",  "a",  "a", "a", new Timestamp(System.currentTimeMillis()), "a",true);
+
+
 		
 		System.out.println(d.getOrderStatusByOrderID(7054));
 		
