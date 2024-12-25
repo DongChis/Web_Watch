@@ -31,15 +31,8 @@ public class Order {
     
     private boolean edited ;
     
-    private boolean cancel;
    
 
-	public boolean isCancel() {
-		return cancel;
-	}
-	public void setCancel(boolean cancel) {
-		this.cancel = cancel;
-	}
 	public boolean isEdited() {
 		return edited;
 	}
@@ -109,26 +102,39 @@ public class Order {
         return this.edited;
     }
 	
-	 public String getOrderStatus() {
-		    // Tính toán trạng thái đơn hàng dựa trên thời gian đặt hàng
-		    LocalDateTime orderTime = orderDate.toLocalDateTime();
-		    LocalDateTime now = LocalDateTime.now();
-		    Duration duration = Duration.between(orderTime, now);
-		    
-		    if (duration.toMinutes() > 5) {
-		        return "Hoàn tất"; // Hoàn tất
-		    } else {   
-		       return "process" ; // Đang xử lý
-		    }
-		    
-		    
-		}
+	public String getOrderStatus() {
+	    // Kiểm tra trạng thái hủy đơn hàng
+		String status = DAO.getInstance().getOrderStatusByOrderID(this.orderID);
+	    if ("cancel".equals(status)) {
+	        return "cancel";
+	    }
+	    
+	    // Tính toán trạng thái đơn hàng dựa trên thời gian đặt hàng
+	    LocalDateTime orderTime = orderDate.toLocalDateTime();
+	    LocalDateTime now = LocalDateTime.now();
+	    Duration duration = Duration.between(orderTime, now);
+	    
+	    // Nếu đơn hàng đã được đặt hơn 5 phút, đánh dấu là "Hoàn tất"
+	    if (duration.toMinutes() > 5) {
+	        return "Hoàn tất";
+	    } else {   
+	        return "process"; // Đang xử lý
+	    }
+	}
+
+
 	 
 	 
 	 
 	 public boolean canCancelOrder(int orderID) throws Exception {
 		    Order order = DAO.getInstance().getOrderDetailByOrderID(orderID);
-		    return "Đang xử lý".equals(order.getOrderStatus());
+		    String status = DAO.getInstance().getOrderStatusByOrderID(orderID);
+		    if ("cancel".equals(status)) {
+		    	 return "Đã hủy".equals(order.getOrderStatus());
+		    }
+		    	 return "Đang xử lý".equals(order.getOrderStatus());
+			
+		   
 		}
 	 
 	 public void setOrderStatus(String orderStatus) {
@@ -199,8 +205,10 @@ public class Order {
 	}
     
 	
-	public static void main(String[] args) {
-	System.out.println(new Order().edited);
+	public static void main(String[] args) throws Exception {
+		Order order = DAO.getInstance().getOrderDetailByOrderID(7054);
+	System.out.println(new Order().canCancelOrder(7054));
+	System.out.println(order.getOrderStatus());
 	}
 	
     
