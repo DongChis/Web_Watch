@@ -51,7 +51,7 @@ public class OrderDetailControl extends HttpServlet {
 				return;
 			}
 		 
-			
+	
 			User user = DAO.getInstance().getUserByID(userIdObj);
 		
 		Order od = null;

@@ -217,16 +217,23 @@ public class KeyControl extends HttpServlet {
         try {
             int userId = Integer.parseInt(request.getSession().getAttribute("userId").toString());
 
-            DAOKey daoKey = new DAOKey();
-            daoKey.reportLostKey(userId);
 
-            response.sendRedirect("Function.jsp");
-        } catch (Exception e) {
-            e.printStackTrace();
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error reporting lost key.");
+			if (!isEmailVerified) {
+				// Nếu email chưa được xác minh, chuyển hướng đến trang yêu cầu xác minh email
+				response.sendRedirect("home");
+				return;
+			}
+			// Retrieve key information from DAO
+			DAOKey daoKey = new DAOKey();
+			Map<String, String> keyInfo = daoKey.getKeyInfo(userId);
+			// If key information is not available, set default messages
+			String publicKey = keyInfo.get("publicKey");
+			String createTime = keyInfo.get("createTime");
+			String endTime = keyInfo.get("endTime");
+
         }
-    }
-
+            }
+    
     // Handle GET requests (show key info)
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
