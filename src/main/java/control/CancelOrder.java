@@ -39,42 +39,32 @@ public class CancelOrder extends HttpServlet {
 	}
 
 	/**
-	 * @throws ServletException 
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-	    // Retrieve orderID from request
-	    String orderIdParam = request.getParameter("orderID");
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+	        throws ServletException, IOException {
 
-	    if (orderIdParam == null || orderIdParam.isEmpty()) {
-	        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-	        response.getWriter().write("Order ID is missing or invalid");
-	        return;
-	    }
-
-	    int orderID = -1;
+	    // Lấy ID đơn hàng từ yêu cầu
+	    String orderIDStr = request.getParameter("orderID");
+	    int orderID = Integer.parseInt(orderIDStr);
+	    
 	    try {
-	        orderID = Integer.parseInt(orderIdParam); // Parse the orderID
-	    } catch (NumberFormatException e) {
-	        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-	        response.getWriter().write("Invalid Order ID format");
-	        return;
-	    }
+			Order order = DAO.getInstance().getOrderDetailByOrderID(orderID);
+			
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	    
+	    
 
-	    // Call the DAO to cancel the order
-	    boolean isCanceled = DAO.getInstance().cancelOrder(orderID);
+	    
 
-	    // If canceled, update the order status
-	    if (isCanceled) {
-	        // Update the order status to 'Đã hủy' in the database or session
-	        request.setAttribute("orderStatus", "cancel");
-	    } else {
-	        // Handle failure case (maybe order couldn't be canceled)
-	        request.setAttribute("orderStatus", "Hủy thất bại");
-	    }
+	        // Chuyển hướng sang trang JSP để hiển thị kết quả
+	        request.getRequestDispatcher("orderListAdmin").forward(request, response);
 
-	    // Forward to the JSP page where the updated order status will be shown
-	    request.getRequestDispatcher("orderListAdmin").forward(request, response);
-	}
+	    } 
+
 	   
 }

@@ -21,8 +21,8 @@
 						style="background-color: blueviolet; border-radius: 8px; color: white; padding: 10px; margin: 10px 0px 0px 0px;">Chi
 						tiết đơn hàng</h1>
 					<div class="button-container">
-						<a href="hisOrder" class="button"
-							style="margin-right: 20px;">back</a>
+						<a href="loadOrder?orderID=${order.orderID}" class="button"
+							style="margin-right: 20px;">Edit</a>
 					</div>
 					<jsp:include page="OrderDetail.jsp" />
 				</c:when>
