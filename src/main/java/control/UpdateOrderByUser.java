@@ -113,7 +113,7 @@ public class UpdateOrderByUser extends HttpServlet {
 			return;
 		}
 
-		// Redirect or forward to a confirmation page
+		
 
 		request.getRequestDispatcher("hisOrder").forward(request, response);;
 	}
