@@ -1,7 +1,7 @@
 package control;
 
 import java.io.IOException;
-
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import dao.DAO;
+import entity.AuditLog;
 import entity.Order;
 import entity.User;
 
@@ -54,23 +55,27 @@ public class OrderDetailControl extends HttpServlet {
 	
 			User user = DAO.getInstance().getUserByID(userIdObj);
 		
-		Order od = null;
+	
+		 List<AuditLog> auditLogs = DAO.getInstance().getAuditLogsForOrder(orderID);
 		try {
-			od = DAO.getInstance().getOrderDetailByOrderID(orderID);
+			Order od = DAO.getInstance().getOrderDetailByOrderID(orderID);
+			request.setAttribute("order", od);
+			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 		
+		request.setAttribute("auditLogs", auditLogs);
 		
-		request.setAttribute("order", od);
 	//	request.setAttribute("orderDetail", od);
 	//	request.setAttribute("totalPrice", totalPrice);
 		
 		 if(!user.getRole().equals("Admin")) {
-	        	request.getRequestDispatcher("HisOrder.jsp").forward(request, response);
+	        	request.getRequestDispatcher("OrderDetail.jsp").forward(request, response);
 	        }
+	
 		request.getRequestDispatcher("orderListAdmin").forward(request, response);
 	}
 
