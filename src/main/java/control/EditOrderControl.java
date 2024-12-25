@@ -67,7 +67,7 @@ public class EditOrderControl extends HttpServlet {
 
         try {
             order = DAO.getInstance().getOrderDetailByOrderID(orderID);
-            boolean isUpdated = DAO.getInstance().updateOrder(order, orderID);
+            boolean isUpdated = DAO.getInstance().updateOrder(order, orderID,userIdObj);
 
             if (!isUpdated) {
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Order update failed.");
