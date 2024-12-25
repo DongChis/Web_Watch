@@ -92,22 +92,18 @@ public class CheckOutControl extends HttpServlet {
 		    
 		    String tt = "1111credit-carddong ho 41250.0 VND250.0 VND";
 		    double totalPrice = 0;
-		    String src = "Thông Tin Đơn Hàng\n" +
-		    	    "\n" +
-		    	    "Thông Tin Người Nhận:\n" +
-		    	    "Tên Người Nhận: " + customerName + "\n" +
-		    	    "Email: " + customerEmail + "\n" +
-		    	    "Số Điện Thoại: " + customerPhone + "\n" +
-		    	    "Địa Chỉ: " + customerAddress + "\n" +
-		    	    "\n" +
-		    	    "Phương Thức Thanh Toán: " + paymentMethod + "\n" +
-		    	    "\n" +
-		    	    "Sản Phẩm:\n";
+		    String src =
+		    	    customerName +
+		    	    "" + customerEmail +
+		    	    "" + customerPhone +
+		    	    "" + customerAddress +
+		    	    "" + paymentMethod ;
+		    	   
 		   
 		    	try {
 		    		List<CartItem>	carts = (List<CartItem>)session.getAttribute("cart");
 					for (CartItem item : carts) {
-					    src += item.getProduct().getName() + " - Số lượng: " + item.getQuantity() + " - Giá: " + item.getTotalPrice()/item.getQuantity() + " VND\n";
+					   src += item.getProduct().getName() + "" + item.getQuantity() + "" + item.getTotalPrice()/item.getQuantity() + " VND";
 					    totalPrice += item.getTotalPrice();
 					}
 				} catch (Exception e) {
@@ -115,12 +111,12 @@ public class CheckOutControl extends HttpServlet {
 					e.printStackTrace();
 				}
 
-		    	src += "\nTổng Tiền: " + totalPrice  + " VND";
+		    	src +=  totalPrice +" VND";
 
 		    // Xác thực chữ ký
 		    	System.out.println(tt);
 		    	
-		    boolean isVerified = verifySignatureWithPublicKey(publicKey, tt, sign);
+		    boolean isVerified = verifySignatureWithPublicKey(publicKey, src, sign);
 		    System.out.println("verifi don hang : "+isVerified);
 		    if (!isVerified) {
 		        request.setAttribute("resultMessageDH", "Chữ ký không hợp lệ. Vui lòng kiểm tra lại.");
