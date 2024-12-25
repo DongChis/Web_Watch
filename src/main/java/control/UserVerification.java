@@ -153,7 +153,7 @@ public class UserVerification extends HttpServlet {
 	    if (isVerified) {
 	        request.getRequestDispatcher("CheckOut.jsp").forward(request, response);
 	    } else {
-	        request.getRequestDispatcher("userVerification").forward(request, response);
+	        request.getRequestDispatcher("userVerification.jsp").forward(request, response);
 	    }
 	}
 

@@ -1,8 +1,14 @@
 package control;
 
 import java.io.IOException;
+import java.security.KeyFactory;
+import java.security.PublicKey;
+import java.security.Signature;
+import java.security.spec.X509EncodedKeySpec;
 import java.sql.Timestamp;
+import java.util.Base64;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -12,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import dao.DAO;
+import dao.DAOKey;
 import entity.CartItem;
 import entity.Order;
 import entity.User;
@@ -21,110 +28,149 @@ import entity.User;
  */
 @WebServlet(urlPatterns = { "/updateOrderByUser" })
 public class UpdateOrderByUser extends HttpServlet {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * @see HttpServlet#HttpServlet()
-	 */
-	public UpdateOrderByUser() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
+    public UpdateOrderByUser() {
+        super();
+    }
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
-	 *      response)
-	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		response.setContentType("text/html;charset=UTF-8");
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
 
-		
+        try {
+            int orderID = Integer.parseInt(request.getParameter("orderID"));
+            String customerName = request.getParameter("customer-name");
+            String customerEmail = request.getParameter("customer-email");
+            String customerPhone = request.getParameter("customer-phone");
+            String customerAddress = request.getParameter("customer-address");
+            String paymentMethod = request.getParameter("payment-method");
+            String sign = request.getParameter("sign");
+         
 
-		 int orderID = Integer.parseInt(request.getParameter("orderID"));
-		 
-		String customerName = request.getParameter("customer-name");
-		String customerEmail = request.getParameter("customer-email");
-		String customerPhone = request.getParameter("customer-phone");
-		String customerAddress = request.getParameter("customer-address");
-		String paymentMethod = request.getParameter("payment-method");
-		String sign = request.getParameter("sign");
+            HttpSession session = request.getSession(false);
+            if (session == null) {
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Session expired. Please log in again.");
+                return;
+            }
 
-		String optionPay1 = "credit-card";
-		String optionPay2 = "bank-transfer";
-		String optionPay3 = "cash-on-delivery";
-		
-		
+            Integer userIdObj = (Integer) session.getAttribute("userId");
+            if (userIdObj == null) {
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User not logged in");
+                return;
+            }
 
-		HttpSession session = request.getSession(false); // Use false to not create a new session
-		if (session == null) {
-			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Session expired. Please log in again.");
-			return;
-		}
+            int userId = userIdObj;
 
-		Integer userIdObj = (Integer) session.getAttribute("userId");
-		if (userIdObj == null) {
-			// userID attribute is missing from session
-			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User not logged in");
-			return;
-		}
+            DAOKey daoKey = DAOKey.getInstance();
+            Map<String, String> keyInfo = daoKey.getKeyInfo(userId);
+            if (keyInfo == null || keyInfo.isEmpty()) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "User public key is missing.");
+                return;
+            }
 
-		int userId = userIdObj;
+            String publicKeyString = keyInfo.get("publicKey");
+            PublicKey publicKey = getPublicKeyFromString(publicKeyString);
+            	System.out.println(publicKeyString);
+            // Retrieve cart items from the existing order
+            Order existingOrder = DAO.getInstance().getOrderDetailByOrderID(orderID);
+            if (existingOrder == null) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Order not found.");
+                return;
+            }
+            List<CartItem> cartItems = existingOrder.getCartItems();
+            if (cartItems == null || cartItems.isEmpty()) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Cart items are missing in the order.");
+                return;
+            }
 
-		if (paymentMethod != null && !paymentMethod.isEmpty()) {
+            double totalPrice = 0;
+            String src =
+		    	    customerName +
+		    	    "" + customerEmail +
+		    	    "" + customerPhone +
+		    	    "" + customerAddress +
+		    	    "" + paymentMethod ;
+		    	   
+		   
+		    	try {
+		    		Order o = DAO.getInstance().getOrderDetailByOrderID(orderID);
+		    		List<CartItem>	carts = o.getCartItems();
+					for (CartItem item : carts) {
+					   src += item.getProduct().getName() + "" + item.getQuantity() + "" + item.getTotalPrice() + " VND";
+					    totalPrice += item.getTotalPrice();
+					}
+				} catch (Exception e) {
+			
+					e.printStackTrace();
+				}
 
-			if (paymentMethod.equals(optionPay1)) {
-				paymentMethod = "The Tin Dung";
-			}
-			if (paymentMethod.equals(optionPay2)) {
-				paymentMethod = "Chuyen khoan ngan hang";
-			}
-			if (paymentMethod.equals(optionPay3)) {
-				paymentMethod = "Tien mat khi nhan hang";
-			}
+		    	src +=  totalPrice +" VND";
+		    	System.out.println(src);
 
-			System.out.println("Selected Payment Method: " + paymentMethod);
-		} else {
-			System.out.println("No Payment Method selected." + paymentMethod);
-			paymentMethod = "Unknown";
-		}
+            boolean isVerified = verifySignatureWithPublicKey(publicKey, src, sign);
+            System.out.println(isVerified);
+            if (!isVerified) {
+            	session.setAttribute("cartItems", cartItems);
+                request.setAttribute("resultMessageUP", "Chữ ký không hợp lệ. Vui lòng kiểm tra lại.");
+                request.setAttribute("messageColorUP", "red");
+                request.setAttribute("order", DAO.getInstance().getOrderDetailByOrderID(orderID));
+                request.getRequestDispatcher("EditOrderByUser.jsp").forward(request, response);
+                
+                return;
+            }
 
-		// Assume you have a method to get the cart items from the session
-		List<CartItem> cartItems = (List<CartItem>) request.getSession().getAttribute("cart");
+            Order updatedOrder = new Order(orderID, cartItems, customerName, customerEmail, customerPhone,
+                    customerAddress, paymentMethod, new Timestamp(System.currentTimeMillis()), sign, true);
 
-		User user = DAO.getInstance().getUserByID(userId);
+            
+            
+            boolean isUpdated = DAO.getInstance().updateOrder(updatedOrder, orderID, userId);
+            if (!isUpdated) {
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Order update failed.");
+                return;
+            }
 
-		try {
-			Order order = new Order(orderID, cartItems, customerName, customerEmail, customerPhone, 
-					customerAddress, paymentMethod,new Timestamp(System.currentTimeMillis()), sign,true);
-//			
-			boolean isUpdated = DAO.getInstance().updateOrder(order, orderID,userIdObj);
+            request.setAttribute("resultMessageUP", "Cập nhật đơn hàng thành công!");
+            request.setAttribute("messageColorUP", "green");
+            request.getRequestDispatcher("EditOrderByUser.jsp").forward(request, response);
 
-			if (!isUpdated) {
-				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Order update failed.");
-				return;
-			}
+        } catch (NumberFormatException e) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid order ID.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An unexpected error occurred.");
+        }
+    }
 
-		}catch (Exception e) {
-		    e.printStackTrace(); // In ra chi tiết lỗi
-		    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An error occurred while processing the order: " + e.getMessage());
-		    return;
-		}
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        doGet(request, response);
+    }
 
-		
+    private PublicKey getPublicKeyFromString(String publicKeyString) throws Exception {
+        try {
+            publicKeyString = publicKeyString.replaceAll("\\s", "");
+            byte[] publicKeyBytes = Base64.getDecoder().decode(publicKeyString);
+            X509EncodedKeySpec keySpec = new X509EncodedKeySpec(publicKeyBytes);
+            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+            return keyFactory.generatePublic(keySpec);
+        } catch (IllegalArgumentException e) {
+            throw new Exception("Invalid public key or not Base64 encoded", e);
+        }
+    }
 
-		request.getRequestDispatcher("hisOrder").forward(request, response);;
-	}
+    private boolean verifySignatureWithPublicKey(PublicKey publicKey, String data, String clientSignatureStr) {
+        try {
+            Signature signature = Signature.getInstance("SHA256withRSA");
+            signature.initVerify(publicKey);
+            signature.update(data.getBytes());
+            byte[] clientSignature = Base64.getDecoder().decode(clientSignatureStr);
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
-	 *      response)
-	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		doGet(request, response);
-	}
-
+            return signature.verify(clientSignature);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }
