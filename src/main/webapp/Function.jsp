@@ -87,14 +87,8 @@
 									<i class="fas fa-arrow-down"></i>
 								</button>
 							</div>
-						</div>
-
-						<!-- Hidden input to specify the action -->
-						<input type="hidden" name="action" value="importKey" />
-
-						<div class="form-group">
-							<button type="submit" class="btn">Lưu</button>
-						</div>
+						</div>				
+						
 					</div>
 				</form>
 			</div>
@@ -146,7 +140,7 @@
 <div class="card">
     <h2>Nhập Khóa Công Khai</h2>
     <form id="keyImportForm" action="keyControl" method="POST" enctype="multipart/form-data">
-        <input type="hidden" name="action" value="importKey" />
+        <input type="hidden" name="action" value="importKey"/>
 
         <!-- Public Key File Upload -->
         <div class="form-group">
@@ -170,21 +164,24 @@
 
 
 
-		<!-- Card: Report Key -->
-		<div class="card">
-			<h2>Báo Mất Khóa</h2>
-			<form id="keyReportForm" action="keyControl" method="POST" enctype="multipart/form-data">
-				<input type="hidden" name="action" value="reportKey" />
-				<div class="form-group">
-					<label for="reportPrivateKey">Nhập khóa Private cần báo
-						mất:</label> <input type="text" id="reportPrivateKey"
-						name="reportPrivateKey" required />
-				</div>
-				<div class="form-group">
-					<button type="submit" class="btn">Báo Mất</button>
-				</div>
-			</form>
-		</div>
+		<!-- Card: Report Key Loss Time -->
+<div class="card">
+    <h2>Báo Mất Khóa</h2>
+    <form id="keyReportForm" action="keyControl" method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="action" value="reportKey" />
+        
+        <!-- Input for the time when the key was lost -->
+        <div class="form-group">
+            <label for="lossTime">Nhập thời gian mất khóa:</label>
+            <input type="datetime-local" id="lossTime" name="lossTime" required />
+        </div>
+        
+        <div class="form-group">
+            <button type="submit" class="btn">Báo Mất</button>
+        </div>
+    </form>
+</div>
+
 	</div>
 
 	<script src="js/key.js"></script>

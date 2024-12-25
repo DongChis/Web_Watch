@@ -8,6 +8,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import dao.DAO;
 import entity.Order;
@@ -33,13 +34,19 @@ public class OrderByAdmin extends HttpServlet {
 	 */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-
+        HttpSession session = request.getSession(false); 
+        Integer userIdObj = (Integer) session.getAttribute("userId");
+		if (userIdObj == null) {
+			// userID attribute is missing from session
+			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User not logged in");
+			return;
+		}
         try {
             int pageSize = 6; // Số đơn hàng mỗi trang
             String pageParam = request.getParameter("page");
             int page = (pageParam != null) ? Integer.parseInt(pageParam) : 1;
 
-            List<Order> listOrder = DAO.getInstance().getOrdersByPage(page, pageSize);
+            List<Order> listOrder = DAO.getInstance().getOrdersByPage(page, pageSize,userIdObj);
             int totalOrders = DAO.getInstance().getTotalOrders();
             Order o = new Order();
             

@@ -98,7 +98,7 @@ public class UpdateOrderByUser extends HttpServlet {
 		try {
 			Order order = new Order(orderID, cartItems, customerName, customerEmail, customerPhone, 
 					customerAddress, paymentMethod,new Timestamp(System.currentTimeMillis()), sign,true);
-			
+//			
 			boolean isUpdated = DAO.getInstance().updateOrder(order, orderID,userIdObj);
 
 			if (!isUpdated) {
@@ -106,11 +106,10 @@ public class UpdateOrderByUser extends HttpServlet {
 				return;
 			}
 
-		} catch (Exception e) {
-			e.printStackTrace();
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-					"An error occurred while processing the order.");
-			return;
+		}catch (Exception e) {
+		    e.printStackTrace(); // In ra chi tiết lỗi
+		    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An error occurred while processing the order: " + e.getMessage());
+		    return;
 		}
 
 		

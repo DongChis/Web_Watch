@@ -14,7 +14,6 @@ import context.DBContext;
 import dao.DAO;
 
 public class Order {
-	
 
 
 	private int orderID;
