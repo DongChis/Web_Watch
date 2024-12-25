@@ -1,5 +1,4 @@
 package control;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,7 +21,6 @@ import javax.servlet.http.Part;
 
 
 import org.apache.catalina.util.Introspection;
-
 
 
 
@@ -51,12 +49,14 @@ public class UserVerification extends HttpServlet {
 	        return;
 	    }
 
+
 	    // Kiểm tra userId
 	    Integer userId = (Integer) session.getAttribute("userId");
 	    if (userId == null) {
 	        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "User ID is missing.");
 	        return;
 	    }
+
 
 	    try {
 	        // Lấy thông tin public key
@@ -68,6 +68,7 @@ public class UserVerification extends HttpServlet {
 	            response.sendRedirect("userVerification");
 	            return;
 	        }
+
 
 	        request.setAttribute("publicKey", keyInfo.get("publicKey"));
 	    } catch (NumberFormatException e) {
@@ -117,9 +118,11 @@ public class UserVerification extends HttpServlet {
 	        // Xử lý file chữ ký
 	        Part filePart = request.getPart("signatureFile");
 
+
 	        if (filePart != null && filePart.getSize() > 0) {
 	            try (InputStream fileContent = filePart.getInputStream();
 	                 BufferedReader reader = new BufferedReader(new InputStreamReader(fileContent))) {
+
 
 	                StringBuilder fileContentBuilder = new StringBuilder();
 	                String line;
@@ -145,6 +148,7 @@ public class UserVerification extends HttpServlet {
 	    String messageColor = isVerified ? "green" : "red";
 	    request.setAttribute("resultMessage", message);
 	    request.setAttribute("messageColor", messageColor);
+
 
 	    if (isVerified) {
 	        request.getRequestDispatcher("CheckOut.jsp").forward(request, response);
