@@ -258,7 +258,6 @@ public class KeyControl extends HttpServlet {
 			// Retrieve key information from DAO
 			DAOKey daoKey = new DAOKey();
 			Map<String, String> keyInfo = daoKey.getKeyInfo(userId);
-
 			// If key information is not available, set default messages
 			String publicKey = keyInfo.get("publicKey");
 			String createTime = keyInfo.get("createTime");

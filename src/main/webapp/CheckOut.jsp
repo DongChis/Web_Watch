@@ -70,10 +70,10 @@
 					<label for="customer-name">Tên Người Nhận:</label> <input
 						type="text" id="customer-name" name="customer-name" required>
 				</div>
-				
-					<div class="form-group">
-					<label for="customer-email">Email:</label> <input
-						type="text" id="customer-email" name="customer-email" required>
+
+				<div class="form-group">
+					<label for="customer-email">Email:</label> <input type="text"
+						id="customer-email" name="customer-email" required>
 				</div>
 
 				<div class="form-group">
@@ -93,11 +93,13 @@
 			<div class="card" style="height: 200px;">
 
 				<div class="form-group">
-					<label for="sign">Nhập chữ kí của bạn</label> <input
-						type="text" id="sign" name="sign" required>
+					<label for="sign">Nhập chữ kí của bạn</label> <input type="text"
+						id="sign" name="sign" required>
 				</div>
 
-
+				<!-- Hiển thị thông báo kết quả -->
+				<div id="resultMessageDH" style="color: ${messageColorDH};">
+					${resultMessageDH != null ? resultMessageDH : " "}</div>
 
 				<button type="submit">Đặt Hàng</button>
 
@@ -118,14 +120,12 @@
 	    let customerPhone = document.querySelector('#customer-phone').value; // Số điện thoại người nhận
 	    let customerAddress = document.querySelector('#customer-address').value; // Địa chỉ người nhận
 
-	    let orderDetails = "Thông Tin Đơn Hàng\n\n";
-	    orderDetails += "Thông Tin Người Nhận:\n";
-	    orderDetails += "Tên Người Nhận: " + customerName + "\n";
-	    orderDetails += "Email: " + customerEmail + "\n";
-	    orderDetails += "Số Điện Thoại: " + customerPhone + "\n";
-	    orderDetails += "Địa Chỉ: " + customerAddress + "\n\n";
-	    orderDetails += "Phương Thức Thanh Toán: " + paymentMethod + "\n\n";
-	    orderDetails += "Sản Phẩm:\n";
+	    let orderDetails = "";
+	    orderDetails += customerName;
+	    orderDetails += customerEmail;
+	    orderDetails += customerPhone;
+	    orderDetails += customerAddress;
+	    orderDetails +=  paymentMethod;
 
 	    // Lặp qua các phần tử trong giỏ hàng và lấy thông tin
 	    items.forEach(function(item) {
@@ -133,10 +133,10 @@
 	        let productQuantity = item.querySelector('.quantity span').innerText.trim(); // Số lượng
 	        let productPrice = item.querySelector('.product-price span').innerText.trim(); // Giá sản phẩm
 
-	        orderDetails += productName +` - Số lượng: ` + productQuantity + ` - Giá: ` + productPrice +`\r\n`;
+	        orderDetails += productName +`` + productQuantity + `` + productPrice;
 	    });
 
-	    orderDetails += "\nTổng Tiền: " + totalAmount;
+	    orderDetails += totalAmount;
 
 	    // Tạo file .txt và tải về
 	    let blob = new Blob([orderDetails], { type: 'text/plain' });

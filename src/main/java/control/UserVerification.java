@@ -69,7 +69,7 @@ public class UserVerification extends HttpServlet {
 	            return;
 	        }
 
-
+	        
 	        request.setAttribute("publicKey", keyInfo.get("publicKey"));
 	    } catch (NumberFormatException e) {
 	        request.setAttribute("error", "Invalid User ID.");
@@ -153,7 +153,7 @@ public class UserVerification extends HttpServlet {
 	    if (isVerified) {
 	        request.getRequestDispatcher("CheckOut.jsp").forward(request, response);
 	    } else {
-	        request.getRequestDispatcher("userVerification.jsp").forward(request, response);
+	        request.getRequestDispatcher("userVerification").forward(request, response);
 	    }
 	}
 
@@ -184,7 +184,7 @@ public class UserVerification extends HttpServlet {
 			e.printStackTrace();
 			return false;
 		}
-	}
+	} 	
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
