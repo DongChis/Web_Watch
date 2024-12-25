@@ -79,7 +79,7 @@ public class CheckOutControl extends HttpServlet {
 		        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "User public key is missing.");
 		        return;
 		    }
-
+		    
 		    String publicKeyString = keyInfo.get("publicKey");
 		    PublicKey publicKey;
 		    try {
@@ -90,7 +90,7 @@ public class CheckOutControl extends HttpServlet {
 		        return;
 		    }
 		    
-		    String tt = "1111credit-carddong ho 41250.0 VND250.0 VND";
+		  
 		    double totalPrice = 0;
 		    String src =
 		    	    customerName +
@@ -103,7 +103,7 @@ public class CheckOutControl extends HttpServlet {
 		    	try {
 		    		List<CartItem>	carts = (List<CartItem>)session.getAttribute("cart");
 					for (CartItem item : carts) {
-					   src += item.getProduct().getName() + "" + item.getQuantity() + "" + item.getTotalPrice()/item.getQuantity() + " VND";
+					   src += item.getProduct().getName() + "" + item.getQuantity() + "" + item.getTotalPrice() + " VND";
 					    totalPrice += item.getTotalPrice();
 					}
 				} catch (Exception e) {
@@ -114,23 +114,25 @@ public class CheckOutControl extends HttpServlet {
 		    	src +=  totalPrice +" VND";
 
 		    // Xác thực chữ ký
-		    	System.out.println(tt);
-		    	
+		    System.out.println(src);
 		    boolean isVerified = verifySignatureWithPublicKey(publicKey, src, sign);
 		    System.out.println("verifi don hang : "+isVerified);
+		    List<CartItem> cartItems = (List<CartItem>) session.getAttribute("cart");
 		    if (!isVerified) {
+		    	session.setAttribute("cart",cartItems);
 		        request.setAttribute("resultMessageDH", "Chữ ký không hợp lệ. Vui lòng kiểm tra lại.");
 		        request.getRequestDispatcher("CheckOut.jsp").forward(request, response);
 		        return;
 		    }else {
 		    	
 		    	  // Xử lý đặt hàng nếu chữ ký hợp lệ
-			    List<CartItem> cartItems = (List<CartItem>) session.getAttribute("cart");
+			 
 			    DAO.getInstance().insertOrder(cartItems, customerName, customerEmail, customerPhone, customerAddress, paymentMethod, sign, userId);
-		    	
+				session.setAttribute("cartUpdate",cartItems);
 		    	session.removeAttribute("cart");
+		    
 		    	
-		    	response.sendRedirect("OrderConfirm.jsp");
+		    	response.sendRedirect("OrderSuccess.jsp");
 		    }
 		    String message = isVerified ? "Chữ ký hợp lệ!" : "Chữ ký không hợp lệ.";
 		    String messageColor = isVerified ? "green" : "red";
