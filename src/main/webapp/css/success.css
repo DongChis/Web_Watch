@@ -1,0 +1,109 @@
+/* Đặt toàn cục cho body */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+/* Container chính */
+.container-success {
+    max-width: 900px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Thông báo thành công */
+.success-message {
+    text-align: center;
+    padding: 20px;
+    background-color: #e6ffed;
+    border: 1px solid #28a745;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.success-message h1 {
+    color: #28a745;
+    margin-bottom: 10px;
+}
+
+.success-message p {
+    margin: 5px 0;
+    font-size: 16px;
+}
+
+/* Thông tin chi tiết đơn hàng */
+.order-details {
+    margin-top: 20px;
+    border-top: 1px solid #ddd;
+    padding-top: 20px;
+}
+
+.order-details h2 {
+    margin-bottom: 15px;
+    font-size: 20px;
+    color: #333;
+}
+
+/* Đơn hàng chi tiết */
+.order-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+}
+
+.order-item:last-child {
+    border-bottom: none;
+}
+
+/* Ảnh sản phẩm */
+.product-image img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    margin-right: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+/* Thông tin sản phẩm */
+.product-info h3 {
+    margin: 0;
+    font-size: 18px;
+    color: #333;
+}
+
+.product-info p {
+    margin: 3px 0;
+    font-size: 14px;
+    color: #555;
+}
+
+/* Các bước tiếp theo */
+.next-steps {
+    margin-top: 30px;
+    text-align: center;
+}
+
+.next-steps p {
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.next-steps a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.next-steps a:hover {
+    text-decoration: underline;
+}
