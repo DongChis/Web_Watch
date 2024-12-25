@@ -421,7 +421,6 @@ public class DAO {
 
 		return order; // Return the order details (or null if not found)
 	}
-
 	public List<Order> getOrdersByPage(int page, int pageSize) {
 
 		List<Order> orders = new ArrayList<>();

@@ -63,7 +63,6 @@ public class CartControl extends HttpServlet {
 			cart.add(new CartItem(product, quantity));
 
 		}
-
 		int totalQuantity = cart.stream().mapToInt(CartItem::getQuantity).sum();
 		session.setAttribute("cart", cart);
 		session.setAttribute("totalQuantity", totalQuantity);

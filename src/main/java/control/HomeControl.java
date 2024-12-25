@@ -27,6 +27,7 @@ public class HomeControl extends HttpServlet {
 		request.getRequestDispatcher("Home.jsp").forward(request, response);
 
 	}
+
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
