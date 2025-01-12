@@ -1,41 +1,38 @@
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-
-<link href="css/home.css" rel="stylesheet">
-<!-- link rel="stylesheet"
-	href="https://use.fontawesome.com/releases/v6.4.2/css/all.css"> -->
-<title>Watch Store</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Watch Store</title>
+    <link href="css/home.css" rel="stylesheet">
 </head>
 <body>
-	<jsp:include page="Header.jsp" />
+    <!-- Header -->
+    <jsp:include page="Header.jsp" />
 
-	<div class="container">
+    <main class="container">
+        <!-- Slideshow Section -->
+        <section class="slideshow-container">
+            <div class="slides">
+                <img src="img/image1.png" alt="Watch Image 1">
+                <img src="img/image2.jpg" alt="Watch Image 2">
+                <img src="img/image3.png" alt="Watch Image 3">
+            </div>
+        </section>
 
-		<div class="slideshow-container">
-			<div class="slides">
-				<img src="img/image1.png" alt="Ảnh 1"> <img
-					src="img/image2.jpg" alt="Ảnh 2"> <img src="img/image3.png"
-					alt="Ảnh 3">
-			</div>
-		</div>
-
-
-		<!-- Product slider: Sản phẩm mới ra mắt -->
-    <div class="container-list">
-        <h2 class="text-center">Sản phẩm mới ra mắt</h2>
-        <div class="product-slider">
+        <!-- New Arrivals Section -->
+        <section class="product-slider">
+            <h2>Sản phẩm mới ra mắt</h2>
             <div class="slider-track new-arrival-slides">
                 <c:forEach var="product" items="${listAllProduct}">
-                    <div class="slider-item">
+                    <article class="slider-item">
                         <div class="card">
-                            <img src="${product.imageURL != null ? product.imageURL : 'img/placeholder.png'}" alt="${product.name}">
+                            <img src="${product.imageURL != null ? product.imageURL : 'img/placeholder.png'}" 
+                                 alt="${product.name}">
                             <div class="card-body">
-                                <h5 class="card-title">${product.name}</h5>
+                                <h3 class="card-title">${product.name}</h3>
                                 <p class="card-text">${product.description}</p>
                                 <p><strong>${product.price} VND</strong></p>
                                 <div class="card-btn">
@@ -44,27 +41,26 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </article>
                 </c:forEach>
             </div>
             <div class="slider-controls">
-                <button class="prev-btn" onclick="moveSlide('.new-arrival-slides', -1)">&#10094;</button>
-                <button class="next-btn" onclick="moveSlide('.new-arrival-slides', 1)">&#10095;</button>
+                <button class="prev-btn" onclick="moveSlide('.new-arrival-slides', -1)"></button>
+                <button class="next-btn" onclick="moveSlide('.new-arrival-slides', 1)"></button>
             </div>
-        </div>
-    </div>
+        </section>
 
-    <!-- Product slider: Sản phẩm bán chạy -->
-    <div class="container-list">
-        <h2 class="text-center">Sản phẩm bán chạy</h2>
-        <div class="product-slider">
+        <!-- Best Sellers Section -->
+        <section class="product-slider">
+            <h2>Sản phẩm bán chạy</h2>
             <div class="slider-track best-seller-slides">
                 <c:forEach var="product" items="${listAllProduct}">
-                    <div class="slider-item">
+                    <article class="slider-item">
                         <div class="card">
-                            <img src="${product.imageURL}" alt="${product.imageURL}">
+                            <img src="${product.imageURL != null ? product.imageURL : 'img/placeholder.png'}" 
+                                 alt="${product.name}">
                             <div class="card-body">
-                                <h5 class="card-title">${product.name}</h5>
+                                <h3 class="card-title">${product.name}</h3>
                                 <p class="card-text">${product.description}</p>
                                 <p><strong>${product.price} VND</strong></p>
                                 <div class="card-btn">
@@ -73,29 +69,22 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </article>
                 </c:forEach>
             </div>
             <div class="slider-controls">
-                <button class="prev-btn" onclick="moveSlide('.best-seller-slides', -1)">&#10094;</button>
-                <button class="next-btn" onclick="moveSlide('.best-seller-slides', 1)">&#10095;</button>
+                <button class="prev-btn" onclick="moveSlide('.best-seller-slides', -1)"></button>
+                <button class="next-btn" onclick="moveSlide('.best-seller-slides', 1)"></button>
             </div>
-        </div>
-    </div>
+        </section>
+    </main>
 
+    <!-- Footer -->
+    <jsp:include page="Footer.jsp" />
 
-
-	</div>
-
-	<jsp:include page="Footer.jsp" />
-
-	<script src="js/slide.js"></script>
-	<script src="js/cart.js"></script>
-	<script src="js/slidersp.js"></script>
-	
-	
-
-
+    <!-- Scripts -->
+    <script src="js/slide.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/slidersp.js"></script>
 </body>
 </html>
-
