@@ -60,7 +60,7 @@
 							class="summary-value">150.0 VND</span>
 					</div>
 					<button class="checkout-btn"
-						onclick="location.href='userVerification';">Tiếp Tục</button>
+						onclick="location.href='checkout';">Tiếp Tục</button>
 				</div>
 			</c:if>
 		</div>

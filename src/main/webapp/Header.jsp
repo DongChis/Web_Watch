@@ -23,7 +23,7 @@
 		<div class="right-info">
 			<a href="#"><i class="fas fa-heart"></i></a> <a href="hisOrder"><i
 				class="fas fa-twitter"></i></a> <a href="#"><i class="fas fa-star"></i></a>
-				<a href="sendVerificationEmail" id="keyButton" > <i class="fas fa-key fa-lg"
+				<a href="" > <i class="fas fa-key fa-lg"
 					style="color: blue;"></i>
 				</a>
 

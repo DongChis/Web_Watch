@@ -15,58 +15,74 @@ import dao.DAO;
 import entity.CartItem;
 import entity.User;
 
-@WebServlet(name = "LoginControl", urlPatterns = { "/login" })
+@WebServlet(name = "LoginControl", urlPatterns = {"/login"})
 public class LoginControl extends HttpServlet {
 
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-		response.setContentType("text/html;charset=UTF-8");
-		request.setCharacterEncoding("UTF-8");
-		String userName = request.getParameter("user");
-		String password = request.getParameter("pass");
+        // Thiết lập mã hóa và kiểu nội dung
+        response.setContentType("text/html;charset=UTF-8");
+        request.setCharacterEncoding("UTF-8");
 
+        // Lấy thông tin username và password từ yêu cầu
+        String userName = request.getParameter("user");
+        String password = request.getParameter("pass");
 
-		System.out.println(userName);
-		System.out.println(password);
+        // Kiểm tra đầu vào hợp lệ
+        if (userName == null || userName.trim().isEmpty() || password == null || password.trim().isEmpty()) {
+            request.setAttribute("mess", "Username and password must not be empty.");
+            request.getRequestDispatcher("Login.jsp").forward(request, response);
+            return;
+        }
 
+        try {
+            // Kiểm tra thông tin đăng nhập qua DAO
+            User acc = DAO.getInstance().login(userName, password);
 
+            if (acc == null) {
+                // Sai thông tin đăng nhập
+                request.setAttribute("mess", "Wrong username or password.");
+                request.getRequestDispatcher("Login.jsp").forward(request, response);
+                return;
+            }
 
-		User acc = DAO.getInstance().login(userName, password);
-	
-		if (acc == null) {
-			request.setAttribute("mess", "Wrong user or password");
-			request.getRequestDispatcher("Login.jsp").forward(request, response);
-			
-		} else {
-			HttpSession currentSession = request.getSession(false); // 
-			 if (currentSession != null && currentSession.getAttribute("accSession") != null) {
-	                
-				 response.sendRedirect("Login.jsp?error=alreadyLoggedIn");
-	                return;
-	            }
-				
-		}
+            // Kiểm tra session hiện tại
+            HttpSession currentSession = request.getSession(false);
+            if (currentSession != null && currentSession.getAttribute("accSession") != null) {
+                // Nếu đã đăng nhập trước đó, chuyển hướng tới trang admin
+                response.sendRedirect("admin");
+                return;
+            }
 
+            // Nếu đăng nhập thành công, tạo session mới
+            HttpSession session = request.getSession(true);
+            session.setAttribute("accSession", acc);
+            session.setAttribute("userId", acc.getUserID());
+            session.setAttribute("role", acc.getRole());
 
-		HttpSession session = request.getSession();
-		session.setAttribute("accSession", acc);
-		 session.setAttribute("userId", acc.getUserID());
-		session.setAttribute("role", acc.getRole());
-		
-		 List<CartItem> cart = new ArrayList<>();
-         session.setAttribute("cart", cart); // Lưu giỏ hàng riêng cho người dùng này
-         
-         
-		response.sendRedirect("admin");
-		
+            // Tạo giỏ hàng riêng cho người dùng
+            List<CartItem> cart = new ArrayList<>();
+            session.setAttribute("cart", cart);
 
-	}
+            // Phân quyền và chuyển hướng
+            if ("Admin".equals(acc.getRole())) {
+                response.sendRedirect("admin");
+            } else {
+                response.sendRedirect("home"); // Chuyển hướng tới trang home cho người dùng không phải admin
+            }
 
+        } catch (Exception e) {
+            // Xử lý ngoại lệ nếu có vấn đề xảy ra
+            request.setAttribute("mess", "An error occurred during login. Please try again.");
+            request.getRequestDispatcher("Login.jsp").forward(request, response);
+            e.printStackTrace(); // Ghi log lỗi để theo dõi
+        }
+    }
+
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         doGet(request, response);
