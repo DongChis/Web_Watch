@@ -1,291 +1,214 @@
 @charset "UTF-8";
 
+/* General Container */
 .container {
-	max-width: 1200px;
-	margin: 0 auto;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    box-sizing: border-box;
 }
 
+/* Slideshow Container */
 .slideshow-container {
-	position: relative;
-	max-width: 100%;
-	height: 350px;
-	margin: auto;
-	overflow: hidden;
+    position: relative;
+    max-width: 100%;
+    height: 350px;
+    margin: auto;
+    overflow: hidden;
 }
 
-/* Slide ảnh */
 .slides {
-	display: flex;
-	transition: transform 0.5s ease-in-out;
-
+    display: flex;
+    transition: transform 0.5s ease-in-out;
 }
 
 .slides img {
-	width: 100%;
-	flex-shrink: 0;
-
+    width: 100%;
+    flex-shrink: 0;
+    object-fit: cover;
 }
 
-.slideshow-container {
-	width: 100%;
-	margin: auto;
-	position: relative;
-}
-
+/* Slide Animation */
 @keyframes slide {
-	0% {
-		transform: translateX(0);
-	}
-
-	100% {
-		transform: translateX(-100%);
-	}
-}
-
-/* Container cho sản phẩm */
-.product-1,
-.product-2 {
-	margin-bottom: 30px;
-}
-
-.title {
-	background-color: #f0f0f5;
-	padding: 15px;
-	border-radius: 10px;
-}
-
-h2 {
-	text-align: center;
-	font-size: 34px;
-	color: rgb(0, 0, 142);
-}
-
-h1 {
-	text-align: center;
-	margin-top: 20px;
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
 }
 
 
 
-.container-list {
-
-
-	background: #fff;
-	padding: 20px;
-	margin: 20px 0;
-	border-radius: 8px;
-	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+/* Product Slider */
+.product-slider {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    margin: 20px 0;
 }
 
-.container-list h2 {
-	text-align: center;
-	color: rgb(0, 0, 142);
-	font-size: 28px;
-	margin-bottom: 30px;
-	font-family: 'Arial', sans-serif;
+.product-slider .slider-track {
+  display: flex;
+    flex-wrap: nowrap;
+    transition: transform 0.5s ease-in-out;
+    will-change: transform;
 }
 
-/*Bố trí dạng lưới cho sản phẩm */
-.row {
-	display: flex;
-	flex-wrap: wrap;
-	justify-content: center;
+.product-slider .slider-item {
+    flex: 0 0 auto;
+    width: 250px;
+    margin: 10px;
+    margin-right: 20px; 
+    text-align: center;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Card sản phẩm */
+.product-slider .slider-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Slider Controls */
+.product-slider .slider-controls {
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    transform: translateY(-50%);
+    z-index: 10;
+}
+
+.product-slider .slider-controls button {
+    background-color: rgba(0, 0, 0, 0.5);
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 50%;
+    font-size: 18px;
+    transition: background-color 0.3s ease;
+}
+
+.product-slider .slider-controls button:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+/* Card Styling */
 .card {
-	border: 1px solid #e0e0e0;
-	border-radius: 10px;
-	overflow: hidden;
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-	margin: 15px;
-
-	padding: 10px;
-	/*width: 100%;*/
-	width: 250px;
-
-	transition: transform 0.3s, box-shadow 0.3s;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    overflow: hidden;
+    padding: 10px;
+    text-align: center;
+    background: #fff;
+    transition: transform 0.3s, box-shadow 0.3s;
 }
 
-/* Hiệu ứng hover cho card sản phẩm */
 .card:hover {
-	transform: translateY(-10px);
-	box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-10px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
-/* Hình ảnh sản phẩm */
 .card img {
-	width: 100%;
-	height: 200px;
-	object-fit: cover;
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
 }
 
-/* Tiêu đề sản phẩm */
 .card-title {
-	font-size: 18px;
-	font-weight: bold;
-	color: #333;
-	margin-bottom: 10px;
-	text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    margin: 10px 0;
 }
 
-/* Mô tả sản phẩm */
 .card-text {
-	font-size: 14px;
-	color: #777;
-	text-align: center;
-	padding: 10px;
+    font-size: 14px;
+    color: #777;
+    margin: 10px 0;
 }
 
-/* Giá sản phẩm */
 .card p strong {
-	font-size: 16px;
-	color: #d9534f;
-	display: block;
-	text-align: center;
-	margin-top: 10px;
+    font-size: 16px;
+    color: #d9534f;
 }
+
+/* Buttons */
 .card-btn {
-	margin: 10px;
-	padding: 10px;
-	text-align: center;
+    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.btn-view, .btn-add {
+    padding: 10px 15px;
+    font-size: 14px;
+    text-decoration: none;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
 .btn-view {
-	justify-content: center;
-	background-color: #0275d8;
-	color: white;
-	margin: 0 10px;
-	text-align: center;
-	padding: 10px;
-	border-radius: 5px;
-	transition: background-color 0.3s;
-	text-decoration: none;
+    background-color: #007bff;
+    color: white;
 }
+
 .btn-add {
-	justify-content: center;
-	background-color: rgb(0, 255, 64);
-	color: white;
-	margin: 0 10px;
-	text-align: center;
-	padding: 10px;
-	border-radius: 5px;
-	transition: background-color 0.3s;
-	text-decoration: none;
+    background-color: #28a745;
+    color: white;
 }
 
-
-/* Hiệu ứng hover cho nút */
-.card .btn:hover {
-	background-color: rgb(255, 0, 128);
-	text-decoration: none;
+.btn-view:hover {
+    background-color: #0056b3;
 }
 
-/* Đảm bảo các card được canh giữa và có kích thước phù hợp */
-
-.col-md-4-l {
-	display: flex;
-	justify-content: center;
+.btn-add:hover {
+    background-color: #218838;
 }
 
-/* Responsive cho màn hình nhỏ hơn */
+/* Responsive Adjustments */
 @media (max-width: 768px) {
-	.card {
-		max-width: 100%;
-		margin-bottom: 20px;
-	}
+    .slider-item {
+        min-width: 90%;
+    }
+
+    .slider-controls button {
+        padding: 8px 15px;
+        font-size: 16px;
+    }
+
+    .card img {
+        height: 180px;
+    }
 }
 
 @media (max-width: 576px) {
-	.card {
-		max-width: 100%;
-	}
-}
-
-
-/* CSS cho phần review và đánh giá */
-.review-form,
-.reviews {
-	background: #fff;
-	padding: 20px;
-	margin: 20px 0;
-	border-radius: 8px;
-	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-.review-form h2,
-.reviews h2 {
-	margin-top: 0;
-}
-
-.review-form label {
-	display: block;
-	margin: 10px 0 5px;
-}
-
-.review-form input[type="text"],
-.review-form select,
-.review-form textarea {
-	width: 100%;
-	padding: 8px;
-	margin-bottom: 10px;
-	border: 1px solid #ccc;
-	border-radius: 4px;
-}
-
-.review-form button {
-	background-color: #5cb85c;
-	color: white;
-	border: none;
-	padding: 10px 20px;
-	text-align: center;
-	text-decoration: none;
-	display: inline-block;
-	font-size: 16px;
-	margin-top: 10px;
-	border-radius: 4px;
-	cursor: pointer;
-}
-
-.review-form button:hover {
-	background-color: #4cae4c;
-}
-
-.reviews .review-item {
-	border-bottom: 1px solid #ddd;
-	padding: 10px 0;
-}
-
-.reviews .review-item:last-child {
-	border-bottom: none;
-}
-
-.reviews .review-item h3 {
-	margin: 0;
-}
-
-.reviews .review-item p {
-	margin: 5px 0;
-}
-
-.pagination {
-        margin: 20px 0;
-        text-align: center;
-    }
-    .pagination a {
-        display: inline-block;
-        padding: 10px 15px;
-        margin: 0 5px;
-        border: 1px solid #ccc;
-        text-decoration: none;
-        color: #333;
-    }
-    .pagination a.active {
-        background-color: blueviolet;
-        color: white;
-        font-weight: bold;
-    }
-    .pagination a:hover {
-        background-color: #ddd;
+    .slider-item {
+        min-width: 100%;
     }
 
+    .card {
+        padding: 8px;
+    }
+
+    .card-title {
+        font-size: 16px;
+    }
+
+    .card-text {
+        font-size: 13px;
+    }
+
+    .card p strong {
+        font-size: 14px;
+    }
+}

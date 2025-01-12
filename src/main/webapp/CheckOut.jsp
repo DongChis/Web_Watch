@@ -63,7 +63,7 @@
 			</div>
 
 			<!-- Card 2: Thông tin người nhận hàng -->
-			<div class="card" style="height: 350px;">
+			<div class="card" style="height: 400px;">
 				<h2>Thông Tin Người Nhận Hàng</h2>
 
 				<div class="form-group">
@@ -85,22 +85,10 @@
 					<label for="customer-address">Địa Chỉ:</label> <input type="text"
 						id="customer-address" name="customer-address" required>
 				</div>
-				<!-- Nút tải thông tin đơn hàng dưới dạng file txt -->
-				<button type="button" onclick="downloadOrderInfo()">Tải
-					Thông Tin Đơn Hàng</button>
+				
 			</div>
 
-			<div class="card" style="height: 200px;">
-
-				<div class="form-group">
-					<label for="sign">Nhập chữ kí của bạn</label> <input type="text"
-						id="sign" name="sign" required>
-				</div>
-
-				<!-- Hiển thị thông báo kết quả -->
-				<div id="resultMessageDH" style="color: ${messageColorDH};">
-					${resultMessageDH != null ? resultMessageDH : " "}</div>
-
+			<div class="card" style="height: 100px;">
 				<button type="submit">Đặt Hàng</button>
 
 			</div>
@@ -109,45 +97,7 @@
 	</div>
 
 	<jsp:include page="Footer.jsp" />
-	<script>
-	function downloadOrderInfo() {
-	    // Thu thập thông tin đơn hàng từ giao diện người dùng
-	    let items = document.querySelectorAll('.cart-item'); // Lấy tất cả các sản phẩm trong giỏ hàng
-	    let totalAmount = document.querySelector('.total-amount span').innerText; // Tổng tiền
-	    let paymentMethod = document.querySelector('#payment-method').value; // Phương thức thanh toán
-	    let customerName = document.querySelector('#customer-name').value; // Tên người nhận
-	    let customerEmail = document.querySelector('#customer-email').value;
-	    let customerPhone = document.querySelector('#customer-phone').value; // Số điện thoại người nhận
-	    let customerAddress = document.querySelector('#customer-address').value; // Địa chỉ người nhận
-
-	    let orderDetails = "";
-	    orderDetails += customerName;
-	    orderDetails += customerEmail;
-	    orderDetails += customerPhone;
-	    orderDetails += customerAddress;
-	    orderDetails +=  paymentMethod;
-
-	    // Lặp qua các phần tử trong giỏ hàng và lấy thông tin
-	    items.forEach(function(item) {
-	        let productName = item.querySelector('.product-name').innerText.trim(); // Tên sản phẩm
-	        let productQuantity = item.querySelector('.quantity span').innerText.trim(); // Số lượng
-	        let productPrice = item.querySelector('.product-price span').innerText.trim(); // Giá sản phẩm
-
-	        orderDetails += productName +`` + productQuantity + `` + productPrice;
-	    });
-
-	    orderDetails += totalAmount;
-
-	    // Tạo file .txt và tải về
-	    let blob = new Blob([orderDetails], { type: 'text/plain' });
-	    let link = document.createElement('a');
-	    link.href = URL.createObjectURL(blob);
-	    link.download = "ThongTinDonHang.txt";  // Tên file tải về
-	    link.click();
-	}
-
-
-	</script>
+	
 
 </body>
 
