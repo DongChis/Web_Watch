@@ -60,7 +60,7 @@
 					</a>
 					
 					<a class="li-child" href="#">
-					<li><i class="fas fa-hashtag"></i> App</li>
+					<li><i class="fas fa-hashtag"></i> Report</li>
 					</a>
 					
 					<a class="li-child" href="#">

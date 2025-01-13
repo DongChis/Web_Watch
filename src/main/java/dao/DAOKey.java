@@ -3,13 +3,12 @@ package dao;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,6 +31,32 @@ public class DAOKey {
         }
         return instance;
     }
+    
+    
+    public boolean deactivateKey(Integer userId, String publicKey, LocalDateTime lossTime) {
+        boolean isDeactivated = false;
+        try (Connection conn = new DBContext().getConnection();
+             PreparedStatement ps = conn.prepareStatement(
+                     "UPDATE KeyManagement SET EndTime = ?, IsActive = 0 " +
+                     "WHERE UserID = ? AND PublicKey = ? AND IsActive = 1")) {
+
+            // Thiết lập các tham số cho câu lệnh SQL
+            ps.setTimestamp(1, Timestamp.valueOf(lossTime));
+            ps.setInt(2, userId);
+            ps.setString(3, publicKey);
+
+            // Thực thi câu lệnh SQL
+            int rowsAffected = ps.executeUpdate();
+            if (rowsAffected > 0) {
+                isDeactivated = true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return isDeactivated;
+    }
+
+    
     public boolean savePublicKeyFile(int userId, String publicKeyFilePath, Date createTime, Date endTime) {
         // Đọc nội dung từ tệp thành chuỗi String
         String publicKeyFileContent = null;
@@ -314,7 +339,11 @@ public class DAOKey {
     }
 
 
-
+public static void main(String[] args) {
+	DAOKey d = new DAOKey();
+	
+	System.out.println(d.getKeyInfo(2008));
+}
  
    
 }

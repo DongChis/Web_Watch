@@ -103,8 +103,9 @@
 
 		
 		<c:if test="${not empty auditLogs}">
+		  <div class="audit-log-table-container">
 			<table border="1"
-				style="width: 100%; border-collapse: collapse; text-align: left;">
+				class="audit-log-table">
 				
 				<thead>
 					<tr>
@@ -126,7 +127,7 @@
 						</tr>
 					</c:forEach>
 				</tbody>
-			</table>
+			</table></div>
 		</c:if>
 
 

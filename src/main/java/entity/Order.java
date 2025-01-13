@@ -30,8 +30,16 @@ public class Order {
     
     private boolean edited ;
     
+    public String statusReport;
+    
    
 
+	public String getStatusReport() {
+		return statusReport;
+	}
+	public void setStatusReport(String statusReport) {
+		this.statusReport = statusReport;
+	}
 	public boolean isEdited() {
 		return edited;
 	}
@@ -56,7 +64,7 @@ public class Order {
 	}
 
 	public Order(int orderID, List<CartItem> cartItems, String customerName, String customerEmail, String customerPhone,
-			String customerAddress, String paymentMethod, Timestamp  orderDate,String sign, boolean edited) {
+			String customerAddress, String paymentMethod, Timestamp  orderDate,String sign, boolean edited,String statusReport) {
 		this.orderID = orderID;
 		this.cartItems = cartItems;
 		this.customerName = customerName;
@@ -67,6 +75,7 @@ public class Order {
 		this.orderDate = orderDate;
 		this.sign = sign;
 		this.edited = edited;
+		this.statusReport = statusReport;
 	
 		
 	}
@@ -114,7 +123,7 @@ public class Order {
 	    Duration duration = Duration.between(orderTime, now);
 	    
 	    // Nếu đơn hàng đã được đặt hơn 5 phút, đánh dấu là "Hoàn tất"
-	    if (duration.toMinutes() > 5) {
+	    if (duration.toMinutes() > 300) {
 	        return "Hoàn tất";
 	    } else {   
 	        return "process"; // Đang xử lý

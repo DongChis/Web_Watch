@@ -19,7 +19,7 @@
 					style="background-color: blueviolet; border-radius: 8px; color: white; padding: 10px; margin: 10px 0px 0px 0px;">
 					Chi tiết đơn hàng</h1>
 				<div class="button-container">
-					<a href="orderListAdmin" class="button">Danh sách đơn hàng</a> 
+					<a href="orderListAdmin" class="button">Danh sách đơn hàng</a>
 					<%-- <a
 						href="loadOrder?orderID=${order.orderID}" class="button"
 						style="margin-right: 20px;">Edit</a> --%>
@@ -99,34 +99,36 @@
 										<button class="button" style="margin-left: 10px;"
 											onclick="window.location.href='login'">Xóa</button>
 									</c:if></td>
-								<td>
-								<c:choose>
-    
-    <c:when test="${order.orderStatus == 'process'}">
-        <span style="color: orange;">Đang xử lý</span>
+								<td><c:choose>
+										<c:when test="${order.statusReport == 'Invalid'}">
+											<span style="color: red;">Cần xác minh</span>
+										</c:when>
+										<c:otherwise>
+											<c:choose>
+												<c:when test="${order.orderStatus == 'process'}">
+													<span style="color: orange;">Đang xử lý</span>
+													<c:if test="${order.edited}">
+														<span style="color: blue; margin-left: 10px;">Đã
+															chỉnh sửa</span>
+													</c:if>
+													<button class="button" style="margin-left: 10px;"
+														onclick="cancelOrder(${order.orderID})">Hủy</button>
+												</c:when>
 
-       
-        <c:if test="${order.edited}">
-            <span style="color: blue; margin-left: 10px;">Đã chỉnh sửa</span>
-        </c:if>
+												<c:when test="${order.orderStatus == 'Hoàn tất'}">
+													<span style="color: green;">Đã hoàn tất</span>
+												</c:when>
 
-       
-        <button class="button" style="margin-left: 10px;" onclick="cancelOrder(${order.orderID})">Hủy</button>
-    </c:when>
+												<c:when test="${order.orderStatus == 'cancel'}">
+													<span style="color: red;">Đơn hàng bị hủy</span>
+												</c:when>
 
-   
-    <c:when test="${order.orderStatus == 'Hoàn tất'}">
-        <span style="color: green;">Đã hoàn tất</span>
-    </c:when>
-     <c:when test="${order.orderStatus == 'cancel'}">
-        <span style="color: red;">Đơn hàng bị hủy</span>
-    </c:when>
-
-    
-    <c:otherwise>
-        <span style="color: red;">${order.orderStatus != null ? order.orderStatus : 'cancel'}</span>
-    </c:otherwise>
-</c:choose></td>
+												<c:otherwise>
+													<span style="color: red;">${order.orderStatus != null ? order.orderStatus : 'cancel'}</span>
+												</c:otherwise>
+											</c:choose>
+										</c:otherwise>
+									</c:choose></td>
 
 							</tr>
 						</c:forEach>

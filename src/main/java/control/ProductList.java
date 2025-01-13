@@ -12,43 +12,61 @@ import javax.servlet.http.HttpServletResponse;
 import dao.DAO;
 import entity.Product;
 
-@WebServlet(urlPatterns = {"/productList"})
+@WebServlet(urlPatterns = { "/productList" })
 public class ProductList extends HttpServlet {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		response.setContentType("text/html;charset=UTF-8");
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
 
-		try {
-			int pageSize = 12; // Số sản phẩm mỗi trang
-			String pageParam = request.getParameter("page");
-			int page = (pageParam != null) ? Integer.parseInt(pageParam) : 1;
+        try {
+            // Số sản phẩm mỗi trang
+            int pageSize = 6;
 
-			List<Product> listProduct = DAO.getInstance().getProductsByPage(page, pageSize);
-			int totalProducts = DAO.getInstance().getTotalProducts();
-			int totalPages = (int) Math.ceil((double) totalProducts / pageSize);
+            // Lấy tham số từ request
+            String pageParam = request.getParameter("page");
+            String priceRange = request.getParameter("priceRange");
+            String gender = request.getParameter("gender");
+            String searchQuery = request.getParameter("search");
 
-			request.setAttribute("listAllProduct", listProduct);
-			request.setAttribute("totalPages", totalPages);
-			request.setAttribute("currentPage", page);
+            // Xử lý giá trị trang hiện tại
+            int page = (pageParam != null && !pageParam.isEmpty()) ? Integer.parseInt(pageParam) : 1;
 
-		} catch (Exception e) {
-			e.printStackTrace();
-			request.setAttribute("error", "Đã xảy ra lỗi: " + e.getMessage());
-		}
+            // Lấy danh sách sản phẩm theo bộ lọc
+            DAO dao = DAO.getInstance();
+            List<Product> listProduct = dao.getFilteredProducts(priceRange, gender, searchQuery, page, pageSize);
 
-		request.getRequestDispatcher("ProductList.jsp").forward(request, response);
-	}
+            // Tính tổng số sản phẩm và số trang
+            int totalProducts = dao.getTotalFilteredProducts(priceRange, gender, searchQuery);
+            int totalPages = (int) Math.ceil((double) totalProducts / pageSize);
 
-	protected void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+            // Truyền dữ liệu vào request
+            request.setAttribute("listAllProduct", listProduct);
+            request.setAttribute("totalPages", totalPages);
+            request.setAttribute("currentPage", page);
+            request.setAttribute("priceRange", priceRange);
+            request.setAttribute("gender", gender);
+            request.setAttribute("searchQuery", searchQuery);
 
-		doGet(request, response);
-	}
+        } catch (NumberFormatException e) {
+            // Xử lý lỗi khi tham số không hợp lệ
+            request.setAttribute("error", "Giá trị trang không hợp lệ: " + e.getMessage());
+        } catch (Exception e) {
+            // Xử lý lỗi chung
+            e.printStackTrace();
+            request.setAttribute("error", "Đã xảy ra lỗi: " + e.getMessage());
+        }
 
+        // Chuyển tiếp đến JSP
+        request.getRequestDispatcher("ProductList.jsp").forward(request, response);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        doGet(request, response);
+    }
 }
