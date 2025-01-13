@@ -7,7 +7,7 @@ public class Product {
     private String title;
     private String name;
     private String description;
-    private String price;
+    private double price;
     private String imageURL;
     private String gender;
     private int quantityP;
@@ -22,7 +22,7 @@ public class Product {
 	}
 
 
-	public Product(int productID, String title, String name, String description, String price, String imageURL, String gender) {
+	public Product(int productID, String title, String name, String description, double price, String imageURL, String gender) {
         this.productID = productID;
         this.title = title;
         this.name = name;
@@ -65,11 +65,11 @@ public class Product {
         this.description = description;
     }
 
-    public String getPrice() {
+    public Double getPrice() {
         return price;
     }
 
-    public void setPrice(String price) {
+    public void setPrice(Double price) {
         this.price = price;
     }
 

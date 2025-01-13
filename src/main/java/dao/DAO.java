@@ -58,7 +58,7 @@ public class DAO {
 			try (ResultSet rs = stmt.executeQuery()) {
 				while (rs.next()) {
 					products.add(new Product(rs.getInt("ProductID"), rs.getString("Title"), rs.getString("Name"),
-							rs.getString("Description"), rs.getString("Price"), rs.getString("ImageURL"),
+							rs.getString("Description"), rs.getDouble("Price"), rs.getString("ImageURL"),
 							rs.getString("Gender")));
 				}
 			}
@@ -87,6 +87,172 @@ public class DAO {
 		}
 		return 0;
 	}
+	public List<Product> getFilteredProducts(String priceRange, String gender, String searchQuery, int page, int pageSize) {
+	    List<Product> products = new ArrayList<>();
+	    StringBuilder query = new StringBuilder("SELECT * FROM Products WHERE 1=1");
+
+	    // Thêm điều kiện khoảng giá
+	    if (priceRange != null && !priceRange.isEmpty()) {
+	        String[] prices = priceRange.split("-");
+	        if (prices.length == 2) {
+	            query.append(" AND Price BETWEEN ? AND ?");
+	        } else if (priceRange.endsWith("-")) {
+	            query.append(" AND Price >= ?");
+	        }
+	    }
+
+	    // Thêm điều kiện tìm trong Description với giới tính
+	    if (gender != null && !gender.isEmpty()) {
+	    	 query.append(" AND Gender LIKE ?");
+	    }
+
+	    // Thêm điều kiện tìm kiếm theo tên sản phẩm
+	    if (searchQuery != null && !searchQuery.isEmpty()) {
+	    	 query.append(" AND Name LIKE ? ");
+	    }
+	   
+
+	    // Thêm điều kiện phân trang (OFFSET và FETCH NEXT) OR Title LIKE ?
+	    query.append(" ORDER BY ProductID OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
+
+	    try {
+	        conn = new DBContext().getConnection();
+	        ps = conn.prepareStatement(query.toString());
+
+	        int index = 1;
+
+	        // Gán giá trị khoảng giá
+	        if (priceRange != null && !priceRange.isEmpty()) {
+	            String[] prices = priceRange.split("-");
+	            if (prices.length == 2) {
+	                ps.setDouble(index++, Double.parseDouble(prices[0]));
+	                ps.setDouble(index++, Double.parseDouble(prices[1]));
+	            } else if (priceRange.endsWith("-")) {
+	                ps.setDouble(index++, Double.parseDouble(priceRange.replace("-", "")));
+	            }
+	        }
+
+	        // Gán giá trị tìm trong Description với giới tính
+	        if (gender != null && !gender.isEmpty()) {
+	            ps.setString(index++, "%" + gender + "%");
+	        }
+
+	        // Gán giá trị tìm kiếm theo tên
+	        if (searchQuery != null && !searchQuery.isEmpty()) {
+	            ps.setString(index++, "%" + searchQuery + "%");
+	        }
+
+	        // Gán giá trị phân trang
+	        ps.setInt(index++, (page - 1) * pageSize);
+	        ps.setInt(index++, pageSize);
+
+	        rs = ps.executeQuery();
+	        while (rs.next()) {
+	            products.add(new Product(
+	                    rs.getInt("ProductID"),
+	                    rs.getString("Title"),
+	                    rs.getString("Name"),
+	                    rs.getString("Description"),
+	                    rs.getDouble("Price"),
+	                    rs.getString("ImageURL"),
+	                    rs.getString("Gender")
+	            ));
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    } finally {
+	        try {
+	            if (rs != null) rs.close();
+	            if (ps != null) ps.close();
+	            if (conn != null) conn.close();
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	    }
+
+	    return products;
+	}
+
+
+
+
+	public int getTotalFilteredProducts(String priceRange, String gender, String searchQuery) {
+	    int total = 0;
+	    StringBuilder query = new StringBuilder("SELECT COUNT(*) FROM Products WHERE 1=1");
+
+	    // Thêm điều kiện khoảng giá
+	    if (priceRange != null && !priceRange.isEmpty()) {
+	        String[] prices = priceRange.split("-");
+	        if (prices.length == 2) {
+	            query.append(" AND Price BETWEEN ? AND ?");
+	        } else if (priceRange.endsWith("-")) {
+	            query.append(" AND Price >= ?");
+	        }
+	    }
+
+	    // Thêm điều kiện tìm trong Description với giới tính
+	    if (gender != null && !gender.isEmpty()) {
+	        query.append(" AND Gender LIKE ?");
+	    }
+
+	    // Thêm điều kiện tìm kiếm theo Name hoặc Title
+	    if (searchQuery != null && !searchQuery.isEmpty()) {
+	        query.append(" AND Name LIKE ? ");
+	    }
+	  
+
+	    try {
+	        // Kết nối đến cơ sở dữ liệu
+	        conn = new DBContext().getConnection();
+	        ps = conn.prepareStatement(query.toString());
+
+	        int index = 1;
+
+	        // Gán giá trị khoảng giá
+	        if (priceRange != null && !priceRange.isEmpty()) {
+	            String[] prices = priceRange.split("-");
+	            if (prices.length == 2) {
+	                ps.setDouble(index++, Double.parseDouble(prices[0]));
+	                ps.setDouble(index++, Double.parseDouble(prices[1]));
+	            } else if (priceRange.endsWith("-")) {
+	                ps.setDouble(index++, Double.parseDouble(priceRange.replace("-", "")));
+	            }
+	        }
+
+	        // Gán giá trị tìm trong Description với giới tính
+	        if (gender != null && !gender.isEmpty()) {
+	            ps.setString(index++, "%" + gender + "%");
+	        }
+
+	        // Gán giá trị tìm kiếm theo Name và Title
+	        if (searchQuery != null && !searchQuery.isEmpty()) {
+	            ps.setString(index++, "%" + searchQuery + "%"); // Gán cho Name
+	            ps.setString(index++, "%" + searchQuery + "%"); // Gán cho Title
+	        }
+
+	        // Thực thi câu lệnh
+	        rs = ps.executeQuery();
+	        if (rs.next()) {
+	            total = rs.getInt(1); // Lấy tổng số sản phẩm
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    } finally {
+	        // Đóng tài nguyên
+	        try {
+	            if (rs != null) rs.close();
+	            if (ps != null) ps.close();
+	            if (conn != null) conn.close();
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	    }
+
+	    return total;
+	}
+
+
+
 
 	// Phương thức để lấy tất cả các sản phẩm
 	public List<Product> getAllProducts() {
@@ -98,7 +264,7 @@ public class DAO {
 			rs = ps.executeQuery();
 			while (rs.next()) {
 				products.add(new Product(rs.getInt("ProductID"), rs.getString("Title"), rs.getString("Name"),
-						rs.getString("Description"), rs.getString("Price"), rs.getString("ImageURL"),
+						rs.getString("Description"), rs.getDouble("Price"), rs.getString("ImageURL"),
 						rs.getString("Gender")));
 
 			}
@@ -792,7 +958,7 @@ public class DAO {
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
 					Product product = new Product(rs.getInt("ProductID"), rs.getString("Title"), rs.getString("Name"),
-							rs.getString("Description"), rs.getString("Price"), rs.getString("ImageURL"),
+							rs.getString("Description"), rs.getDouble("Price"), rs.getString("ImageURL"),
 							rs.getString("Gender"));
 					products.add(product);
 				}
@@ -1429,7 +1595,7 @@ public class DAO {
 			ps.setString(1, id);
 			rs = ps.executeQuery();
 			while (rs.next()) {
-				return new Product(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5),
+				return new Product(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getDouble(5),
 						rs.getString(6), rs.getString(7));
 			}
 

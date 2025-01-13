@@ -13,7 +13,7 @@ public class DBContext {
 //	String password = "123";
 
 // SQLSERVER name dunghoang: DESKTOP-9LNQ1HF
-	String url = "jdbc:sqlserver://DESKTOP-9LNQ1HF\\MSSQLSERVER02:1433;databaseName=DongHo;encrypt=false";
+	String url = "jdbc:sqlserver://DESKTOP-9LNQ1HF\\MSSQLSERVER02:1433;databaseName=DongHo;encrypt=true;trustServerCertificate=true;characterEncoding=UTF-8";
 	String userName = "sa";
 	String password = "dunghoang168";
 
