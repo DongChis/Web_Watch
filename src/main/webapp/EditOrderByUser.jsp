@@ -91,8 +91,6 @@
 
 
 
-
-
 				<div class="form-group">
 					<label for="payment-method">Phương Thức Thanh Toán:</label> <select
 						id="payment-method" name="payment-method" required>
