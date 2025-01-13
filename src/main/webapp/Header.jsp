@@ -51,6 +51,7 @@
 	<div class="main-header">
 		<div class="logo">
 			<h1>WATCH STORE</h1>
+			
 		</div>
 		<div class="nav-menu">
 			<ul>

@@ -32,7 +32,7 @@ public class OrderItem {
 	}
 
 	public Double getTotalPrice() {
-		return totalPrice= Double.parseDouble(DAO.getInstance().getProductByID(productId).getPrice())
+		return totalPrice= DAO.getInstance().getProductByID(productId).getPrice()
 				*Double.parseDouble(quantityOrder);
 	}
 

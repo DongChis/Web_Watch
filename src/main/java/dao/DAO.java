@@ -11,12 +11,14 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -174,6 +176,92 @@ public class DAO {
 	}
 
 
+
+	public void moveUserToUsers(int userId) {
+	    // Kiểm tra xem UserID đã tồn tại trong bảng Users chưa
+	    String checkUserQuery = "SELECT COUNT(*) FROM Users WHERE UserID = ?";
+	    try (Connection conn = new DBContext().getConnection();
+	         PreparedStatement psCheck = conn.prepareStatement(checkUserQuery)) {
+	        psCheck.setInt(1, userId);
+	        ResultSet rsCheck = psCheck.executeQuery();
+	        
+	        if (rsCheck.next() && rsCheck.getInt(1) == 0) {
+	            // Nếu người dùng chưa tồn tại trong bảng Users, thực hiện chuyển
+	            String query = "INSERT INTO Users (Username, Password, Email, Role, CreatedAt, emailVerified) " +
+	                           "SELECT Username, Password, Email, 'Customer', CreatedAt, TRUE FROM PendingVerification WHERE UserID = ?";
+	            try (PreparedStatement ps = conn.prepareStatement(query)) {
+	                ps.setInt(1, userId);
+	                ps.executeUpdate();
+	            }
+	            
+	            // Tạo token cho người dùng
+	            String token = UUID.randomUUID().toString();
+	            String insertTokenQuery = "INSERT INTO Tokens (UserID, Token) VALUES (?, ?)";
+	            try (PreparedStatement psInsertToken = conn.prepareStatement(insertTokenQuery)) {
+	                psInsertToken.setInt(1, userId);
+	                psInsertToken.setString(2, token);
+	                psInsertToken.executeUpdate();
+	            }
+
+	            // Sau khi chuyển người dùng, xóa bản ghi trong PendingVerification
+	            String deletePendingQuery = "DELETE FROM PendingVerification WHERE UserID = ?";
+	            try (PreparedStatement psDelete = conn.prepareStatement(deletePendingQuery)) {
+	                psDelete.setInt(1, userId);
+	                psDelete.executeUpdate();
+	            }
+	        }
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	}
+
+
+	public int saveUserAndGenerateToken(String username, String password, String email) {
+	    // Insert user into Users table
+	    String insertUserQuery = "INSERT INTO Users (Username, Password, Email, Role, CreatedAt, emailVerified) VALUES (?, ?, ?, 'Customer', GETDATE(), 0)";
+	    try (Connection conn = new DBContext().getConnection();
+	         PreparedStatement ps = conn.prepareStatement(insertUserQuery, Statement.RETURN_GENERATED_KEYS)) {
+	        
+	        // Insert user into Users table
+	        ps.setString(1, username);
+	        ps.setString(2, password);
+	        ps.setString(3, email);
+	        ps.executeUpdate();
+	        
+	        // Get the generated UserID
+	        ResultSet rs = ps.getGeneratedKeys();
+	        if (rs.next()) {
+	            int userId = rs.getInt(1);  // Get the UserID from the inserted user
+	            
+	            // Generate token and insert into Tokens table
+	            String token = UUID.randomUUID().toString();
+	            String insertTokenQuery = "INSERT INTO Tokens (UserID, Token) VALUES (?, ?)";
+	            try (PreparedStatement psToken = conn.prepareStatement(insertTokenQuery)) {
+	                psToken.setInt(1, userId);
+	                psToken.setString(2, token);
+	                psToken.executeUpdate();
+	            }
+	            
+	            return userId;  // Return the UserID
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return -1;  // Return -1 if there is an error
+	}
+
+	
+	public void deleteFromPendingVerification(int userId) {
+	    String query = "DELETE FROM PendingVerification WHERE UserID = ?";
+	    try (Connection conn =new DBContext(). getConnection();
+	         PreparedStatement ps = conn.prepareStatement(query)) {
+	        ps.setInt(1, userId);
+	        ps.executeUpdate();
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	}
 
 
 	public int getTotalFilteredProducts(String priceRange, String gender, String searchQuery) {
@@ -1061,6 +1149,29 @@ public class DAO {
 		}
 		return null;
 	}
+	public User getUserByEmail(String email) {
+	    String query = "SELECT * FROM Users WHERE Email = ?";
+	    try (Connection conn = new DBContext().getConnection();
+	         PreparedStatement ps = conn.prepareStatement(query)) {
+	        ps.setString(1, email);
+	        try (ResultSet rs = ps.executeQuery()) {
+	            if (rs.next()) {
+	                return new User(
+	                    rs.getInt("UserID"), 
+	                    rs.getString("Username"), 
+	                    rs.getString("Password"),
+	                    rs.getString("Email"), 
+	                    rs.getString("Role"), 
+	                    rs.getDate("CreatedAt")
+	                );
+	            }
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return null;
+	}
+
 
 	public boolean isAdmin(User user) {
 		String query = "SELECT Role FROM Users WHERE UserID = ?";
@@ -1097,6 +1208,72 @@ public class DAO {
 			}
 		}
 		return false;
+	}
+	
+	public boolean verifyEmail(int userId) {
+	    String updateQuery = "UPDATE Users SET emailVerified = 1 WHERE UserID = ?";
+	    try (Connection conn = new DBContext().getConnection();
+	         PreparedStatement ps = conn.prepareStatement(updateQuery)) {
+	        ps.setInt(1, userId);
+	        int rowsUpdated = ps.executeUpdate();
+	        return rowsUpdated > 0; // Trả về true nếu có ít nhất một bản ghi được cập nhật
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return false; // Trả về false nếu có lỗi
+	    }
+	}
+
+	public void deleteUserWithTokens(int userId) {
+	    String deleteTokensQuery = "DELETE FROM Tokens WHERE UserID = ?";
+	    String deleteUserQuery = "DELETE FROM Users WHERE UserID = ?";
+	    
+	    try (Connection conn = new DBContext().getConnection();
+	         PreparedStatement psDeleteTokens = conn.prepareStatement(deleteTokensQuery);
+	         PreparedStatement psDeleteUser = conn.prepareStatement(deleteUserQuery)) {
+
+	        // Xóa tất cả các token liên quan đến người dùng
+	        psDeleteTokens.setInt(1, userId);
+	        psDeleteTokens.executeUpdate();
+
+	        // Xóa người dùng khỏi bảng Users
+	        psDeleteUser.setInt(1, userId);
+	        psDeleteUser.executeUpdate();
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	}
+
+	public int saveTemporaryUser(String username, String password, String email) {
+	    String query = "INSERT INTO PendingVerification (Username, Password, Email, Token, ExpiryTime) VALUES (?, ?, ?, NULL, NOW() + INTERVAL 1 MINUTE)";
+	    try (Connection conn = new DBContext().getConnection();
+	         PreparedStatement ps = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+	        ps.setString(1, username);
+	        ps.setString(2, password);
+	        ps.setString(3, email);
+	        ps.executeUpdate();
+
+	        ResultSet rs = ps.getGeneratedKeys();
+	        if (rs.next()) {
+	            return rs.getInt(1); // Trả về userId vừa tạo
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return -1; // Trả về -1 nếu không tạo được người dùng
+	}
+	
+	
+	public void saveToken(int userId, String token) {
+	    String query = "UPDATE PendingVerification SET Token = ? WHERE UserID = ?";
+	    try (Connection conn = new DBContext().getConnection();
+	         PreparedStatement ps = conn.prepareStatement(query)) {
+	        ps.setString(1, token);
+	        ps.setInt(2, userId);
+	        ps.executeUpdate();
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
 	}
 
 	public void signUp(String username, String password, String email) throws Exception {
@@ -1594,20 +1771,6 @@ public class DAO {
 		return isVerified; // Trả về trạng thái xác minh email
 	}
 
-	public boolean verifyEmail(int userId) throws Exception {
-		String sql = "UPDATE users SET emailVerified = 1 WHERE userId = ?";
-
-		try (Connection conn = new DBContext().getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-			stmt.setInt(1, userId);
-			int rowsUpdated = stmt.executeUpdate();
-
-			return rowsUpdated > 0; // Trả về true nếu cập nhật thành công
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return false;
-		}
-	}
 
 	public void updateEmailVerified(int userId) throws Exception {
 		String sql = "UPDATE users SET emailVerified = 0 WHERE UserID = ?";
@@ -1638,31 +1801,7 @@ public class DAO {
 		// d.deleteProduct(session,"3002");
 
 		// System.out.println(d.getOrderDateById(13));
-		List<CartItem> cartItems = new ArrayList<CartItem>();
-		String signAf = "cKKu6Rut++GF+w++OyEDCjxdNmRTnR/4uQtHT4JjOJxuoQGI4cf9V/xbR1vtuOcenj12a5KS7c680qs7hwnIN4mMiH6gj56oZr0tqgOx9zwdP3afdlld2T1PNBhfq9g3RsrDsm+Svcv+WFHmM1K+MXmz///IweGoZXZi1I8V8XIiVUFCnCX39e4wFFVrd7r1LZF8+OSsN0wLy/2hwjJC/y54ikiOInxKO3zq7mwN3rexPopC5dWyd7oNAr83ANibWR5mnGkBmcI5XnK9LsTSWUuPB8v2+jMUOCjtl20WrsdGDt/Hft6mjLeMbyOCJ9TSrVrGw5ZzI12/LWtW33XfOA==";
-		String pubKey = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArkBDXCH3SloQoetjqxKO9Ey7N6WcSjlXP+Ugyx0byH2/1JlOHli/xgRfnrxeQ+asFG3WCRK2jImeN3Qg4n+MHvH1PQpapWaahf6B0FvNYnyQRKZF/5lZRVip8DKQ+GKZVQZIpZcbY9xWLlaBxJ6UD+Ldehecy4JA4llOoWxfk9jTpQXHA0HY4ty3nWeBfIx+/PBtIBdhlH3TIeaKqZ4dQ3T++LhMcWXteW49Gy0wCMk8XuXcFHH1LvFD5tpoIRKikjXb39HV0k89YfCgUg3Hh4fInXutKXXsEw9Gnitfw0suiRbEuXwvn4ndqaAbGT9v4IBostaWV3XuqYk/bSWEawIDAQAB";
-		String signO = "nN/4SpYuDElUATudHNGtEf/+yCZLwupl+TZJosKx6cPxsigeBC5Ss9btwiEHvnkTDpVbcGFHPWbStUOPBJZVBoChp3bEmOAGs4zahkvL3p5CSEakdqmC6SsVqHPxv1/yHFkaGiKBoQ4bf5Q99lWku+h4cc9lsUxwJhrNuhohdd+LXIHVUIEOW1AKPmMskcBRI/7oDnc6I7nlRWgcYncjb67qbBuLdjMrXwRX9l6KdUpsuE+8pIN7sJiVhJtgq1gG3xhSo0PjhOiutyU3J2qDoeYnyFatm5Lv+oG1fv5C1rmIOlfmEIrV3eshKUlTJyhxoUiptlSodD6z1XFfw7UxYQ==";
-<<<<<<< HEAD
-		Order o = new Order(9064, cartItems, "dunggghhh", "a@gmail.com", "123", "123", "credit-card",
-				new Timestamp(System.currentTimeMillis()), signO, true);
-=======
-		Order o = new Order(9064, cartItems, "dunggghhh", "a@gmail.com", "123", "123", "credit-card", new Timestamp(System.currentTimeMillis()), signO,
-				true,"valid");
->>>>>>> main
-
-		// System.out.println(d.getOrderStatusByOrderID(7054));
-
-		// System.out.println(d.getOrdersByPage(1,5));
-
-		// Order o = new Order(5048, cartItems, "a", "a", "a", "a", "a", new
-		// Timestamp(System.currentTimeMillis()), "a");
-		// System.out.println(d.updateOrder(o, 9064, 2008));
-		System.out.println(d.isEdited(o, pubKey, 9064));
-
-		// System.out.println("de: " + d.decodeSignature(signAf, pubKey));
-
-		// System.out.println(d.decodeSignature(signAf, pubKey));
-
+	
 	}
 
 }
