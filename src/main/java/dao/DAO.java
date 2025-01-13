@@ -167,291 +167,283 @@ public class DAO {
 
 		return orderStatus; // Trả về giá trị OrderStatus (hoặc null nếu không tìm thấy)
 	}
-	
+
 	public Map<Integer, Boolean> getOrderEditStatus() {
-	    Map<Integer, Boolean> editStatusMap = new HashMap<>();
-	    String query = "SELECT DISTINCT OrderID FROM OrderAuditLog";
+		Map<Integer, Boolean> editStatusMap = new HashMap<>();
+		String query = "SELECT DISTINCT OrderID FROM OrderAuditLog";
 
-	    try (Connection conn = new DBContext().getConnection();
-	         PreparedStatement ps = conn.prepareStatement(query);
-	         ResultSet rs = ps.executeQuery()) {
+		try (Connection conn = new DBContext().getConnection();
+				PreparedStatement ps = conn.prepareStatement(query);
+				ResultSet rs = ps.executeQuery()) {
 
-	        while (rs.next()) {
-	            int orderId = rs.getInt("OrderID");
-	            editStatusMap.put(orderId, true); // Đánh dấu đơn hàng này đã bị chỉnh sửa
-	        }
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    }
+			while (rs.next()) {
+				int orderId = rs.getInt("OrderID");
+				editStatusMap.put(orderId, true); // Đánh dấu đơn hàng này đã bị chỉnh sửa
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-	    return editStatusMap;
+		return editStatusMap;
 	}
 
-	
 	public String getOrderSignatureByOrderID(int orderID) {
-        String getOrderHashQuery = "SELECT Signature FROM Orders1 WHERE OrderID = ?";
-        String signature = null;
+		String getOrderHashQuery = "SELECT Signature FROM Orders1 WHERE OrderID = ?";
+		String signature = null;
 
-        // Establishing a connection and executing the query
-        try (Connection conn = new DBContext().getConnection();
-             PreparedStatement stmt = conn.prepareStatement(getOrderHashQuery)) {
+		// Establishing a connection and executing the query
+		try (Connection conn = new DBContext().getConnection();
+				PreparedStatement stmt = conn.prepareStatement(getOrderHashQuery)) {
 
-            stmt.setInt(1, orderID);  // Set the OrderID parameter
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    signature = rs.getString("Signature");  // Get the signature from the result set
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            // Return null or handle error as needed
-        }
+			stmt.setInt(1, orderID); // Set the OrderID parameter
+			try (ResultSet rs = stmt.executeQuery()) {
+				if (rs.next()) {
+					signature = rs.getString("Signature"); // Get the signature from the result set
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			// Return null or handle error as needed
+		}
 
-        return signature;
-    }
-	
-	public List<AuditLog> getAuditLogsForOrder(int orderId) {
-	    List<AuditLog> logs = new ArrayList<>();
-	    String query = "SELECT * FROM OrderAuditLog WHERE OrderID = ? ORDER BY ChangeTime DESC";
-
-	    try (Connection conn = new DBContext().getConnection();
-	         PreparedStatement ps = conn.prepareStatement(query)) {
-	        ps.setInt(1, orderId);
-	        ResultSet rs = ps.executeQuery();
-
-	        while (rs.next()) {
-	            AuditLog log = new AuditLog();
-	            log.setOrderID(rs.getInt("OrderID"));
-	            log.setChangedColumn(rs.getString("ChangedColumn"));
-	            log.setOldValue(rs.getString("OldValue"));
-	            log.setNewValue(rs.getString("NewValue"));
-	            log.setChangedBy(rs.getString("ChangedBy"));
-	            log.setChangeTime(rs.getTimestamp("ChangeTime"));
-	            logs.add(log);
-	        }
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    }
-	    return logs;
+		return signature;
 	}
 
+	public List<AuditLog> getAuditLogsForOrder(int orderId) {
+		List<AuditLog> logs = new ArrayList<>();
+		String query = "SELECT * FROM OrderAuditLog WHERE OrderID = ? ORDER BY ChangeTime DESC";
+
+		try (Connection conn = new DBContext().getConnection(); PreparedStatement ps = conn.prepareStatement(query)) {
+			ps.setInt(1, orderId);
+			ResultSet rs = ps.executeQuery();
+
+			while (rs.next()) {
+				AuditLog log = new AuditLog();
+				log.setOrderID(rs.getInt("OrderID"));
+				log.setChangedColumn(rs.getString("ChangedColumn"));
+				log.setOldValue(rs.getString("OldValue"));
+				log.setNewValue(rs.getString("NewValue"));
+				log.setChangedBy(rs.getString("ChangedBy"));
+				log.setChangeTime(rs.getTimestamp("ChangeTime"));
+				logs.add(log);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return logs;
+	}
 
 	public boolean updateOrder(Order updatedOrder, int orderID, int userID) throws Exception {
-	    String updateOrderQuery = "UPDATE Orders1 SET CustomerName = ?, CustomerEmail = ?, CustomerPhone = ?, CustomerAddress = ?, PaymentMethod = ?, OrderDate = ?, Signature = ? WHERE OrderID = ?";
-	    String updateOrderItemQuery = "UPDATE OrderItems1 SET Quantity = ?, Price = ? WHERE OrderID = ?";
-	    String getOrderHashQuery = "SELECT Signature FROM Orders1 WHERE OrderID = ?";
-	    String getPublicKeyQuery = "SELECT PublicKey FROM KeyManagement WHERE UserID = ?"; // Query để lấy public key
-	    String setEditedFlagQuery = "UPDATE Orders1 SET Edited = ? WHERE OrderID = ?"; // Query to set Edited flag
+		String updateOrderQuery = "UPDATE Orders1 SET CustomerName = ?, CustomerEmail = ?, CustomerPhone = ?, CustomerAddress = ?, PaymentMethod = ?, OrderDate = ?, Signature = ? WHERE OrderID = ?";
+		String updateOrderItemQuery = "UPDATE OrderItems1 SET Quantity = ?, Price = ? WHERE OrderID = ?";
+		String getOrderHashQuery = "SELECT Signature FROM Orders1 WHERE OrderID = ?";
+		String getPublicKeyQuery = "SELECT PublicKey FROM KeyManagement WHERE UserID = ?"; // Query để lấy public key
+		String setEditedFlagQuery = "UPDATE Orders1 SET Edited = ? WHERE OrderID = ?"; // Query to set Edited flag
 
-	    boolean isUpdated = false;
-	    Connection conn = null;
+		boolean isUpdated = false;
+		Connection conn = null;
 
-	    try {
-	        conn = new DBContext().getConnection();
-	        conn.setAutoCommit(false); // Start transaction
+		try {
+			conn = new DBContext().getConnection();
+			conn.setAutoCommit(false); // Start transaction
 
-	        // Get current signature (hash) from the database
-	        String hash = getOrderHashByOrderID(orderID);
+			// Get current signature (hash) from the database
+			String hash = getOrderHashByOrderID(orderID);
 
-	        // Get the signature from the order
-	        String sign = getOrderSignatureByOrderID(orderID);
+			// Get the signature from the order
+			String sign = getOrderSignatureByOrderID(orderID);
 
-	        // Get the public key from KeyManagement based on UserID
-	        String publicKeyString = getPublicKeyByUserID(userID);
+			// Get the public key from KeyManagement based on UserID
+			String publicKeyString = getPublicKeyByUserID(userID);
 
-	        // Decode the signature using the public key
-	        String decodedSignature = decodeSignature(sign, publicKeyString);
+			// Decode the signature using the public key
+			String decodedSignature = decodeSignature(sign, publicKeyString);
 
-	        // Check if the signature is valid (if needed)
-	        // if (!isSignatureValid(decodedSignature, updatedOrder)) {
-	        //     throw new Exception("Invalid signature. The order data has been tampered with.");
-	        // }
+			// Check if the signature is valid (if needed)
+			// if (!isSignatureValid(decodedSignature, updatedOrder)) {
+			// throw new Exception("Invalid signature. The order data has been tampered
+			// with.");
+			// }
 
-	        // Update order information and order items
-	        try (PreparedStatement orderStmt = conn.prepareStatement(updateOrderQuery);
-	             PreparedStatement orderItemStmt = conn.prepareStatement(updateOrderItemQuery)) {
+			// Update order information and order items
+			try (PreparedStatement orderStmt = conn.prepareStatement(updateOrderQuery);
+					PreparedStatement orderItemStmt = conn.prepareStatement(updateOrderItemQuery)) {
 
-	            // Update main order information
-	            orderStmt.setString(1, updatedOrder.getCustomerName());
-	            orderStmt.setString(2, updatedOrder.getCustomerEmail());
-	            orderStmt.setString(3, updatedOrder.getCustomerPhone());
-	            orderStmt.setString(4, updatedOrder.getCustomerAddress());
-	            orderStmt.setString(5, updatedOrder.getPaymentMethod());
-	            orderStmt.setTimestamp(6, new Timestamp(System.currentTimeMillis()));
-	            orderStmt.setString(7, updatedOrder.getSign());
-	            orderStmt.setInt(8, orderID);
+				// Update main order information
+				orderStmt.setString(1, updatedOrder.getCustomerName());
+				orderStmt.setString(2, updatedOrder.getCustomerEmail());
+				orderStmt.setString(3, updatedOrder.getCustomerPhone());
+				orderStmt.setString(4, updatedOrder.getCustomerAddress());
+				orderStmt.setString(5, updatedOrder.getPaymentMethod());
+				orderStmt.setTimestamp(6, new Timestamp(System.currentTimeMillis()));
+				orderStmt.setString(7, updatedOrder.getSign());
+				orderStmt.setInt(8, orderID);
 
-	            int orderRowsUpdated = orderStmt.executeUpdate();
+				int orderRowsUpdated = orderStmt.executeUpdate();
 
-	            // Update order items
-	            for (CartItem item : updatedOrder.getCartItems()) {
-	                orderItemStmt.setInt(1, item.getQuantity());
-	                orderItemStmt.setDouble(2, item.getPrice());
-	                orderItemStmt.setInt(3, orderID);
-	                orderItemStmt.addBatch(); // Add to batch
-	            }
+				// Update order items
+				for (CartItem item : updatedOrder.getCartItems()) {
+					orderItemStmt.setInt(1, item.getQuantity());
+					orderItemStmt.setDouble(2, item.getPrice());
+					orderItemStmt.setInt(3, orderID);
+					orderItemStmt.addBatch(); // Add to batch
+				}
 
-	            int[] orderItemsRowsUpdated = orderItemStmt.executeBatch(); // Execute batch
+				int[] orderItemsRowsUpdated = orderItemStmt.executeBatch(); // Execute batch
 
-	            // Check if the order has been modified
-	            boolean isEdited = !hash.equals(decodedSignature);
-	            if (isEdited) {
-	                System.out.println("Order has been edited directly in the database!");
-	            }
+				// Check if the order has been modified
+				boolean isEdited = !hash.equals(decodedSignature);
+				if (isEdited) {
+					System.out.println("Order has been edited directly in the database!");
+				}
 
-	            // If the update was successful, set the Edited column to true
-	            if (isUpdated = orderRowsUpdated > 0 && orderItemsRowsUpdated.length == updatedOrder.getCartItems().size()) {
-	                try (PreparedStatement updateEditedStmt = conn.prepareStatement(setEditedFlagQuery)) {
-	                    updateEditedStmt.setBoolean(1, true); // Set Edited to true
-	                    updateEditedStmt.setInt(2, orderID);
-	                    updateEditedStmt.executeUpdate();
-	                }
-	            }
+				// If the update was successful, set the Edited column to true
+				if (isUpdated = orderRowsUpdated > 0
+						&& orderItemsRowsUpdated.length == updatedOrder.getCartItems().size()) {
+					try (PreparedStatement updateEditedStmt = conn.prepareStatement(setEditedFlagQuery)) {
+						updateEditedStmt.setBoolean(1, true); // Set Edited to true
+						updateEditedStmt.setInt(2, orderID);
+						updateEditedStmt.executeUpdate();
+					}
+				}
 
-	            // Commit transaction if everything is successful
-	            conn.commit();
-	        }
+				// Commit transaction if everything is successful
+				conn.commit();
+			}
 
-	    } catch (SQLException e) {
-	        System.err.println("SQL error occurred: " + e.getMessage());
-	        e.printStackTrace();
-	        if (conn != null) {
-	            conn.rollback(); // Rollback on error
-	        }
-	        throw new Exception("Database operation failed", e);
+		} catch (SQLException e) {
+			System.err.println("SQL error occurred: " + e.getMessage());
+			e.printStackTrace();
+			if (conn != null) {
+				conn.rollback(); // Rollback on error
+			}
+			throw new Exception("Database operation failed", e);
 
-	    } catch (Exception e) {
-	        System.err.println("Error occurred: " + e.getMessage());
-	        e.printStackTrace();
-	        if (conn != null) {
-	            conn.rollback(); // Rollback on error
-	        }
-	        throw new Exception("An error occurred while updating the order.", e);
+		} catch (Exception e) {
+			System.err.println("Error occurred: " + e.getMessage());
+			e.printStackTrace();
+			if (conn != null) {
+				conn.rollback(); // Rollback on error
+			}
+			throw new Exception("An error occurred while updating the order.", e);
 
-	    } finally {
-	        if (conn != null) {
-	            conn.close(); // Close connection
-	        }
-	    }
+		} finally {
+			if (conn != null) {
+				conn.close(); // Close connection
+			}
+		}
 
-	    return isUpdated;
+		return isUpdated;
 	}
+
 	public List<AuditLog> getAuditLogsForUserOrders(int userId) {
-	    List<AuditLog> logs = new ArrayList<>();
-	    String query = "SELECT al.* FROM OrderAuditLog al " +
-	                   "JOIN Orders1 o ON al.OrderID = o.OrderID " +
-	                   "WHERE o.UserID = ? " +
-	                   "ORDER BY al.ChangeTime DESC";
+		List<AuditLog> logs = new ArrayList<>();
+		String query = "SELECT al.* FROM OrderAuditLog al " + "JOIN Orders1 o ON al.OrderID = o.OrderID "
+				+ "WHERE o.UserID = ? " + "ORDER BY al.ChangeTime DESC";
 
-	    try (Connection conn = new DBContext().getConnection();
-	         PreparedStatement ps = conn.prepareStatement(query)) {
-	        ps.setInt(1, userId);
-	        ResultSet rs = ps.executeQuery();
+		try (Connection conn = new DBContext().getConnection(); PreparedStatement ps = conn.prepareStatement(query)) {
+			ps.setInt(1, userId);
+			ResultSet rs = ps.executeQuery();
 
-	        while (rs.next()) {
-	            AuditLog log = new AuditLog();
-	            log.setAuditID(rs.getInt("AuditID"));
-	            log.setOrderID(rs.getInt("OrderID"));
-	            log.setChangedColumn(rs.getString("ChangedColumn"));
-	            log.setOldValue(rs.getString("OldValue"));
-	            log.setNewValue(rs.getString("NewValue"));
-	            log.setChangedBy(rs.getString("ChangedBy"));
-	            log.setChangeTime(rs.getTimestamp("ChangeTime"));
-	            logs.add(log);
-	        }
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    }
-	    return logs;
+			while (rs.next()) {
+				AuditLog log = new AuditLog();
+				log.setAuditID(rs.getInt("AuditID"));
+				log.setOrderID(rs.getInt("OrderID"));
+				log.setChangedColumn(rs.getString("ChangedColumn"));
+				log.setOldValue(rs.getString("OldValue"));
+				log.setNewValue(rs.getString("NewValue"));
+				log.setChangedBy(rs.getString("ChangedBy"));
+				log.setChangeTime(rs.getTimestamp("ChangeTime"));
+				logs.add(log);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return logs;
 	}
-
 
 	public List<AuditLog> getAuditLogs(int orderId) {
-	    List<AuditLog> logs = new ArrayList<>();
-	    String query = "SELECT * FROM OrderAuditLog WHERE OrderID = ? ORDER BY ChangeTime DESC";
+		List<AuditLog> logs = new ArrayList<>();
+		String query = "SELECT * FROM OrderAuditLog WHERE OrderID = ? ORDER BY ChangeTime DESC";
 
-	    try (Connection conn = new DBContext().getConnection();
-	         PreparedStatement ps = conn.prepareStatement(query)) {
-	        ps.setInt(1, orderId);
-	        ResultSet rs = ps.executeQuery();
+		try (Connection conn = new DBContext().getConnection(); PreparedStatement ps = conn.prepareStatement(query)) {
+			ps.setInt(1, orderId);
+			ResultSet rs = ps.executeQuery();
 
-	        while (rs.next()) {
-	            AuditLog log = new AuditLog();
-	            log.setAuditID(rs.getInt("AuditID"));
-	            log.setOrderID(rs.getInt("OrderID"));
-	            log.setChangedColumn(rs.getString("ChangedColumn"));
-	            log.setOldValue(rs.getString("OldValue"));
-	            log.setNewValue(rs.getString("NewValue"));
-	            log.setChangedBy(rs.getString("ChangedBy"));
-	            log.setChangeTime(rs.getTimestamp("ChangeTime"));
-	            logs.add(log);
-	        }
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    }
-	    return logs;
+			while (rs.next()) {
+				AuditLog log = new AuditLog();
+				log.setAuditID(rs.getInt("AuditID"));
+				log.setOrderID(rs.getInt("OrderID"));
+				log.setChangedColumn(rs.getString("ChangedColumn"));
+				log.setOldValue(rs.getString("OldValue"));
+				log.setNewValue(rs.getString("NewValue"));
+				log.setChangedBy(rs.getString("ChangedBy"));
+				log.setChangeTime(rs.getTimestamp("ChangeTime"));
+				logs.add(log);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return logs;
 	}
 
-
-
 	public String decodeSignature(String signature, String publicKeyString) throws Exception {
-	    if (signature == null || publicKeyString == null) {
-	        throw new IllegalArgumentException("Signature or public key cannot be null");
-	    }
+		if (signature == null || publicKeyString == null) {
+			throw new IllegalArgumentException("Signature or public key cannot be null");
+		}
 
-	    try {
-	        // Convert public key from string to PublicKey object
-	        PublicKey publicKey = getPublicKeyFromString(publicKeyString);
+		try {
+			// Convert public key from string to PublicKey object
+			PublicKey publicKey = getPublicKeyFromString(publicKeyString);
 
-	        // Initialize cipher for decryption with RSA
-	        Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-	        cipher.init(Cipher.DECRYPT_MODE, publicKey);
+			// Initialize cipher for decryption with RSA
+			Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+			cipher.init(Cipher.DECRYPT_MODE, publicKey);
 
-	        // Decode the base64 encoded signature
-	        byte[] decodedBytes = Base64.getDecoder().decode(signature);
+			// Decode the base64 encoded signature
+			byte[] decodedBytes = Base64.getDecoder().decode(signature);
 
-	        // Decrypt the signature
-	        byte[] decryptedBytes = cipher.doFinal(decodedBytes);
+			// Decrypt the signature
+			byte[] decryptedBytes = cipher.doFinal(decodedBytes);
 
-	        // Create hash of the decrypted data (SHA-256)
-	        MessageDigest digest = MessageDigest.getInstance("SHA-256");
-	        byte[] hashBytes = digest.digest(decryptedBytes);
+			// Create hash of the decrypted data (SHA-256)
+			MessageDigest digest = MessageDigest.getInstance("SHA-256");
+			byte[] hashBytes = digest.digest(decryptedBytes);
 
-	        return bytesToHex(hashBytes);
-	    } catch (BadPaddingException e) {
-	        throw new BadPaddingException("Decryption failed: likely due to invalid padding or mismatched key.");
-	    } catch (InvalidKeyException e) {
-	        throw new InvalidKeyException("Invalid public key for decryption.");
-	    } catch (IllegalBlockSizeException e) {
-	        throw new IllegalBlockSizeException("Decryption failed: block size mismatch.");
-	    } catch (NoSuchAlgorithmException e) {
-	        throw new NoSuchAlgorithmException("SHA-256 or RSA algorithm not found.");
-	    } catch (Exception e) {
-	        throw new Exception("Failed to decode the signature: " + e.getMessage(), e);
-	    }
+			return bytesToHex(hashBytes);
+		} catch (BadPaddingException e) {
+			throw new BadPaddingException("Decryption failed: likely due to invalid padding or mismatched key.");
+		} catch (InvalidKeyException e) {
+			throw new InvalidKeyException("Invalid public key for decryption.");
+		} catch (IllegalBlockSizeException e) {
+			throw new IllegalBlockSizeException("Decryption failed: block size mismatch.");
+		} catch (NoSuchAlgorithmException e) {
+			throw new NoSuchAlgorithmException("SHA-256 or RSA algorithm not found.");
+		} catch (Exception e) {
+			throw new Exception("Failed to decode the signature: " + e.getMessage(), e);
+		}
 	}
 
 	private PublicKey getPublicKeyFromString(String publicKeyString) throws Exception {
-	    // Assuming you have a method to get the public key from a string
-	    // Example:
-	    byte[] keyBytes = Base64.getDecoder().decode(publicKeyString);
-	    X509EncodedKeySpec keySpec = new X509EncodedKeySpec(keyBytes);
-	    KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-	    return keyFactory.generatePublic(keySpec);
+		// Assuming you have a method to get the public key from a string
+		// Example:
+		byte[] keyBytes = Base64.getDecoder().decode(publicKeyString);
+		X509EncodedKeySpec keySpec = new X509EncodedKeySpec(keyBytes);
+		KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+		return keyFactory.generatePublic(keySpec);
 	}
 
 	private String bytesToHex(byte[] bytes) {
-	    StringBuilder hexString = new StringBuilder();
-	    for (byte b : bytes) {
-	        String hex = Integer.toHexString(0xff & b);
-	        if (hex.length() == 1) {
-	            hexString.append('0');
-	        }
-	        hexString.append(hex);
-	    }
-	    return hexString.toString();
+		StringBuilder hexString = new StringBuilder();
+		for (byte b : bytes) {
+			String hex = Integer.toHexString(0xff & b);
+			if (hex.length() == 1) {
+				hexString.append('0');
+			}
+			hexString.append(hex);
+		}
+		return hexString.toString();
 	}
-
 
 	private boolean isSignatureValid(String decodedSignature, Order updatedOrder) throws NoSuchAlgorithmException {
 		// Kiểm tra chữ ký hợp lệ, ví dụ so sánh với hash mới của đơn hàng
@@ -489,37 +481,35 @@ public class DAO {
 
 		return hexString.toString();
 	}
-	
+
 	public String getOrderHashByOrderID(int orderID) {
-	    String query = "SELECT OrderHash FROM Orders1 WHERE OrderID = ?";
-	    
-	    try (Connection conn = new DBContext().getConnection();
-	         PreparedStatement stmt = conn.prepareStatement(query)) {
-	        
-	        stmt.setInt(1, orderID); // Đặt OrderID vào câu truy vấn
-	        try (ResultSet rs = stmt.executeQuery()) {
-	            if (rs.next()) {
-	                return rs.getString("OrderHash"); // Trả về giá trị OrderHash
-	            } else {
-	                throw new SQLException("No OrderHash found for OrderID: " + orderID);
-	            }
-	        }
-	    } catch (SQLException e) {
-	        System.err.println("SQL error occurred: " + e.getMessage());
-	    } catch (Exception e) {
-	        System.err.println("An error occurred: " + e.getMessage());
-	    }
-	    return null; // Trả về null nếu xảy ra lỗi
+		String query = "SELECT OrderHash FROM Orders1 WHERE OrderID = ?";
+
+		try (Connection conn = new DBContext().getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
+
+			stmt.setInt(1, orderID); // Đặt OrderID vào câu truy vấn
+			try (ResultSet rs = stmt.executeQuery()) {
+				if (rs.next()) {
+					return rs.getString("OrderHash"); // Trả về giá trị OrderHash
+				} else {
+					throw new SQLException("No OrderHash found for OrderID: " + orderID);
+				}
+			}
+		} catch (SQLException e) {
+			System.err.println("SQL error occurred: " + e.getMessage());
+		} catch (Exception e) {
+			System.err.println("An error occurred: " + e.getMessage());
+		}
+		return null; // Trả về null nếu xảy ra lỗi
 	}
 
-
-	public boolean isEdited(Order order, String publicKey,int orderID) {
+	public boolean isEdited(Order order, String publicKey, int orderID) {
 		try {
 			String currentHash = getOrderHashByOrderID(orderID);
 			System.out.println("hash1: " + currentHash);// Hàm generateHash đã được định nghĩa
 
 			System.out.println("hash2: " + decodeSignature(order.getSign(), publicKey));
-			
+
 			return !currentHash.equals(decodeSignature(order.getSign(), publicKey)); // So sánh với hash ban đầu
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -599,9 +589,7 @@ public class DAO {
 		return order; // Return the order details (or null if not found)
 	}
 
-
-	public List<Order> getOrdersByPage(int page, int pageSize,int userID) {
-
+	public List<Order> getOrdersByPage(int page, int pageSize, int userID) {
 
 		List<Order> orders = new ArrayList<>();
 		Map<Integer, Order> orderMap = new HashMap<>();
@@ -655,7 +643,6 @@ public class DAO {
 						order = new Order(orderID, items, customerName, customerEmail, customerPhone, customerAddress,
 								paymentMethod, orderDate, signature, edited);
 
-						 
 						orders.add(order);
 						orderMap.put(orderID, order);
 					} else {
@@ -672,29 +659,27 @@ public class DAO {
 
 		return orders;
 	}
-	
-	public String getPublicKeyByUserID(int userID) {
-	    String query = "SELECT PublicKey FROM KeyManagement WHERE UserID = ?";
-	    
-	    try (Connection conn = new DBContext().getConnection();
-	         PreparedStatement stmt = conn.prepareStatement(query)) {
-	        
-	        stmt.setInt(1, userID); // Đặt UserID vào câu truy vấn
-	        try (ResultSet rs = stmt.executeQuery()) {
-	            if (rs.next()) {
-	                return rs.getString("PublicKey"); // Trả về giá trị PublicKey
-	            } else {
-	                throw new SQLException("No PublicKey found for UserID: " + userID);
-	            }
-	        }
-	    } catch (SQLException e) {
-	        System.err.println("SQL error occurred: " + e.getMessage());
-	    } catch (Exception e) {
-	        System.err.println("An error occurred: " + e.getMessage());
-	    }
-	    return null; // Trả về null nếu xảy ra lỗi
-	}
 
+	public String getPublicKeyByUserID(int userID) {
+		String query = "SELECT PublicKey FROM KeyManagement WHERE UserID = ?";
+
+		try (Connection conn = new DBContext().getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
+
+			stmt.setInt(1, userID); // Đặt UserID vào câu truy vấn
+			try (ResultSet rs = stmt.executeQuery()) {
+				if (rs.next()) {
+					return rs.getString("PublicKey"); // Trả về giá trị PublicKey
+				} else {
+					throw new SQLException("No PublicKey found for UserID: " + userID);
+				}
+			}
+		} catch (SQLException e) {
+			System.err.println("SQL error occurred: " + e.getMessage());
+		} catch (Exception e) {
+			System.err.println("An error occurred: " + e.getMessage());
+		}
+		return null; // Trả về null nếu xảy ra lỗi
+	}
 
 	public int getTotalOrders() {
 		String query = "SELECT COUNT(*) FROM Orders1";
@@ -1008,24 +993,14 @@ public class DAO {
 		return orderDate; // Return the order date or null if not found
 	}
 
-	public void insertOrder(List<CartItem> cartItems, String customerName, String customerEmail, String customerPhone,
-			String customerAddress, String paymentMethod, String sign, int userID) {
+	public boolean insertOrder(List<CartItem> cartItems, String customerName, String customerEmail,
+			String customerPhone, String customerAddress, String paymentMethod, int userID) {
 
-		String orderQuery = "INSERT INTO Orders1 (CustomerName, CustomerEmail, CustomerPhone, CustomerAddress, PaymentMethod, OrderDate, Signature, UserID,Edited, OrderHash) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?)";
+		String orderQuery = "INSERT INTO Orders1 (CustomerName, CustomerEmail, CustomerPhone, CustomerAddress, PaymentMethod, OrderDate, UserID, Edited) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 		String orderItemQuery = "INSERT INTO OrderItems1 (OrderID, ProductID, Quantity, Price) VALUES (?, ?, ?, ?)";
 
 		try (Connection conn = new DBContext().getConnection()) {
-			conn.setAutoCommit(false); // Bắt đầu transaction
-
-
-			String publicKey = getPublicKeyFromUserID(conn, userID);
-			if (publicKey == null) {
-				throw new Exception("Public key not found for userID: " + userID);
-			}
-
-
-			String orderHash = decodeSignature(sign, publicKey);
-
+			conn.setAutoCommit(false); // Start transaction
 
 			try (PreparedStatement orderStmt = conn.prepareStatement(orderQuery,
 					PreparedStatement.RETURN_GENERATED_KEYS)) {
@@ -1034,11 +1009,9 @@ public class DAO {
 				orderStmt.setString(3, customerPhone);
 				orderStmt.setString(4, customerAddress);
 				orderStmt.setString(5, paymentMethod);
-				orderStmt.setTimestamp(6, new Timestamp(System.currentTimeMillis())); // Ngày hiện tại
-				orderStmt.setString(7, sign);
-				orderStmt.setInt(8, userID);
-				orderStmt.setBoolean(9, false);
-				orderStmt.setString(10, orderHash); // Thêm mã hash vào cột OrderHash
+				orderStmt.setTimestamp(6, new Timestamp(System.currentTimeMillis())); // Current timestamp
+				orderStmt.setInt(7, userID);
+				orderStmt.setBoolean(8, false);
 
 				int affectedRows = orderStmt.executeUpdate();
 
@@ -1046,15 +1019,16 @@ public class DAO {
 					throw new SQLException("Inserting order failed, no rows affected.");
 				}
 
-// Lấy OrderID được tạo
+				// Get the generated OrderID
 				try (ResultSet generatedKeys = orderStmt.getGeneratedKeys()) {
 					if (generatedKeys.next()) {
-						long orderId = generatedKeys.getLong(1); // Lấy OrderID
+						long orderId = generatedKeys.getLong(1); // Retrieve OrderID
 
-						// Chèn từng item vào bảng OrderItems1
+						// Insert each item into OrderItems1 table
 						insertOrderItems(conn, orderId, cartItems);
 						conn.commit(); // Commit transaction
 						System.out.println("Order and order items successfully inserted.");
+						return true;
 					} else {
 						throw new SQLException("Inserting order failed, no ID obtained.");
 					}
@@ -1062,28 +1036,25 @@ public class DAO {
 			}
 		} catch (SQLException e) {
 			System.err.println("SQL error occurred: " + e.getMessage());
-			
 		} catch (Exception e) {
 			System.err.println("An error occurred: " + e.getMessage());
 		}
+
+		return false;
 	}
 
 	private String getPublicKeyFromUserID(Connection conn, int userID) throws SQLException {
-	    String query = "SELECT PublicKey FROM KeyManagement WHERE UserID = ?";
-	    try (PreparedStatement stmt = conn.prepareStatement(query)) {
-	        stmt.setInt(1, userID);
-	        try (ResultSet rs = stmt.executeQuery()) {
-	            if (rs.next()) {
-	                return rs.getString("PublicKey"); // Trả về khóa công khai
-	            }
-	        }
-	    }
-	    return null; // Trả về null nếu không tìm thấy
+		String query = "SELECT PublicKey FROM KeyManagement WHERE UserID = ?";
+		try (PreparedStatement stmt = conn.prepareStatement(query)) {
+			stmt.setInt(1, userID);
+			try (ResultSet rs = stmt.executeQuery()) {
+				if (rs.next()) {
+					return rs.getString("PublicKey"); // Trả về khóa công khai
+				}
+			}
+		}
+		return null; // Trả về null nếu không tìm thấy
 	}
-
-
-	
-
 
 	private void insertOrderItems(Connection conn, long orderId, List<CartItem> cartItems) throws SQLException {
 		String orderItemQuery = "INSERT INTO OrderItems1 (OrderID, ProductID, Quantity, Price) VALUES (?, ?, ?, ?)";
@@ -1503,22 +1474,21 @@ public class DAO {
 		String signAf = "cKKu6Rut++GF+w++OyEDCjxdNmRTnR/4uQtHT4JjOJxuoQGI4cf9V/xbR1vtuOcenj12a5KS7c680qs7hwnIN4mMiH6gj56oZr0tqgOx9zwdP3afdlld2T1PNBhfq9g3RsrDsm+Svcv+WFHmM1K+MXmz///IweGoZXZi1I8V8XIiVUFCnCX39e4wFFVrd7r1LZF8+OSsN0wLy/2hwjJC/y54ikiOInxKO3zq7mwN3rexPopC5dWyd7oNAr83ANibWR5mnGkBmcI5XnK9LsTSWUuPB8v2+jMUOCjtl20WrsdGDt/Hft6mjLeMbyOCJ9TSrVrGw5ZzI12/LWtW33XfOA==";
 		String pubKey = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArkBDXCH3SloQoetjqxKO9Ey7N6WcSjlXP+Ugyx0byH2/1JlOHli/xgRfnrxeQ+asFG3WCRK2jImeN3Qg4n+MHvH1PQpapWaahf6B0FvNYnyQRKZF/5lZRVip8DKQ+GKZVQZIpZcbY9xWLlaBxJ6UD+Ldehecy4JA4llOoWxfk9jTpQXHA0HY4ty3nWeBfIx+/PBtIBdhlH3TIeaKqZ4dQ3T++LhMcWXteW49Gy0wCMk8XuXcFHH1LvFD5tpoIRKikjXb39HV0k89YfCgUg3Hh4fInXutKXXsEw9Gnitfw0suiRbEuXwvn4ndqaAbGT9v4IBostaWV3XuqYk/bSWEawIDAQAB";
 		String signO = "nN/4SpYuDElUATudHNGtEf/+yCZLwupl+TZJosKx6cPxsigeBC5Ss9btwiEHvnkTDpVbcGFHPWbStUOPBJZVBoChp3bEmOAGs4zahkvL3p5CSEakdqmC6SsVqHPxv1/yHFkaGiKBoQ4bf5Q99lWku+h4cc9lsUxwJhrNuhohdd+LXIHVUIEOW1AKPmMskcBRI/7oDnc6I7nlRWgcYncjb67qbBuLdjMrXwRX9l6KdUpsuE+8pIN7sJiVhJtgq1gG3xhSo0PjhOiutyU3J2qDoeYnyFatm5Lv+oG1fv5C1rmIOlfmEIrV3eshKUlTJyhxoUiptlSodD6z1XFfw7UxYQ==";
-		Order o = new Order(9064, cartItems, "dunggghhh", "a@gmail.com", "123", "123", "credit-card", new Timestamp(System.currentTimeMillis()), signO,
-				true);
+		Order o = new Order(9064, cartItems, "dunggghhh", "a@gmail.com", "123", "123", "credit-card",
+				new Timestamp(System.currentTimeMillis()), signO, true);
 
-		//System.out.println(d.getOrderStatusByOrderID(7054));
+		// System.out.println(d.getOrderStatusByOrderID(7054));
 
 		// System.out.println(d.getOrdersByPage(1,5));
 
 		// Order o = new Order(5048, cartItems, "a", "a", "a", "a", "a", new
 		// Timestamp(System.currentTimeMillis()), "a");
-	//	System.out.println(d.updateOrder(o, 9064, 2008));
-		 System.out.println(d.isEdited(o,pubKey,9064));
+		// System.out.println(d.updateOrder(o, 9064, 2008));
+		System.out.println(d.isEdited(o, pubKey, 9064));
 
-	//	System.out.println("de: " + d.decodeSignature(signAf, pubKey));
-		
-	//	System.out.println(d.decodeSignature(signAf, pubKey));
-		
+		// System.out.println("de: " + d.decodeSignature(signAf, pubKey));
+
+		// System.out.println(d.decodeSignature(signAf, pubKey));
 
 	}
 

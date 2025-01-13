@@ -1,6 +1,6 @@
 @charset "UTF-8";
 
-/* Biến CSS để quản lý màu sắc và font chữ */
+/* Biến CSS */
 :root {
     --primary-color: #007bff;
     --secondary-color: #28a745;
@@ -13,324 +13,304 @@
     --transition-speed: 0.3s;
 }
 
-/* Reset một số phần tử mặc định */
+/* Reset mặc định */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-/* Container chung */
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
+html, body {
+    margin: 0;
+    padding: 0;
     font-family: var(--font-family);
-    color: var(--text-color);
     background-color: var(--background-color);
+    color: var(--text-color);
 }
 
-/* Header và Footer */
-header, footer {
+/* Header */
+header {
     background-color: var(--primary-color);
     color: #fff;
-    padding: 20px 0;
+    padding: 15px 0;
     text-align: center;
+    box-shadow: 0 3px 10px var(--shadow-color);
 }
 
-/* Slideshow Container */
+header h1 {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+/* Footer */
+footer {
+    background-color: var(--primary-color);
+    color: #fff;
+    text-align: center;
+    padding: 15px 0;
+}
+
+/* Container chính */
+main.container {
+    max-width: 1000px;
+    margin: 20px auto;
+    padding: 20px;
+}
+
+/* Slideshow Section */
 .slideshow-container {
     position: relative;
-    max-width: 100%;
-    height: 400px;
-    margin: 20px 0;
+    left: 50%; /* Căn chỉnh ra giữa */
+    right: 50%;
+    margin-left: -50vw; /* Đẩy slideshow ra khỏi container */
+    margin-right: -50vw;
+    width: 100vw; /* Đảm bảo chiều rộng */
+    height: 300px;
     overflow: hidden;
-    border-radius: 15px;
-    box-shadow: 0 5px 15px var(--shadow-color);
-    background-color: var(--card-bg);
 }
+
 
 .slides {
     display: flex;
     transition: transform 0.5s ease-in-out;
+    width: 100%; /* Đảm bảo hình ảnh tràn đầy */
 }
 
 .slides img {
-    width: 100%;
-    flex-shrink: 0;
-    object-fit: cover;
-    border-radius: 15px;
-    /* Thêm hiệu ứng mờ khi chuyển slide */
-    opacity: 0;
-    animation: fadeIn 1s forwards;
+    width: 100vw; /* Tràn toàn bộ màn hình */
+    height: 300px; /* Đặt chiều cao cố định */
+    object-fit: cover; /* Hình ảnh được căn chỉnh đúng tỉ lệ */
 }
 
-.slides img.active {
-    opacity: 1;
-}
-
-/* Hiệu ứng Fade In */
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-/* Product Slider */
+/* Slider Section */
 .product-slider {
-    position: relative;
-    overflow: hidden;
-    width: 100%;
-    margin: 30px 0;
-    background: var(--card-bg);
+    margin: 40px 0;
     padding: 20px;
+    background: var(--card-bg);
     border-radius: 15px;
     box-shadow: 0 5px 15px var(--shadow-color);
-    transition: background-color var(--transition-speed);
-}
-
-.product-slider:hover {
-    background-color: #f1f1f1;
-}
-
-.product-slider h2 {
     text-align: center;
+    
+}
+
+.slider-title {
     font-size: 28px;
-    margin-bottom: 20px;
-    color: var(--primary-color);
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    color: #ff5722;
     font-weight: bold;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+}
+
+.slider-container {
+    position: relative;
+    overflow: hidden;
+    
 }
 
 .slider-track {
     display: flex;
     transition: transform 0.5s ease-in-out;
-    will-change: transform;
+    gap: 10px;
 }
 
 .slider-item {
-    flex: 0 0 auto;
-    width: 250px;
-    margin: 0 10px;
-    text-align: center;
+    flex: 0 0 20%; /* Hiển thị 5 sản phẩm */
+    padding: 10px;
+    transition: transform 0.3s ease;
+}
+
+.product-card {
     background: var(--card-bg);
-    border-radius: 15px;
-    box-shadow: 0 4px 12px var(--shadow-color);
-    transition: transform var(--transition-speed), box-shadow var(--transition-speed);
-}
-
-.slider-item:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 8px 20px var(--hover-shadow);
-}
-
-/* Card Styling */
-.card {
-    border: none;
-    border-radius: 15px;
-    overflow: hidden;
-    padding: 15px;
-    text-align: center;
-    background: var(--card-bg);
-    transition: transform var(--transition-speed), box-shadow var(--transition-speed);
-}
-
-.card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 18px var(--hover-shadow);
-}
-
-.card img {
-    width: 100%;
-    height: 220px;
-    object-fit: cover;
     border-radius: 10px;
+    box-shadow: 0 4px 10px var(--shadow-color);
+    padding: 20px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px var(--hover-shadow);
+}
+/* Hình ảnh sản phẩm */
+.product-image {
+    width: 100%;
+    height: 150px; /* Hình chữ nhật */
+    object-fit: contain; /* Đảm bảo hình ảnh không bị méo */
     margin-bottom: 15px;
-    transition: transform var(--transition-speed);
 }
 
-.card img:hover {
-    transform: scale(1.05);
-}
-
-.card-title {
-    font-size: 20px;
+.product-name {
+    font-size: 16px;
     font-weight: bold;
     color: var(--text-color);
     margin: 10px 0;
 }
 
-.card-text {
-    font-size: 15px;
-    color: #666;
-    margin: 10px 0;
+/* Giá sản phẩm */
+.product-price {
+    margin: 15px 0;
+    font-size: 16px;
     line-height: 1.5;
 }
 
-.card p strong {
+.current-price {
     font-size: 18px;
-    color: var(--secondary-color);
+    font-weight: bold;
+    color: #e91e63;
 }
 
-/* Buttons */
-.card-btn {
-    margin-top: 20px;
+.original-price {
+    text-decoration: line-through;
+    color: #888;
+    font-size: 14px;
+    margin-left: 10px;
+}
+
+.discount {
+    font-size: 14px;
+    color: #d50000;
+    margin-left: 10px;
+}
+
+/* Rating (Sao) */
+.rating {
     display: flex;
     justify-content: center;
-    gap: 15px;
+    margin: 10px 0;
+}
+
+.rating i {
+    color: #ffd700; /* Màu vàng cho sao */
+    font-size: 16px;
+    margin: 0 2px;
+}
+
+/* Nút */
+.card-btn {
+    display: flex;
+    justify-content: center;
+    gap: 10px; /* Khoảng cách giữa các nút */
+    margin-top: 15px;
 }
 
 .btn-view, .btn-add {
-    padding: 12px 20px;
-    font-size: 14px;
-    text-decoration: none;
+    padding: 10px 5px;
+    font-size: 10px;
+    font-weight: bold;
+    text-align: center;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    transition: background-color var(--transition-speed), transform 0.2s ease;
-    display: inline-block;
+    transition: all 0.3s ease;
+    color: #fff;
+    min-width: 120px; /* Đặt chiều rộng tối thiểu để đồng bộ kích thước */
 }
 
 .btn-view {
     background-color: var(--primary-color);
-    color: #fff;
 }
 
 .btn-add {
     background-color: var(--secondary-color);
-    color: #fff;
 }
 
+/* Hiệu ứng hover */
 .btn-view:hover {
-    background-color: darken(var(--primary-color), 10%);
+    background-color: #0056b3;
     transform: scale(1.05);
 }
 
 .btn-add:hover {
-    background-color: darken(var(--secondary-color), 10%);
+    background-color: #218838;
     transform: scale(1.05);
 }
 
-/* Slider Controls */
-.slider-controls {
+/* Nút điều hướng Slider */
+.slider-arrow {
     position: absolute;
     top: 50%;
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
     transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.8);
+    border: none;
+    padding: 10px;
+    border-radius: 50%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
     z-index: 10;
 }
 
-/* Nút mũi tên */
-.slider-controls button {
-    background-color: rgba(0, 0, 0, 0.5); /* Màu nền mờ */
-    border: none;
-    color: #fff;
-    padding: 12px;
-    border-radius: 50%; /* Hình tròn */
-    font-size: 20px;
-    cursor: pointer;
-    transition: background-color var(--transition-speed), transform 0.2s ease, box-shadow var(--transition-speed);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+.slider-arrow:hover {
+    background: rgba(255, 255, 255, 1);
+    transform: scale(1.1);
 }
 
-/* Hiệu ứng khi hover */
-.slider-controls button:hover {
-    background-color: rgba(0, 0, 0, 0.8); /* Tăng độ mờ khi hover */
-    transform: scale(1.1); /* Phóng to nhẹ khi hover */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+.prev-btn {
+    left: 10px;
 }
 
-/* Biểu tượng mũi tên */
-.slider-controls button::before {
-    content: '';
-    display: inline-block;
-    border: solid white;
-    border-width: 0 3px 3px 0;
-    padding: 5px;
+.next-btn {
+    right: 10px;
 }
 
-/* Mũi tên trái */
-.slider-controls .prev-btn::before {
-    transform: rotate(135deg);
+/* FLASH SALE Banner */
+.flash-sale-banner {
+    position: relative;
+    max-width: 100%;
+    margin: 20px 0;
+    text-align: center;
 }
 
-/* Mũi tên phải */
-.slider-controls .next-btn::before {
-    transform: rotate(-45deg);
+.flash-sale-image {
+    width: 100%; /* Chiếm toàn bộ chiều rộng */
+    height: auto; /* Giữ tỷ lệ gốc */
+    border-radius: 10px; /* Bo góc nhẹ */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); /* Tạo bóng mờ */
 }
 
-
-
-/* Responsive Adjustments */
-@media (max-width: 1024px) {
-    .slider-item {
-        width: 220px;
-        margin: 0 8px;
-    }
-
-    .card img {
-        height: 200px;
-    }
-
-    .product-slider h2 {
-        font-size: 24px;
-    }
-}
-
+/* Responsive - Màn hình vừa */
 @media (max-width: 768px) {
     .slider-item {
-        width: 180px;
-        margin: 0 6px;
+        flex: 0 0 50%; /* Hiển thị 2 sản phẩm */
     }
 
-    .card img {
-        height: 180px;
+    .product-card {
+        padding: 15px;
     }
 
-    .product-slider h2 {
-        font-size: 22px;
+    .product-image {
+        height: 160px;
+    }
+     .flash-sale-image {
+        width: 100%;
+        height: auto;
     }
 }
 
+/* Responsive - Màn hình nhỏ */
 @media (max-width: 576px) {
     .slider-item {
+        flex: 0 0 100%; /* Hiển thị 1 sản phẩm */
+    }
+
+    .slider-arrow {
+        display: none; /* Ẩn nút điều hướng */
+    }
+
+    .card-btn {
+        flex-direction: column;
+    }
+
+    .btn-view, .btn-add {
+        min-width: 100%;
+    }
+	.flash-sale-image {
         width: 100%;
-        margin: 0;
-    }
-
-    .slider-controls button {
-        padding: 10px;
-        font-size: 18px;
-    }
-
-    .card {
-        padding: 10px;
-    }
-
-    .card-title {
-        font-size: 18px;
-    }
-
-    .card-text {
-        font-size: 14px;
-    }
-
-    .card p strong {
-        font-size: 16px;
-    }
-
-    .product-slider h2 {
-        font-size: 20px;
-    }
-
-    .slider-controls {
-        display: none; /* Ẩn các nút điều khiển trên thiết bị nhỏ */
+        height: auto;
+        border-radius: 5px; /* Giảm bo góc trên màn hình nhỏ */
     }
 }
