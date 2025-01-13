@@ -36,3 +36,5 @@ function moveSlide(selector, direction) {
 
 
 
+
+

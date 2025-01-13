@@ -11,7 +11,7 @@
 <title>Giỏ hàng</title>
 </head>
 <body>
-	<jsp:include page="Header.jsp"/>
+	<jsp:include page="Header.jsp" />
 
 	<div class="container">
 		<div class="cart-detail">
@@ -21,37 +21,44 @@
 				<!-- Kiểm tra xem giỏ hàng có rỗng không -->
 				<c:if test="${empty sessionScope.cart}">
 					<div class="empty-cart-message">
-						<p>Giỏ hàng của bạn hiện đang trống</p>
+						<p>Không có sản phẩm nào trong giỏ hàng</p>
+						<a href="home">Về trang chủ</a>
+						
 					</div>
 				</c:if>
 
-				<c:forEach var="item" items="${sessionScope.cart}">
-					<div class="cart-item" data-id="${item.product.productID}">
-						<div class="product-image">
-							<img src="${item.product.imageURL}" alt="${item.product.name}">
-						</div>
-						<div class="product-details">
-							<h2 class="product-name">${item.product.name}</h2>
-							<p class="product-description">${item.product.description}</p>
-							<div class="quantity">
-								<!-- Nút trừ, số lượng, nút cộng -->
-								<button class="quantity-btn" onclick="updateQuantity(${item.product.productID},-1)">-</button>
-								<span  class="quantity-display">${item.quantity}</span>
-								<button class="quantity-btn" onclick="updateQuantity(${item.product.productID},1">+</button>
+				<!-- Hiển thị sản phẩm nếu giỏ hàng không trống -->
+				<c:if test="${not empty sessionScope.cart}">
+					<c:forEach var="item" items="${sessionScope.cart}">
+						<div class="cart-item" data-id="${item.product.productID}">
+							<div class="product-image">
+								<img src="${item.product.imageURL}" alt="${item.product.name}">
+							</div>
+							<div class="product-details">
+								<h2 class="product-name">${item.product.name}</h2>
+								<p class="product-description">${item.product.description}</p>
+								<div class="quantity">
+									<!-- Nút trừ, số lượng, nút cộng -->
+									<button class="quantity-btn"
+										onclick="updateQuantity(${item.product.productID},-1)">-</button>
+									<span class="quantity-display">${item.quantity}</span>
+									<button class="quantity-btn"
+										onclick="updateQuantity(${item.product.productID},1)">+</button>
+								</div>
+							</div>
+							<div class="product-price">
+								<span>${item.product.price * item.quantity} VND</span>
+								<button class="remove-item"
+									onclick="removeFromCart(${item.product.productID})">
+									<i class="fas fa-trash fa-lg"></i>
+								</button>
 							</div>
 						</div>
-						<div class="product-price">
-							<span>${item.product.price * item.quantity} VND</span>
-							<button class="remove-item"
-								onclick="removeFromCart(${item.product.productID})">
-								<i class="fas fa-trash fa-lg"></i>
-							</button>
-						</div>
-					</div>
-				</c:forEach>
+					</c:forEach>
+				</c:if>
 			</div>
 
-				<!-- Tổng thanh toán  -->
+			<!-- Tổng thanh toán nếu giỏ hàng không trống -->
 			<c:if test="${not empty sessionScope.cart}">
 				<div class="cart-summary">
 					<h2 class="summary-title">Tổng thanh toán</h2>
@@ -59,8 +66,8 @@
 						<span class="summary-label">Tổng:</span> <span
 							class="summary-value">150.0 VND</span>
 					</div>
-					<button class="checkout-btn"
-						onclick="location.href='checkout';">Tiếp Tục</button>
+					<button class="checkout-btn" onclick="location.href='checkout';">Tiếp
+						Tục</button>
 				</div>
 			</c:if>
 		</div>

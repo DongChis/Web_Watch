@@ -89,7 +89,7 @@
 			</div>
 
 			<div class="card" style="height: 100px;">
-				<button type="submit">Đặt Hàng</button>
+				<button type="submit" >Đặt Hàng</button>
 
 			</div>
 
