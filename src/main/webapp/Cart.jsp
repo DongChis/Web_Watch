@@ -1,6 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -14,6 +15,9 @@
 	<jsp:include page="Header.jsp" />
 
 	<div class="container">
+		<nav class="breadcrumb">
+			<a href="home">Trang chủ</a> | <span>Giỏ hàng</span>
+		</nav>
 		<div class="cart-detail">
 			<h1 class="page-title">Giỏ hàng</h1>
 
@@ -23,7 +27,7 @@
 					<div class="empty-cart-message">
 						<p>Không có sản phẩm nào trong giỏ hàng</p>
 						<a href="home">Về trang chủ</a>
-						
+
 					</div>
 				</c:if>
 
@@ -47,7 +51,11 @@
 								</div>
 							</div>
 							<div class="product-price">
-								<span>${item.product.price * item.quantity} VND</span>
+								<strong> <fmt:formatNumber
+										value="${item.product.price * item.quantity}" pattern="#,###" />
+									VND
+								</strong>
+
 								<button class="remove-item"
 									onclick="removeFromCart(${item.product.productID})">
 									<i class="fas fa-trash fa-lg"></i>
@@ -62,10 +70,22 @@
 			<c:if test="${not empty sessionScope.cart}">
 				<div class="cart-summary">
 					<h2 class="summary-title">Tổng thanh toán</h2>
+
+					<!-- Tính tổng giá trị giỏ hàng -->
+					<c:set var="totalPrice" value="0" />
+					<c:forEach var="item" items="${sessionScope.cart}">
+						<c:set var="totalPrice"
+							value="${totalPrice + item.product.price * item.quantity}" />
+					</c:forEach>
+
 					<div class="summary-item">
 						<span class="summary-label">Tổng:</span> <span
-							class="summary-value">150.0 VND</span>
+							class="summary-value"> <strong> <fmt:formatNumber
+									value="${totalPrice}" pattern="#,###" /> VND
+						</strong>
+						</span>
 					</div>
+
 					<button class="checkout-btn" onclick="location.href='checkout';">Tiếp
 						Tục</button>
 				</div>

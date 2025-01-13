@@ -1,6 +1,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -87,7 +89,9 @@
 							<h5 class="card-title">${product.name}</h5>
 							<p class="card-text">${product.description}</p>
 							<p class="product-price">
-								<strong>${product.price} VND</strong>
+								<strong> <fmt:formatNumber value="${product.price}"
+										pattern="#,###" /> VND
+								</strong>
 							</p>
 							<div class="card-btn">
 								<a href="detail?pid=${product.productID}" class="btn-view">Xem</a>
@@ -97,6 +101,7 @@
 						</div>
 					</div>
 				</c:forEach>
+
 			</main>
 		</div>
 

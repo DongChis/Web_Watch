@@ -13,17 +13,7 @@
     --transition-speed: 0.3s;
 }
 
-<<<<<<< HEAD
-/* Reset mặc định */
-=======
 
-/* Reset một số phần tử mặc định */
->>>>>>> main
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
 
 html, body {
     margin: 0;
