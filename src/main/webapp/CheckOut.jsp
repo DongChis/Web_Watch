@@ -1,6 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+	<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -31,7 +32,10 @@
 							</div>
 						</div>
 						<div class="product-price">
-							<span>${item.product.price * item.quantity} VND</span>
+							<span><strong> <fmt:formatNumber
+										value="${item.product.price * item.quantity}" pattern="#,###" />
+									VND
+								</strong></span>
 							<button type="button" class="remove-item"
 								onclick="removeFromCart(${item.product.productID})">
 								<i class="fas fa-trash fa-lg"></i>
@@ -56,7 +60,10 @@
 								var="item" items="${sessionScope.cart}">
 								<c:set var="total"
 									value="${total + (item.product.price * item.quantity)}" />
-							</c:forEach> ${total} VND
+							</c:forEach>  <strong> <fmt:formatNumber
+										value="${total}" pattern="#,###" />
+									VND
+								</strong></span>
 						</span>
 					</h3>
 				</div>

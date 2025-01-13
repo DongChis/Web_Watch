@@ -2,6 +2,7 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -81,7 +82,9 @@
 								<td><img src="${product.imageURL}"
 									style="width: 70px; height: auto;"></td>
 								<td>${product.name}</td>
-								<td>${product.price}VNĐ</td>
+								<td><strong> <fmt:formatNumber value="${product.price}"
+										pattern="#,###" /> VND
+								</strong></td>
 								<td>${product.title}</td>
 								<td>${product.description}</td>
 								<td><a href="loadP?pid=${product.productID}" class="button">Sửa</a>

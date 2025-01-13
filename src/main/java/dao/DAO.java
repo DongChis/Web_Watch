@@ -1639,26 +1639,8 @@ public class DAO {
 
 		// System.out.println(d.getOrderDateById(13));
 		List<CartItem> cartItems = new ArrayList<CartItem>();
-		String signAf = "cKKu6Rut++GF+w++OyEDCjxdNmRTnR/4uQtHT4JjOJxuoQGI4cf9V/xbR1vtuOcenj12a5KS7c680qs7hwnIN4mMiH6gj56oZr0tqgOx9zwdP3afdlld2T1PNBhfq9g3RsrDsm+Svcv+WFHmM1K+MXmz///IweGoZXZi1I8V8XIiVUFCnCX39e4wFFVrd7r1LZF8+OSsN0wLy/2hwjJC/y54ikiOInxKO3zq7mwN3rexPopC5dWyd7oNAr83ANibWR5mnGkBmcI5XnK9LsTSWUuPB8v2+jMUOCjtl20WrsdGDt/Hft6mjLeMbyOCJ9TSrVrGw5ZzI12/LWtW33XfOA==";
-		String pubKey = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArkBDXCH3SloQoetjqxKO9Ey7N6WcSjlXP+Ugyx0byH2/1JlOHli/xgRfnrxeQ+asFG3WCRK2jImeN3Qg4n+MHvH1PQpapWaahf6B0FvNYnyQRKZF/5lZRVip8DKQ+GKZVQZIpZcbY9xWLlaBxJ6UD+Ldehecy4JA4llOoWxfk9jTpQXHA0HY4ty3nWeBfIx+/PBtIBdhlH3TIeaKqZ4dQ3T++LhMcWXteW49Gy0wCMk8XuXcFHH1LvFD5tpoIRKikjXb39HV0k89YfCgUg3Hh4fInXutKXXsEw9Gnitfw0suiRbEuXwvn4ndqaAbGT9v4IBostaWV3XuqYk/bSWEawIDAQAB";
-		String signO = "nN/4SpYuDElUATudHNGtEf/+yCZLwupl+TZJosKx6cPxsigeBC5Ss9btwiEHvnkTDpVbcGFHPWbStUOPBJZVBoChp3bEmOAGs4zahkvL3p5CSEakdqmC6SsVqHPxv1/yHFkaGiKBoQ4bf5Q99lWku+h4cc9lsUxwJhrNuhohdd+LXIHVUIEOW1AKPmMskcBRI/7oDnc6I7nlRWgcYncjb67qbBuLdjMrXwRX9l6KdUpsuE+8pIN7sJiVhJtgq1gG3xhSo0PjhOiutyU3J2qDoeYnyFatm5Lv+oG1fv5C1rmIOlfmEIrV3eshKUlTJyhxoUiptlSodD6z1XFfw7UxYQ==";
-<<<<<<< HEAD
-		Order o = new Order(9064, cartItems, "dunggghhh", "a@gmail.com", "123", "123", "credit-card",
-				new Timestamp(System.currentTimeMillis()), signO, true);
-=======
-		Order o = new Order(9064, cartItems, "dunggghhh", "a@gmail.com", "123", "123", "credit-card", new Timestamp(System.currentTimeMillis()), signO,
-				true,"valid");
->>>>>>> main
 
-		// System.out.println(d.getOrderStatusByOrderID(7054));
-
-		// System.out.println(d.getOrdersByPage(1,5));
-
-		// Order o = new Order(5048, cartItems, "a", "a", "a", "a", "a", new
-		// Timestamp(System.currentTimeMillis()), "a");
-		// System.out.println(d.updateOrder(o, 9064, 2008));
-		System.out.println(d.isEdited(o, pubKey, 9064));
-
+	
 		// System.out.println("de: " + d.decodeSignature(signAf, pubKey));
 
 		// System.out.println(d.decodeSignature(signAf, pubKey));

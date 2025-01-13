@@ -73,7 +73,7 @@
 							<th>Mã đơn hàng</th>
 							<th>Khách hàng</th>
 							<th>Số sản phẩm</th>
-							<th>Tổng giá trị</th>
+						<!-- 	<th>Tổng giá trị</th> -->
 							<th>Ngày đặt hàng</th>
 							<th>Hành động</th>
 							<th>Trạng thái</th>
@@ -85,11 +85,11 @@
 								<td><c:out value="${order.orderID}" /></td>
 								<td><c:out value="${order.customerName}" /></td>
 								<td><c:out value="${order.cartItems.size()}" /></td>
-								<td><c:set var="totalOrderPrice" value="0" /> <c:forEach
+								<%-- <td><c:set var="totalOrderPrice" value="0" /> <c:forEach
 										var="item" items="${order.cartItems}">
 										<c:set var="totalOrderPrice"
 											value="${totalOrderPrice + item.totalPrice}" />
-									</c:forEach> ${totalOrderPrice} VNĐ</td>
+									</c:forEach> ${totalOrderPrice} VNĐ</td> --%>
 								<td><c:out value="${order.orderDate}" /></td>
 								<td><a href="orderDetail?orderID=${order.orderID}">Xem</a>
 									<c:if test="${not empty sessionScope.accSession}">

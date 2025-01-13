@@ -55,10 +55,10 @@
 		<div class="nav-menu">
 			<ul>
 				<li><a href="home">Trang chủ</a></li>
-				<li><a href="about.jsp">Giới thiệu</a></li>
+				<li><a href="About.jsp">Giới thiệu</a></li>
 				<li><a href="productList">Sản phẩm</a></li>
-				<li><a href="blogs.jsp">Bài viết</a></li>
-				<li><a href="detail">Liên hệ</a></li>
+				<li><a href="Blogs.jsp">Bài viết</a></li>
+				<li><a href="Contact.jsp">Liên hệ</a></li>
 			</ul>
 		</div>
 		<div class="header-cart">
