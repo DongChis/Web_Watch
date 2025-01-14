@@ -8,14 +8,14 @@ public class DBContext {
 
 	
 //	
-//	String url = "jdbc:sqlserver://DESKTOP-RDMJ7GI\\MSSQLSERVER02:1433;databaseName=donghoNew;encrypt=false";
-//	String userName = "sa";
-//	String password = "123";
+	String url = "jdbc:sqlserver://DESKTOP-RDMJ7GI\\MSSQLSERVER02:1433;databaseName=donghoNew;encrypt=false";
+	String userName = "sa";
+	String password = "123";
 
 // SQLSERVER name dunghoang: DESKTOP-9LNQ1HF
-	String url = "jdbc:sqlserver://DESKTOP-9LNQ1HF\\MSSQLSERVER02:1433;databaseName=DongHo;encrypt=true;trustServerCertificate=true;characterEncoding=UTF-8";
-	String userName = "sa";
-	String password = "dunghoang168";
+//	String url = "jdbc:sqlserver://DESKTOP-9LNQ1HF\\MSSQLSERVER02:1433;databaseName=DongHo;encrypt=true;trustServerCertificate=true;characterEncoding=UTF-8";
+//	String userName = "sa";
+//	String password = "dunghoang168";
 
 	
 	public Connection getConnection() throws Exception{

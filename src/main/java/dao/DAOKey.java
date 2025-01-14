@@ -284,24 +284,32 @@ public class DAOKey {
    
     public boolean saveToken(int userId, String token) throws Exception {
         String sql = "INSERT INTO Tokens (user_id, token, expiration_time) VALUES (?, ?, ?)";
-        try (Connection conn =  new DBContext().getConnection();
+        try (Connection conn = new DBContext().getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
+
             // Tính thời gian hết hạn (24 giờ từ thời điểm hiện tại)
-            long expirationMillis = System.currentTimeMillis() + (24 * 60 * 60 * 1000);
+            long expirationMillis = System.currentTimeMillis() + (24 * 60 * 60 * 1000); // 24 giờ
             Timestamp expirationTime = new Timestamp(expirationMillis);
+
+            // Log giá trị userId và token để kiểm tra
+            System.out.println("Saving token for UserID: " + userId + " with Token: " + token + " and Expiration Time: " + expirationTime);
 
             stmt.setInt(1, userId);
             stmt.setString(2, token);
             stmt.setTimestamp(3, expirationTime);
 
             int rowsInserted = stmt.executeUpdate();
+            
+            // Log số lượng dòng được chèn vào
+            System.out.println("Rows inserted: " + rowsInserted);
+
             return rowsInserted > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+            e.printStackTrace();  // In chi tiết lỗi SQL
+            throw new Exception("Error while saving token: " + e.getMessage());  // Ném lỗi chi tiết
         }
     }
+
     
     public boolean isTokenValid(String token) throws Exception {
         // Kiểm tra tính hợp lệ của token
