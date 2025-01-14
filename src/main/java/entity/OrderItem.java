@@ -6,9 +6,9 @@ public class OrderItem {
 	
 	private String productId;
 	private String quantityOrder;
-	private Double totalPrice;
+	private double totalPrice;
 
-	public OrderItem(String productId, String quantityOrder, Double totalPrice) {
+	public OrderItem(String productId, String quantityOrder, double totalPrice) {
 		
 		this.productId = productId;
 		this.quantityOrder = quantityOrder;
@@ -31,12 +31,12 @@ public class OrderItem {
 		this.quantityOrder = quantityOrder;
 	}
 
-	public Double getTotalPrice() {
-		return totalPrice= DAO.getInstance().getProductByID(productId).getPrice()
+	public double getTotalPrice() {
+		return totalPrice= (DAO.getInstance().getProductByID(productId).getPrice())
 				*Double.parseDouble(quantityOrder);
 	}
 
-	public void setTotalPrice(Double totalPrice) {
+	public void setTotalPrice(double totalPrice) {
 		this.totalPrice = totalPrice;
 	}
 

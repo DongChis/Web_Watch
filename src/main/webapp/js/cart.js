@@ -27,6 +27,33 @@ function addToCart(productId, quantity) {
 }
 
 
+function updateQuantity(productID, change) {
+    // Lấy phần tử hiển thị số lượng sản phẩm
+    var quantityElement = document.querySelector(`[data-id='${productID}'] .quantity-display`);
+    var currentQuantity = parseInt(quantityElement.textContent);
+
+    // Tính toán số lượng mới
+    var newQuantity = currentQuantity + change;
+
+    // Nếu số lượng mới hợp lệ, cập nhật lại giao diện
+    if (newQuantity >= 1) {
+        quantityElement.textContent = newQuantity;
+
+        // Gửi yêu cầu cập nhật số lượng đến server (bằng AJAX hoặc request tương tự)
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'updateQuantity', true);  // Đổi 'updateQuantity' thành URL đúng của bạn
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                // Xử lý phản hồi từ server, ví dụ như cập nhật giá trị giỏ hàng
+                console.log('Số lượng đã được cập nhật');
+            }
+        };
+        xhr.send('productID=' + productID + '&quantity=' + newQuantity);
+    }
+}
+
+
 
 
 function saveCartToSession(count) {

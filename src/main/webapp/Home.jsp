@@ -1,6 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,13 +15,13 @@
 	<jsp:include page="Header.jsp" />
 
 	<main class="container">
-			<!-- Slideshow Section -->
-			<section class="slideshow-container">
-				<div class="slides">
-					<img src="img/sl1.png" alt="Watch Image 1"> 
-						
-				</div>
-			</section>
+		<!-- Slideshow Section -->
+		<section class="slideshow-container">
+			<div class="slides">
+				<img src="img/sl1.png" alt="Watch Image 1">
+
+			</div>
+		</section>
 
 
 		<section class="flash-sale-banner">
@@ -42,7 +43,9 @@
 								<div class="product-info">
 									<h3 class="product-name">${product.name}</h3>
 									<p class="product-price">
-										<span class="current-price">${product.price}đ</span>
+										<span class="current-price"><strong> <fmt:formatNumber
+													value="${product.price}" pattern="#,###" /> VND
+										</strong></span>
 									</p>
 									<div class="rating">
 										<i class="fa fa-star"></i><i class="fa fa-star"></i><i
@@ -82,8 +85,10 @@
 									<h3 class="product-name">${product.name}</h3>
 									<p class="product-description">${product.description}</p>
 									<p class="product-price">
-										<span class="current-price">${product.price} VND</span> <span
-											class="original-price">9.250.000đ</span> <span
+
+										<span class="current-price"><strong> <fmt:formatNumber
+													value="${product.price}" pattern="#,###" /> VND
+										</strong></span> <span class="original-price">9.250.000đ</span> <span
 											class="discount">-32%</span>
 									</p>
 									<div class="rating">

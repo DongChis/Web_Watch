@@ -7,6 +7,22 @@
     padding: 20px;
 }
 
+/* Breadcrumb */
+.breadcrumb {
+     font-size: 18px;
+    color: #555;
+    margin-bottom: 20px;
+}
+
+.breadcrumb a {
+    text-decoration: none;
+    color: #007bff;
+}
+
+.breadcrumb span {
+    color: #333;
+}
+
 /* Phần giỏ hàng */
 .cart-detail {
     background-color: #f9fafc; /* Màu nền nhạt hơn */

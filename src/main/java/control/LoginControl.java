@@ -62,6 +62,7 @@ public class LoginControl extends HttpServlet {
             session.setAttribute("accSession", acc);
             session.setAttribute("userId", acc.getUserID());
             session.setAttribute("role", acc.getRole());
+            
 
             // Tạo giỏ hàng riêng cho người dùng
             List<CartItem> cart = new ArrayList<>();
@@ -69,6 +70,7 @@ public class LoginControl extends HttpServlet {
 
             // Phân quyền và chuyển hướng
             if ("Admin".equals(acc.getRole())) {
+            	session.setAttribute("hasAccessedAdmin",true);
                 response.sendRedirect("admin");
             } else {
                 response.sendRedirect("home"); // Chuyển hướng tới trang home cho người dùng không phải admin

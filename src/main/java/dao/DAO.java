@@ -1792,16 +1792,7 @@ public class DAO {
 	}
 
 //a
-	public static void main(String[] args) throws Exception {
-		DAO d = new DAO();
 
-		// System.out.println(d.getUserByUsername("chia"));
-		// System.out.println(""+d.insertProduct(null, null, null, null, null, null));
-		// d.signUp("dung1","1");
-		// d.deleteProduct(session,"3002");
-
-		// System.out.println(d.getOrderDateById(13));
 	
-	}
 
 }
